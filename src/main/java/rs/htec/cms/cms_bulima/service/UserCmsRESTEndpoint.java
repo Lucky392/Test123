@@ -14,7 +14,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
-import rs.htec.cms.cms_bulima.domain.UserCms;
+import rs.htec.cms.cms_bulima.domain.CmsUser;
 import java.util.Date;
 
 /**
@@ -39,7 +39,7 @@ public class UserCmsRESTEndpoint {
         } catch (RuntimeException e) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        UserCms user = (UserCms) getEntityManager()
+        CmsUser user = (CmsUser) getEntityManager()
                 .createQuery("SELECT u FROM UserCms u WHERE u.userName = :userName AND u.password = :password")
                 .setParameter("userName", userPass[0])
                 .setParameter("password", userPass[1])

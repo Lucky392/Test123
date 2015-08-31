@@ -3,6 +3,7 @@
   <persistence-unit name="rs.htec.cms_CMS_Bulima_war_1.0PU" transaction-type="RESOURCE_LOCAL">
     <provider>org.hibernate.ejb.HibernatePersistence</provider>
     <class>rs.htec.cms.cms_bulima.domain.UserCms</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsUser</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.120:3306/bulima?zeroDateTimeBehavior=convertToNull"/>

@@ -21,17 +21,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author lazar
+ * @author marko
  */
 @Entity
-@Table(name = "USER_CMS")
+@Table(name = "CMS_USER")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "UserCms.findAll", query = "SELECT u FROM UserCms u"),
-    @NamedQuery(name = "UserCms.findById", query = "SELECT u FROM UserCms u WHERE u.id = :id"),
-    @NamedQuery(name = "UserCms.findByUserName", query = "SELECT u FROM UserCms u WHERE u.userName = :userName"),
-    @NamedQuery(name = "UserCms.findByPassword", query = "SELECT u FROM UserCms u WHERE u.password = :password")})
-public class UserCms implements Serializable {
+    @NamedQuery(name = "CmsUser.findAll", query = "SELECT c FROM CmsUser c"),
+    @NamedQuery(name = "CmsUser.findById", query = "SELECT c FROM CmsUser c WHERE c.id = :id"),
+    @NamedQuery(name = "CmsUser.findByUserName", query = "SELECT c FROM CmsUser c WHERE c.userName = :userName"),
+    @NamedQuery(name = "CmsUser.findByPassword", query = "SELECT c FROM CmsUser c WHERE c.password = :password"),
+    @NamedQuery(name = "CmsUser.findByToken", query = "SELECT c FROM CmsUser c WHERE c.token = :token")})
+public class CmsUser implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -48,15 +49,18 @@ public class UserCms implements Serializable {
     @Size(min = 1, max = 255)
     @Column(name = "password")
     private String password;
+    @Size(max = 45)
+    @Column(name = "token")
+    private String token;
 
-    public UserCms() {
+    public CmsUser() {
     }
 
-    public UserCms(Long id) {
+    public CmsUser(Long id) {
         this.id = id;
     }
 
-    public UserCms(Long id, String userName, String password) {
+    public CmsUser(Long id, String userName, String password) {
         this.id = id;
         this.userName = userName;
         this.password = password;
@@ -86,6 +90,14 @@ public class UserCms implements Serializable {
         this.password = password;
     }
 
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -96,10 +108,10 @@ public class UserCms implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof UserCms)) {
+        if (!(object instanceof CmsUser)) {
             return false;
         }
-        UserCms other = (UserCms) object;
+        CmsUser other = (CmsUser) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -108,7 +120,7 @@ public class UserCms implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.UserCms[ id=" + id + " ]";
+        return "rs.htec.cms.cms_bulima.domain.CmsUser[ id=" + id + " ]";
     }
     
 }
