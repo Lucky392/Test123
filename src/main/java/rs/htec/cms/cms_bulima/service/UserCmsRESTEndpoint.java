@@ -59,6 +59,18 @@ public class UserCmsRESTEndpoint {
 
         }
     }
+    
+    @GET
+    @Path("/logout")
+    public Response logOut(@HeaderParam("token") String token){
+        EntityManager em = getEntityManager();
+        CmsUser user = em.find(CmsUser.class, Long.parseLong(decode(token).split("##")[1]));
+        user.setToken(null);
+        em.getTransaction().begin();
+        em.merge(user);
+        em.getTransaction().commit();
+        return Response.ok("You are logged out!").build();
+    }
 
     @GET
     @Path("/test")
