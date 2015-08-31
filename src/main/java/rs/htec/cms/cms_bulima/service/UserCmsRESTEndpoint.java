@@ -1,0 +1,117 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package rs.htec.cms.cms_bulima.service;
+
+import java.sql.Timestamp;
+import java.util.Base64;
+import java.util.List;
+import javax.ejb.Stateless;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.PersistenceContext;
+import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
+import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
+import javax.xml.bind.DatatypeConverter;
+import rs.htec.cms.cms_bulima.domain.UserCms;
+import java.util.Date;
+
+/**
+ *
+ * @author lazar
+ */
+@Path("/cms")
+public class UserCmsRESTEndpoint {
+
+    public EntityManager getEntityManager() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
+        EntityManager ecm = emf.createEntityManager();
+        return ecm;
+    }
+
+    @GET
+    @Path("/login")
+    public Response logIn(@HeaderParam("authorization") String authorization) {
+        String[] userPass;
+        try {
+            userPass = decodeBasicAuth(authorization);
+        } catch (RuntimeException e) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        UserCms user = (UserCms) getEntityManager()
+                .createQuery("SELECT u FROM UserCms u WHERE u.userName = :userName AND u.password = :password")
+                .setParameter("userName", userPass[0])
+                .setParameter("password", userPass[1])
+                .getSingleResult();
+        if (user == null) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        } else {
+            String token = createToken(user.getId());
+            String encodedToken = encode(token);
+            return Response.ok(encodedToken).build();
+        }
+    }
+
+    @GET
+    @Path("/test")
+    public String nesto() {
+        return "pera";
+    }
+    
+    private String createToken(long id){
+        return "TOKEN##" + id + "##" + (new Date()).getTime();
+    }
+    
+    private String encode(String token){
+        return Base64.getEncoder().encodeToString(token.getBytes());
+    }
+    
+    private String decode(String token){
+        return new String(Base64.getDecoder().decode(token));
+    }
+
+    public static String[] decodeBasicAuth(String authorization) {
+        if (authorization == null) {
+            throw new RuntimeException("Invalid Authorization String.");
+        }
+        if (authorization.length() < 9) {
+            throw new RuntimeException("Invalid Authorization String.");
+        }
+        if (authorization.length() > 64) {
+            throw new RuntimeException("Invalid Authorization String.");
+        }
+        String s[] = authorization.split("\\s", 3);
+        if (s.length < 2) {
+            throw new RuntimeException("Invalid Authorization String.");
+        }
+        for (int i = 0; i < s.length; i++) {
+            String part = s[i];
+            if (part.compareTo("Basic") == 0) {
+                String userPassBase64 = s[i + 1];
+                if (!userPassBase64.isEmpty()) {
+                    String userPass = null;
+                    try {
+                        userPass = new String(DatatypeConverter.parseBase64Binary(userPassBase64));
+                    } catch (RuntimeException e) {
+                        throw new RuntimeException("Authorization cannot be decoded.", e);
+                    }
+                    String userPassArray[] = userPass.split(":");
+                    if (userPassArray.length == 2) {
+                        return userPassArray;
+                    } else {
+                        throw new RuntimeException("Invalid Authorization String.");
+                    }
+                } else {
+                    throw new RuntimeException("Invalid Authorization String.");
+                }
+            }
+        }
+        throw new RuntimeException("Authorization cannot be decoded.");
+    }
+
+}
