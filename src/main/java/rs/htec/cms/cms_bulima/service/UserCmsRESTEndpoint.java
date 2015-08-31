@@ -31,6 +31,7 @@ public class UserCmsRESTEndpoint {
     public Response logIn(@HeaderParam("authorization") String authorization) {
         String[] userPass;
         EntityManager em = helper.getEntityManager();
+
         try {
             userPass = helper.decodeBasicAuth(authorization);
         } catch (RuntimeException e) {
