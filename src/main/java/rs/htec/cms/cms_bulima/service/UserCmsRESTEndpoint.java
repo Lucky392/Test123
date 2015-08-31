@@ -40,16 +40,23 @@ public class UserCmsRESTEndpoint {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
         CmsUser user = (CmsUser) getEntityManager()
-                .createQuery("SELECT u FROM UserCms u WHERE u.userName = :userName AND u.password = :password")
+                .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName AND u.password = :password")
                 .setParameter("userName", userPass[0])
                 .setParameter("password", userPass[1])
                 .getSingleResult();
         if (user == null) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         } else {
-            String token = createToken(user.getId());
-            String encodedToken = encode(token);
-            return Response.ok(encodedToken).build();
+            if (user.getToken() == null || user.getToken().equals("")) {
+                user.setToken(createToken(user.getId()));
+//                getEntityManager().getTransaction().begin();
+                getEntityManager().merge(user);
+//                getEntityManager().getTransaction().commit();
+                String encodedToken = encode(user.getToken());
+                return Response.ok(encodedToken).build();
+            } else {
+                return Response.ok(user.getToken()).build();
+            }
         }
     }
 
@@ -58,16 +65,16 @@ public class UserCmsRESTEndpoint {
     public String nesto() {
         return "pera";
     }
-    
-    private String createToken(long id){
+
+    private String createToken(long id) {
         return "TOKEN##" + id + "##" + (new Date()).getTime();
     }
-    
-    private String encode(String token){
+
+    private String encode(String token) {
         return Base64.getEncoder().encodeToString(token.getBytes());
     }
-    
-    private String decode(String token){
+
+    private String decode(String token) {
         return new String(Base64.getDecoder().decode(token));
     }
 
