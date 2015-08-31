@@ -34,12 +34,13 @@ public class UserCmsRESTEndpoint {
     @Path("/login")
     public Response logIn(@HeaderParam("authorization") String authorization) {
         String[] userPass;
+        EntityManager em = getEntityManager();
         try {
             userPass = decodeBasicAuth(authorization);
         } catch (RuntimeException e) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
-        CmsUser user = (CmsUser) getEntityManager()
+        CmsUser user = (CmsUser) em
                 .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName AND u.password = :password")
                 .setParameter("userName", userPass[0])
                 .setParameter("password", userPass[1])
@@ -49,14 +50,13 @@ public class UserCmsRESTEndpoint {
         } else {
             if (user.getToken() == null || user.getToken().equals("")) {
                 user.setToken(createToken(user.getId()));
-//                getEntityManager().getTransaction().begin();
-                getEntityManager().merge(user);
-//                getEntityManager().getTransaction().commit();
-                String encodedToken = encode(user.getToken());
-                return Response.ok(encodedToken).build();
-            } else {
-                return Response.ok(user.getToken()).build();
+                em.getTransaction().begin();
+                em.merge(user);
+                em.getTransaction().commit();
+
             }
+            return Response.ok(encode(user.getToken())).build();
+
         }
     }
 
