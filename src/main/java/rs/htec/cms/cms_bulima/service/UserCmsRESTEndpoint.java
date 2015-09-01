@@ -5,6 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import java.util.ArrayList;
 import java.util.Base64;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -16,6 +19,13 @@ import javax.ws.rs.core.Response;
 import javax.xml.bind.DatatypeConverter;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import java.util.Date;
+import java.util.List;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import org.json.JSONArray;
+import rs.htec.cms.cms_bulima.domain.News;
+import rs.htec.cms.cms_bulima.pojo.NewsPojo;
 
 /**
  *
@@ -59,10 +69,10 @@ public class UserCmsRESTEndpoint {
 
         }
     }
-    
+
     @GET
     @Path("/logout")
-    public Response logOut(@HeaderParam("token") String token){
+    public Response logOut(@HeaderParam("authorization") String token) {
         EntityManager em = getEntityManager();
         CmsUser user = em.find(CmsUser.class, Long.parseLong(decode(token).split("##")[1]));
         user.setToken(null);
@@ -73,9 +83,27 @@ public class UserCmsRESTEndpoint {
     }
 
     @GET
-    @Path("/test")
-    public String nesto() {
-        return "pera";
+    @Path("/news/{page}/{limit}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+        EntityManager em = getEntityManager();
+        try {
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(decode(token).split("##")[1]));
+            if (user.getToken() != null && !user.getToken().equals("")) {
+//                List <News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                List <NewsPojo> newsPojo = em.createNativeQuery("Select * from News limit " + ((page - 1) * limit) + ", " + limit).getResultList();
+//                for (int i = 0; i < news.size(); i++) {
+//                    news.get(i).setIdFantasyClub(null);
+//                    news.get(i).setIdFantasyLeague(null);
+//                }
+                
+                return Response.ok().entity(new Gson().toJson(newsPojo)).build();
+            } else {
+                return Response.status(Response.Status.UNAUTHORIZED).build();
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
     }
 
     private String createToken(long id) {
