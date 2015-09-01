@@ -389,7 +389,7 @@ public class FantasyClub implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.FantasyClub[ id=" + id + " ]";
+        return id + "";
     }
     
 }

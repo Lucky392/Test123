@@ -6,11 +6,14 @@
 package rs.htec.cms.cms_bulima.pojo;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import rs.htec.cms.cms_bulima.domain.News;
 
 /**
  *
@@ -18,9 +21,8 @@ import javax.xml.bind.annotation.XmlRootElement;
  */
 @Entity
 @XmlRootElement
-public class NewsPojo implements Serializable{
-    private static final long serialVersionUID = 1L;
-    
+public class NewsPojo implements Serializable, AbstractFacadePojo {
+
     @Id
     private Long id;
     private String newsType;
@@ -31,8 +33,8 @@ public class NewsPojo implements Serializable{
     private String newsHeadlineMobile;
     private String newsMessageMobile;
     private Long idFantasyLeague;
-    private Long idFantasyClub;
-
+    private Long idFantasyClub;    
+    
     @XmlElement
     public Long getId() {
         return id;
@@ -41,7 +43,7 @@ public class NewsPojo implements Serializable{
     public void setId(Long id) {
         this.id = id;
     }
-    
+
     @XmlElement
     public String getNewsType() {
         return newsType;
@@ -122,6 +124,33 @@ public class NewsPojo implements Serializable{
     public void setIdFantasyClub(Long idFantasyClub) {
         this.idFantasyClub = idFantasyClub;
     }
-    
-    
+
+    @Override
+    public List createPojoList(List list) {
+        List<NewsPojo> newsPojos = new ArrayList<>();
+        for (News nue : (List<News>) list) {
+            NewsPojo np = new NewsPojo();
+            id = nue.getId();
+            if (nue.getIdFantasyClub() == null) {
+                idFantasyClub = new Long(0);
+            } else {
+                idFantasyClub = nue.getIdFantasyClub().getId();
+            }
+            if (nue.getIdFantasyLeague() == null) {
+                idFantasyLeague = new Long(0);
+            } else {
+                idFantasyLeague = nue.getIdFantasyLeague().getId();
+            }
+            newsDate = nue.getNewsDate();
+            newsHeadlineMobile = nue.getNewsHeadlineMobile();
+            newsHeadlineWeb = nue.getNewsHeadlineWeb();
+            newsMessageMobile = nue.getNewsMessageMobile();
+            newsMessageWeb = nue.getNewsMessageWeb();
+            newsType = nue.getNewsType();
+            createDate = nue.getCreateDate();
+            newsPojos.add(np);
+        }
+        return newsPojos;
+    }
+
 }

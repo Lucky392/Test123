@@ -401,7 +401,7 @@ public class FantasyLeague implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=" + id + " ]";
+        return id + "";
     }
     
 }
