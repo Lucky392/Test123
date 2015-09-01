@@ -7,6 +7,7 @@ package rs.htec.cms.cms_bulima.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.sun.javafx.scene.control.skin.VirtualFlow;
 import java.util.ArrayList;
 import java.util.Base64;
 import javax.persistence.EntityManager;
@@ -90,14 +91,32 @@ public class UserCmsRESTEndpoint {
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-//                List <News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                List <NewsPojo> newsPojo = em.createNativeQuery("Select * from News limit " + ((page - 1) * limit) + ", " + limit).getResultList();
-//                for (int i = 0; i < news.size(); i++) {
-//                    news.get(i).setIdFantasyClub(null);
-//                    news.get(i).setIdFantasyLeague(null);
-//                }
+                List <News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                List<NewsPojo> newsPojos = new ArrayList<>();
+                for (int i = 0; i < news.size(); i++) {
+                    NewsPojo np = new NewsPojo();
+                    np.setId(news.get(i).getId());
+                    if (news.get(i).getIdFantasyClub() == null){
+                        np.setIdFantasyClub(new Long(0));
+                    } else {
+                    np.setIdFantasyClub(news.get(i).getIdFantasyClub().getId());   
+                    }
+                    if (news.get(i).getIdFantasyLeague() == null){
+                        np.setIdFantasyLeague(new Long(0));
+                    } else {
+                    np.setIdFantasyLeague(news.get(i).getIdFantasyLeague().getId());             
+                    }
+                    np.setNewsDate(news.get(i).getNewsDate());
+                    np.setNewsHeadlineMobile(news.get(i).getNewsHeadlineMobile());
+                    np.setNewsHeadlineWeb(news.get(i).getNewsHeadlineWeb());
+                    np.setNewsMessageMobile(news.get(i).getNewsMessageMobile());
+                    np.setNewsMessageWeb(news.get(i).getNewsMessageWeb());
+                    np.setNewsType(news.get(i).getNewsType());
+                    np.setCreateDate(news.get(i).getCreateDate());
+                    newsPojos.add(np);
+                }
                 
-                return Response.ok().entity(new Gson().toJson(newsPojo)).build();
+                return Response.ok().entity(new Gson().toJson(newsPojos)).build();
             } else {
                 return Response.status(Response.Status.UNAUTHORIZED).build();
             }
