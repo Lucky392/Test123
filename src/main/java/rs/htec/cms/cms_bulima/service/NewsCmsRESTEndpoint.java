@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -15,6 +16,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -56,10 +58,8 @@ public class NewsCmsRESTEndpoint {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
-
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/")
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         try {
@@ -97,6 +97,36 @@ public class NewsCmsRESTEndpoint {
         } catch (Exception ignore) {
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
+    }
+
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/update")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateNews(@HeaderParam("authorization") String token, News news) {
+        EntityManager em = helper.getEntityManager();
+        try {
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            if (user.getToken() != null && !user.getToken().equals("")) {
+                News oldNews = em.find(News.class, news.getId());
+                if(oldNews != null) {
+                    
+                //news.setCreateDate(new Date());
+                em.getTransaction().begin();
+                em.merge(news);
+                //em.persist(news);
+                em.getTransaction().commit();
+                return Response.ok("Successfully updated!").build();
+                } else {
+                    return Response.status(Response.Status.BAD_REQUEST).build();
+                }
+            }
+        } catch (Exception e) {
+            return Response.status(Response.Status.UNAUTHORIZED).build();
+        }
+        return Response.status(Response.Status.UNAUTHORIZED).build();
+
     }
 
 }
