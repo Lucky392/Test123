@@ -21,6 +21,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -55,6 +56,7 @@ public class NewsCmsRESTEndpoint {
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/")
@@ -73,6 +75,7 @@ public class NewsCmsRESTEndpoint {
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
+
 
     @DELETE
     @Path("/{id}")

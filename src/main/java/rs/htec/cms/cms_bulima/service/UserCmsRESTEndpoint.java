@@ -69,6 +69,4 @@ public class UserCmsRESTEndpoint {
         return Response.ok("You are logged out!").build();
     }
 
-    
-
 }
