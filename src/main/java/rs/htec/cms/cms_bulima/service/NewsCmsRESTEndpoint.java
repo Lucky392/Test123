@@ -102,7 +102,6 @@ public class NewsCmsRESTEndpoint {
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path("/update")
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
