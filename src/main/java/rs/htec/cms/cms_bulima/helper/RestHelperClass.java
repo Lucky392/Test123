@@ -9,6 +9,9 @@ import java.lang.reflect.Field;
 import java.util.Base64;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -82,6 +85,13 @@ public class RestHelperClass {
             jsonList.add(obj1);
         }
         return jsonList.toJSONString();
+    }
+    
+    
+    public EntityManager getEntityManager() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
+        EntityManager ecm = emf.createEntityManager();
+        return ecm;
     }
     
 }
