@@ -21,7 +21,7 @@ import org.json.simple.JSONObject;
  * @author lazar
  */
 public class RestHelperClass {
-    
+
     public String createToken(long id) {
         return "TOKEN##" + id + "##" + (new Date()).getTime();
     }
@@ -72,26 +72,27 @@ public class RestHelperClass {
         }
         throw new RuntimeException("Authorization cannot be decoded.");
     }
-    
+
     public String getJson(List list) throws IllegalArgumentException, IllegalAccessException {
         JSONArray jsonList = new JSONArray();
         for (Object o : list) {
             JSONObject obj1 = new JSONObject();
             for (Field field : o.getClass().getDeclaredFields()) {
-                field.setAccessible(true);
-                String s = field.get(o) + "";
-                obj1.put(field.getName(), s);
+                if (!field.getName().equals("serialVersionUID")) {
+                    field.setAccessible(true);
+                    String s = field.get(o) + "";
+                    obj1.put(field.getName(), s);
+                }
             }
             jsonList.add(obj1);
         }
         return jsonList.toJSONString();
     }
-    
-    
+
     public EntityManager getEntityManager() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
         EntityManager ecm = emf.createEntityManager();
         return ecm;
     }
-    
+
 }
