@@ -5,12 +5,15 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -26,13 +29,13 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  */
 @Path("/news")
 public class NewsCmsRESTEndpoint {
-    
+
     RestHelperClass helper;
 
     public NewsCmsRESTEndpoint() {
         helper = new RestHelperClass();
     }
-    
+
     @GET
     @Path("/{page}/{limit}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -49,6 +52,17 @@ public class NewsCmsRESTEndpoint {
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-    
-    
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/insert")
+    public Response insertNews(News news) {
+        EntityManager em = helper.getEntityManager();
+        news.setCreateDate(new Date());
+        em.getTransaction().begin();
+        em.persist(news);
+
+        em.getTransaction().commit();
+        return Response.ok("blaaa").build();
+    }
 }
