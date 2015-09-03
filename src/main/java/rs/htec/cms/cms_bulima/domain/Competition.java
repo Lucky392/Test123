@@ -42,6 +42,7 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Competition.findBySport", query = "SELECT c FROM Competition c WHERE c.sport = :sport"),
     @NamedQuery(name = "Competition.findByGender", query = "SELECT c FROM Competition c WHERE c.gender = :gender")})
 public class Competition implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -172,5 +173,5 @@ public class Competition implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.Competition[ id=" + id + " ]";
     }
-    
+
 }

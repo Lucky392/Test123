@@ -22,50 +22,50 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
-import rs.htec.cms.cms_bulima.domain.News;
+import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
  *
- * @author marko
+ * @author stefan
  */
-@Path("/news")
-public class NewsCmsRESTEndpoint {
+@Path("/slider")
+public class SliderContentCmsRESTEndpoint {
 
     RestHelperClass helper;
 
-    public NewsCmsRESTEndpoint() {
+    public SliderContentCmsRESTEndpoint() {
         helper = new RestHelperClass();
     }
 
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+    public Response getSlider(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                return Response.ok().entity(helper.getJson(news)).build();
+                List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                return Response.ok().entity(helper.getJson(slider)).build();
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertNews(@HeaderParam("authorization") String token, News news) {
+    public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    news.setCreateDate(new Date());
+                    slider.setCreateDate(new Date());
                     em.getTransaction().begin();
-                    em.persist(news);
+                    em.persist(slider);
                     em.getTransaction().commit();
                     return Response.ok().build();
                 } else {
@@ -79,16 +79,16 @@ public class NewsCmsRESTEndpoint {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteSlider(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    News news = em.find(News.class, id);
-                    if (news != null) {
+                    SliderContent slider = em.find(SliderContent.class, id);
+                    if (slider != null) {
                         em.getTransaction().begin();
-                        em.remove(news);
+                        em.remove(slider);
                         em.getTransaction().commit();
                         return Response.ok().build();
                     } else {
@@ -106,18 +106,17 @@ public class NewsCmsRESTEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateNews(@HeaderParam("authorization") String token, News news) {
+    public Response updateSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    News oldNews = em.find(News.class, news.getId());
-                    if (oldNews != null) {
-                        //news.setCreateDate(new Date());
+                    SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
+                    if (oldSlider != null) {
+                        slider.setCreateDate(new Date());
                         em.getTransaction().begin();
-                        em.merge(news);
-                        //em.persist(news);
+                        em.merge(slider);
                         em.getTransaction().commit();
                         return Response.ok("Successfully updated!").build();
                     } else {
@@ -128,9 +127,8 @@ public class NewsCmsRESTEndpoint {
                 }
             }
         } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e).build();
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-
 }

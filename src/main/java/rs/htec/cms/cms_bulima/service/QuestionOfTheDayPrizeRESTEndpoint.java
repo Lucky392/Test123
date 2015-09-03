@@ -22,50 +22,51 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
-import rs.htec.cms.cms_bulima.domain.News;
+import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
+import rs.htec.cms.cms_bulima.exception.RoleException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
  *
- * @author marko
+ * @author stefan
  */
-@Path("/news")
-public class NewsCmsRESTEndpoint {
+@Path("/prize")
+public class QuestionOfTheDayPrizeRESTEndpoint {
 
     RestHelperClass helper;
 
-    public NewsCmsRESTEndpoint() {
+    public QuestionOfTheDayPrizeRESTEndpoint() {
         helper = new RestHelperClass();
     }
 
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+    public Response getPrize(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                return Response.ok().entity(helper.getJson(news)).build();
+                List<QuestionOfTheDayPrize> question = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                return Response.ok().entity(helper.getJson(question)).build();
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertNews(@HeaderParam("authorization") String token, News news) {
+    public Response insertPrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
-                    news.setCreateDate(new Date());
+                if (helper.isNewsAdmin(user)) {
+                    prize.setCreateDate(new Date());
                     em.getTransaction().begin();
-                    em.persist(news);
+                    em.persist(prize);
                     em.getTransaction().commit();
                     return Response.ok().build();
                 } else {
@@ -73,22 +74,23 @@ public class NewsCmsRESTEndpoint {
                 }
             }
         } catch (Exception ignore) {
+
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @DELETE
     @Path("/{id}")
-    public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deletePrize(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    News news = em.find(News.class, id);
-                    if (news != null) {
+                    QuestionOfTheDayPrize prize = em.find(QuestionOfTheDayPrize.class, id);
+                    if (prize != null) {
                         em.getTransaction().begin();
-                        em.remove(news);
+                        em.remove(prize);
                         em.getTransaction().commit();
                         return Response.ok().build();
                     } else {
@@ -106,18 +108,17 @@ public class NewsCmsRESTEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateNews(@HeaderParam("authorization") String token, News news) {
+    public Response updatePrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    News oldNews = em.find(News.class, news.getId());
-                    if (oldNews != null) {
-                        //news.setCreateDate(new Date());
+                    QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
+                    if (oldPrize != null) {
+                        prize.setCreateDate(new Date());
                         em.getTransaction().begin();
-                        em.merge(news);
-                        //em.persist(news);
+                        em.merge(prize);
                         em.getTransaction().commit();
                         return Response.ok("Successfully updated!").build();
                     } else {
@@ -128,9 +129,8 @@ public class NewsCmsRESTEndpoint {
                 }
             }
         } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+            return Response.status(Response.Status.UNAUTHORIZED).entity(e).build();
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
-
 }

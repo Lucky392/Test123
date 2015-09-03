@@ -5,7 +5,6 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
-import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,50 +21,50 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
-import rs.htec.cms.cms_bulima.domain.News;
+import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
  *
- * @author marko
+ * @author stefan
  */
-@Path("/news")
-public class NewsCmsRESTEndpoint {
+@Path("/question")
+public class QuestionOfTheDayCmsRESTEndpoint {
 
     RestHelperClass helper;
 
-    public NewsCmsRESTEndpoint() {
+    public QuestionOfTheDayCmsRESTEndpoint() {
         helper = new RestHelperClass();
     }
 
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+    public Response getQuestions(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                return Response.ok().entity(helper.getJson(news)).build();
+                List<QuestionOfTheDay> question = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                return Response.ok().entity(helper.getJson(question)).build();
             }
         } catch (IllegalArgumentException | IllegalAccessException e) {
-            Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertNews(@HeaderParam("authorization") String token, News news) {
+    public Response insertQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    news.setCreateDate(new Date());
+                    //question.setDate(new Date());
                     em.getTransaction().begin();
-                    em.persist(news);
+                    em.persist(question);
                     em.getTransaction().commit();
                     return Response.ok().build();
                 } else {
@@ -79,16 +78,16 @@ public class NewsCmsRESTEndpoint {
 
     @DELETE
     @Path("/{id}")
-    public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteQuestion(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    News news = em.find(News.class, id);
-                    if (news != null) {
+                    QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
+                    if (question != null) {
                         em.getTransaction().begin();
-                        em.remove(news);
+                        em.remove(question);
                         em.getTransaction().commit();
                         return Response.ok().build();
                     } else {
@@ -106,18 +105,16 @@ public class NewsCmsRESTEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateNews(@HeaderParam("authorization") String token, News news) {
+    public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
-                    News oldNews = em.find(News.class, news.getId());
-                    if (oldNews != null) {
-                        //news.setCreateDate(new Date());
+                    QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
+                    if (oldQuestion != null) {
                         em.getTransaction().begin();
-                        em.merge(news);
-                        //em.persist(news);
+                        em.merge(question);
                         em.getTransaction().commit();
                         return Response.ok("Successfully updated!").build();
                     } else {

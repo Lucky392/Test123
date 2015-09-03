@@ -39,6 +39,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "QuestionOfTheDay.findByWrongAnswer3", query = "SELECT q FROM QuestionOfTheDay q WHERE q.wrongAnswer3 = :wrongAnswer3"),
     @NamedQuery(name = "QuestionOfTheDay.findByDate", query = "SELECT q FROM QuestionOfTheDay q WHERE q.date = :date")})
 public class QuestionOfTheDay implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -167,5 +168,5 @@ public class QuestionOfTheDay implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.QuestionOfTheDay[ id=" + id + " ]";
     }
-    
+
 }

@@ -15,6 +15,7 @@ import javax.persistence.Persistence;
 import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import rs.htec.cms.cms_bulima.domain.CmsUser;
 
 /**
  *
@@ -93,6 +94,14 @@ public class RestHelperClass {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
         EntityManager ecm = emf.createEntityManager();
         return ecm;
+    }
+
+    public boolean isAdmin(CmsUser user) {
+        return user.getIdRole().getRoleName().equals("admin");
+    }
+
+    public boolean isNewsAdmin(CmsUser user) {
+        return user.getIdRole().getRoleName().equals("news_admin");
     }
 
 }

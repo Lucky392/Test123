@@ -50,7 +50,6 @@ public class UserCmsRESTEndpoint {
                 em.getTransaction().begin();
                 em.merge(user);
                 em.getTransaction().commit();
-
             }
             return Response.ok(helper.encode(user.getToken())).build();
 

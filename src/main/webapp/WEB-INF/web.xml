@@ -21,4 +21,42 @@
         <servlet-name>Jersey REST Service</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+    
+<!--    <security-role id="role_admin">
+        <description>This is role 1 (Admin)</description>
+        <role-name>admin</role-name>
+    </security-role>-->
+    
+<!--    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>BasicSecurityExample</web-resource-name>
+            <url-pattern>/rest/news/nesto</url-pattern>
+            <http-method>GET</http-method>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Authorized role is admin</description>
+            <role-name>admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>Login</realm-name>
+    </login-config>-->
+    
+    <!--    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/rest/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>Admin</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <security-constraint>
+        <web-resource-collection>
+            <url-pattern>/rest/*</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <role-name>*</role-name>  all authenticated users 
+        </auth-constraint>
+    </security-constraint>-->
 </web-app> 
