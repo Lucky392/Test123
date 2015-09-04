@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -33,9 +34,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class NewsCmsRESTEndpoint {
 
     RestHelperClass helper;
+    AbstractTokenCreator tokenHelper;
 
     public NewsCmsRESTEndpoint() {
         helper = new RestHelperClass();
+        tokenHelper = helper.getAbstractToken();
     }
 
     @GET
@@ -44,7 +47,7 @@ public class NewsCmsRESTEndpoint {
     public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
                 return Response.ok().entity(helper.getJson(news)).build();
@@ -60,7 +63,7 @@ public class NewsCmsRESTEndpoint {
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     news.setCreateDate(new Date());
@@ -82,7 +85,7 @@ public class NewsCmsRESTEndpoint {
     public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     News news = em.find(News.class, id);
@@ -109,7 +112,7 @@ public class NewsCmsRESTEndpoint {
     public Response updateNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     News oldNews = em.find(News.class, news.getId());

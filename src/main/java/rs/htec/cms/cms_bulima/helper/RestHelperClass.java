@@ -6,16 +6,15 @@
 package rs.htec.cms.cms_bulima.helper;
 
 import java.lang.reflect.Field;
-import java.util.Base64;
-import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.xml.bind.DatatypeConverter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
+import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
+import rs.htec.cms.cms_bulima.token.Base64Token;
 
 /**
  *
@@ -23,55 +22,8 @@ import rs.htec.cms.cms_bulima.domain.CmsUser;
  */
 public class RestHelperClass {
 
-    public String createToken(long id) {
-        return "TOKEN##" + id + "##" + (new Date()).getTime();
-    }
-
-    public String encode(String token) {
-        return Base64.getEncoder().encodeToString(token.getBytes());
-    }
-
-    public String decode(String token) {
-        return new String(Base64.getDecoder().decode(token));
-    }
-
-    public String[] decodeBasicAuth(String authorization) {
-        if (authorization == null) {
-            throw new RuntimeException("Invalid Authorization String.");
-        }
-        if (authorization.length() < 9) {
-            throw new RuntimeException("Invalid Authorization String.");
-        }
-        if (authorization.length() > 64) {
-            throw new RuntimeException("Invalid Authorization String.");
-        }
-        String s[] = authorization.split("\\s", 3);
-        if (s.length < 2) {
-            throw new RuntimeException("Invalid Authorization String.");
-        }
-        for (int i = 0; i < s.length; i++) {
-            String part = s[i];
-            if (part.compareTo("Basic") == 0) {
-                String userPassBase64 = s[i + 1];
-                if (!userPassBase64.isEmpty()) {
-                    String userPass = null;
-                    try {
-                        userPass = new String(DatatypeConverter.parseBase64Binary(userPassBase64));
-                    } catch (RuntimeException e) {
-                        throw new RuntimeException("Authorization cannot be decoded.", e);
-                    }
-                    String userPassArray[] = userPass.split(":");
-                    if (userPassArray.length == 2) {
-                        return userPassArray;
-                    } else {
-                        throw new RuntimeException("Invalid Authorization String.");
-                    }
-                } else {
-                    throw new RuntimeException("Invalid Authorization String.");
-                }
-            }
-        }
-        throw new RuntimeException("Authorization cannot be decoded.");
+    public AbstractTokenCreator getAbstractToken(){
+        return new Base64Token();
     }
 
     public String getJson(List list) throws IllegalArgumentException, IllegalAccessException {

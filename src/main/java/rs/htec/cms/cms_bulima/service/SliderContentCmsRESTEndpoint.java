@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -33,9 +34,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class SliderContentCmsRESTEndpoint {
 
     RestHelperClass helper;
+    AbstractTokenCreator tokenHelper;
 
     public SliderContentCmsRESTEndpoint() {
         helper = new RestHelperClass();
+        tokenHelper = helper.getAbstractToken();
     }
 
     @GET
@@ -44,7 +47,7 @@ public class SliderContentCmsRESTEndpoint {
     public Response getSlider(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
                 return Response.ok().entity(helper.getJson(slider)).build();
@@ -60,7 +63,7 @@ public class SliderContentCmsRESTEndpoint {
     public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     slider.setCreateDate(new Date());
@@ -82,7 +85,7 @@ public class SliderContentCmsRESTEndpoint {
     public Response deleteSlider(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     SliderContent slider = em.find(SliderContent.class, id);
@@ -109,7 +112,7 @@ public class SliderContentCmsRESTEndpoint {
     public Response updateSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     SliderContent oldSlider = em.find(SliderContent.class, slider.getId());

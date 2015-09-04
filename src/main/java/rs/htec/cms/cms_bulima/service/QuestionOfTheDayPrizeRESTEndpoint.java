@@ -23,8 +23,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
-import rs.htec.cms.cms_bulima.exception.RoleException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -34,9 +34,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class QuestionOfTheDayPrizeRESTEndpoint {
 
     RestHelperClass helper;
+    AbstractTokenCreator tokenHelper;
 
     public QuestionOfTheDayPrizeRESTEndpoint() {
         helper = new RestHelperClass();
+        tokenHelper = helper.getAbstractToken();
     }
 
     @GET
@@ -45,7 +47,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     public Response getPrize(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 List<QuestionOfTheDayPrize> question = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
                 return Response.ok().entity(helper.getJson(question)).build();
@@ -61,7 +63,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     public Response insertPrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isNewsAdmin(user)) {
                     prize.setCreateDate(new Date());
@@ -84,7 +86,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     public Response deletePrize(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     QuestionOfTheDayPrize prize = em.find(QuestionOfTheDayPrize.class, id);
@@ -111,7 +113,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     public Response updatePrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 if (helper.isAdmin(user)) {
                     QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());

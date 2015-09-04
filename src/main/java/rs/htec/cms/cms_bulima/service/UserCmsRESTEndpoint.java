@@ -12,6 +12,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -21,9 +22,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class UserCmsRESTEndpoint {
 
     RestHelperClass helper;
+    AbstractTokenCreator tokenHelper;
 
     public UserCmsRESTEndpoint() {
         helper = new RestHelperClass();
+        tokenHelper = helper.getAbstractToken();
     }
 
     @GET
@@ -33,7 +36,7 @@ public class UserCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
 
         try {
-            userPass = helper.decodeBasicAuth(authorization);
+            userPass = tokenHelper.decodeBasicAuth(authorization);
         } catch (RuntimeException e) {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         }
@@ -46,12 +49,12 @@ public class UserCmsRESTEndpoint {
             return Response.status(Response.Status.UNAUTHORIZED).build();
         } else {
             if (user.getToken() == null || user.getToken().equals("")) {
-                user.setToken(helper.createToken(user.getId()));
+                user.setToken(tokenHelper.createToken(user.getId()));
                 em.getTransaction().begin();
                 em.merge(user);
                 em.getTransaction().commit();
             }
-            return Response.ok(helper.encode(user.getToken())).build();
+            return Response.ok(tokenHelper.encode(user.getToken())).build();
 
         }
     }
@@ -60,7 +63,7 @@ public class UserCmsRESTEndpoint {
     @Path("/logout")
     public Response logOut(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
-        CmsUser user = em.find(CmsUser.class, Long.parseLong(helper.decode(token).split("##")[1]));
+        CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
         user.setToken(null);
         em.getTransaction().begin();
         em.merge(user);
