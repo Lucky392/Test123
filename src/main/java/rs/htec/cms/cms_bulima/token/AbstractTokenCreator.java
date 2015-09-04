@@ -12,13 +12,13 @@ import javax.xml.bind.DatatypeConverter;
  * @author lazar
  */
 public abstract class AbstractTokenCreator {
-    
-    public abstract String createToken(Object ... o);
-    
+
+    public abstract String createToken(Object... o);
+
     public abstract String encode(String token);
-    
+
     public abstract String decode(String token);
-    
+
     public String[] decodeBasicAuth(String authorization) {
         if (authorization == null) {
             throw new RuntimeException("Invalid Authorization String.");
@@ -57,5 +57,5 @@ public abstract class AbstractTokenCreator {
         }
         throw new RuntimeException("Authorization cannot be decoded.");
     }
-    
+
 }

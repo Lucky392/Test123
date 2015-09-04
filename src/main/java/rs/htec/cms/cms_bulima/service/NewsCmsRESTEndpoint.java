@@ -19,13 +19,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
-import rs.htec.cms.cms_bulima.exception.ErrorMessage;
+import rs.htec.cms.cms_bulima.exception.ForbbidenException;
+import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
@@ -53,14 +53,15 @@ public class NewsCmsRESTEndpoint {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
                 List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                if (news.isEmpty()) {
+                    throw new DataNotFoundException("Requested page does not exist..");
+                }
                 return Response.ok().entity(helper.getJson(news)).build();
             }
-        } catch (Exception e) {
-            
-            throw new DataNotFoundException(e.getMessage());
-            //Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        throw new NotAuthorizedException("You are not logged in!");
     }
 
     @PUT
@@ -77,12 +78,15 @@ public class NewsCmsRESTEndpoint {
                     em.getTransaction().commit();
                     return Response.status(Response.Status.CREATED).build();
                 } else {
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbbidenException("You don't have permission to insert data");
                 }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
-        } catch (Exception ignore) {
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @DELETE
@@ -100,15 +104,16 @@ public class NewsCmsRESTEndpoint {
                         em.getTransaction().commit();
                         return Response.ok().build();
                     } else {
-                        return Response.status(Response.Status.BAD_REQUEST).build();
+                        throw new DataNotFoundException("News at index: " + id + " does not exits");
                     }
                 } else {
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbbidenException("You don't have permission to delete data");
                 }
             }
-        } catch (Exception ignore) {
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        throw new NotAuthorizedException("You are not logged in!");
     }
 
     @POST
@@ -129,16 +134,16 @@ public class NewsCmsRESTEndpoint {
                         em.getTransaction().commit();
                         return Response.ok("Successfully updated!").build();
                     } else {
-                        return Response.status(Response.Status.BAD_REQUEST).build();
+                        throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
                     }
                 } else {
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbbidenException("You don't have permission to update data");
                 }
             }
-        } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        throw new NotAuthorizedException("You are not logged in!");
     }
 
 }
