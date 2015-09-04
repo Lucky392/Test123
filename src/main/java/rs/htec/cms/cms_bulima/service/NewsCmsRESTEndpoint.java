@@ -19,10 +19,13 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.News;
+import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.ErrorMessage;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
@@ -52,8 +55,10 @@ public class NewsCmsRESTEndpoint {
                 List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
                 return Response.ok().entity(helper.getJson(news)).build();
             }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+        } catch (Exception e) {
+            
+            throw new DataNotFoundException(e.getMessage());
+            //Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
         }
         return Response.status(Response.Status.UNAUTHORIZED).build();
     }

@@ -5,13 +5,18 @@
  */
 package rs.htec.cms.cms_bulima.exception;
 
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 /**
  *
  * @author stefan
  */
-public class DataNotFoundException extends RuntimeException{
+
+public class DataNotFoundException extends WebApplicationException {
     
-    public DataNotFoundException(String message){
-        super(message);
+    public DataNotFoundException (String message){
+        super(Response.status(Response.Status.NOT_FOUND).entity(new ErrorMessage(message, 404)).type(MediaType.APPLICATION_JSON).build());
     }
 }
