@@ -9,8 +9,13 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
+import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
+import rs.htec.cms.cms_bulima.exception.JPAQueryException;
+import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
@@ -37,38 +42,47 @@ public class UserCmsRESTEndpoint {
 
         try {
             userPass = tokenHelper.decodeBasicAuth(authorization);
-        } catch (RuntimeException e) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        }
-        CmsUser user = (CmsUser) em
-                .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName AND u.password = :password")
-                .setParameter("userName", userPass[0])
-                .setParameter("password", userPass[1])
-                .getSingleResult();
-        if (user == null) {
-            return Response.status(Response.Status.UNAUTHORIZED).build();
-        } else {
-            if (user.getToken() == null || user.getToken().equals("")) {
-                user.setToken(tokenHelper.createToken(user.getId()));
-                em.getTransaction().begin();
-                em.merge(user);
-                em.getTransaction().commit();
-            }
-            return Response.ok(tokenHelper.encode(user.getToken())).build();
 
+            CmsUser user = (CmsUser) em
+                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName AND u.password = :password")
+                    .setParameter("userName", userPass[0])
+                    .setParameter("password", userPass[1])
+                    .getSingleResult();
+            if (user == null) {
+                throw new BasicAuthenticationException("Bad login parameters!");
+            } else {
+                if (user.getToken() == null || user.getToken().equals("")) {
+                    user.setToken(tokenHelper.createToken(user.getId()));
+                    em.getTransaction().begin();
+                    em.merge(user);
+                    em.getTransaction().commit();
+                }
+                return Response.ok(tokenHelper.encode(user.getToken())).build();
+            }
+        } catch (RuntimeException e) {
+            throw new BasicAuthenticationException(e.getMessage());
+        } catch (Exception e) {
+            throw new JPAQueryException("Database query error");
         }
+
     }
 
     @GET
     @Path("/logout")
     public Response logOut(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
-        CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-        user.setToken(null);
-        em.getTransaction().begin();
-        em.merge(user);
-        em.getTransaction().commit();
-        return Response.ok("You are logged out!").build();
+        try {
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
+            user.setToken(null);
+            em.getTransaction().begin();
+            em.merge(user);
+            em.getTransaction().commit();
+            return Response.ok("You are logged out!").build();
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+            throw new NotAuthorizedException("Not authorized!");
+        } catch (Exception e) {
+            throw new WebApplicationException(Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build());
+        }
     }
 
 }
