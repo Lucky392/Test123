@@ -70,7 +70,7 @@ public class NewsCmsRESTEndpoint {
                     em.getTransaction().begin();
                     em.persist(news);
                     em.getTransaction().commit();
-                    return Response.ok().build();
+                    return Response.status(Response.Status.CREATED).build();
                 } else {
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }

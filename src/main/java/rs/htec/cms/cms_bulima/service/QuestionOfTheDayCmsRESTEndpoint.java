@@ -69,7 +69,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
                     em.getTransaction().begin();
                     em.persist(question);
                     em.getTransaction().commit();
-                    return Response.ok().build();
+                    return Response.status(Response.Status.CREATED).build();
                 } else {
                     return Response.status(Response.Status.FORBIDDEN).build();
                 }
