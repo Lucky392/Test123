@@ -23,6 +23,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
+import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.ForbbidenException;
+import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
@@ -49,13 +52,18 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                List<QuestionOfTheDayPrize> question = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                return Response.ok().entity(helper.getJson(question)).build();
+                List<QuestionOfTheDayPrize> prize = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                if (prize.isEmpty()) {
+                    throw new DataNotFoundException("Requested page does not exist..");
+                }
+                return Response.ok().entity(helper.getJson(prize)).build();
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
-        } catch (IllegalArgumentException | IllegalAccessException e) {
-            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @PUT
@@ -72,13 +80,15 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
                     em.getTransaction().commit();
                     return Response.status(Response.Status.CREATED).build();
                 } else {
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbbidenException("You don't have permission to insert data");
                 }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
-        } catch (Exception ignore) {
-
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 
     @DELETE
@@ -96,15 +106,19 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
                         em.getTransaction().commit();
                         return Response.ok().build();
                     } else {
-                        return Response.status(Response.Status.BAD_REQUEST).build();
+                        throw new DataNotFoundException("Prize at index: " + id + " does not exits");
                     }
                 } else {
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbbidenException("You don't have permission to delete data");
                 }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
-        } catch (Exception ignore) {
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
+        
     }
 
     @POST
@@ -123,16 +137,18 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
                         em.merge(prize);
                         em.getTransaction().commit();
                         return Response.ok("Successfully updated!").build();
-                    } else {
-                        return Response.status(Response.Status.BAD_REQUEST).build();
+                    }  else {
+                        throw new DataNotFoundException("Prize at index" + prize.getId() + " does not exits");
                     }
                 } else {
-                    return Response.status(Response.Status.FORBIDDEN).build();
+                    throw new ForbbidenException("You don't have permission to update data");
                 }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
-        } catch (Exception e) {
-            return Response.status(Response.Status.UNAUTHORIZED).entity(e).build();
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        return Response.status(Response.Status.UNAUTHORIZED).build();
     }
 }

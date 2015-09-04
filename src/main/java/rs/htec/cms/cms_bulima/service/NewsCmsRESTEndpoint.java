@@ -57,11 +57,13 @@ public class NewsCmsRESTEndpoint {
                     throw new DataNotFoundException("Requested page does not exist..");
                 }
                 return Response.ok().entity(helper.getJson(news)).build();
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        throw new NotAuthorizedException("You are not logged in!");
     }
 
     @PUT
@@ -109,11 +111,13 @@ public class NewsCmsRESTEndpoint {
                 } else {
                     throw new ForbbidenException("You don't have permission to delete data");
                 }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        throw new NotAuthorizedException("You are not logged in!");
     }
 
     @POST
@@ -139,11 +143,13 @@ public class NewsCmsRESTEndpoint {
                 } else {
                     throw new ForbbidenException("You don't have permission to update data");
                 }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
         }
-        throw new NotAuthorizedException("You are not logged in!");
     }
 
 }
