@@ -13,10 +13,10 @@ import javax.ws.rs.core.Response;
  *
  * @author stefan
  */
-public abstract class CMSException extends WebApplicationException{
-    
+public abstract class CMSException extends WebApplicationException {
+
     public CMSException(String message, int code, Response.Status status) {
         super(Response.status(status).entity(new ErrorMessage(message, code)).type(MediaType.APPLICATION_JSON).build());
     }
-    
+
 }

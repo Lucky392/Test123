@@ -5,17 +5,15 @@
  */
 package rs.htec.cms.cms_bulima.exception;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
  *
  * @author stefan
  */
-public class NotAuthorizedException extends WebApplicationException{
- 
-    public NotAuthorizedException (String message){
-        super(Response.status(Response.Status.UNAUTHORIZED).entity(new ErrorMessage(message, 401)).type(MediaType.APPLICATION_JSON).build());
+public class NotAuthorizedException extends CMSException {
+
+    public NotAuthorizedException(String message) {
+        super(message, 401, Response.Status.UNAUTHORIZED);
     }
 }

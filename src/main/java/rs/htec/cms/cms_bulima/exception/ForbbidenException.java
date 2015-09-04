@@ -5,18 +5,16 @@
  */
 package rs.htec.cms.cms_bulima.exception;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
  *
  * @author stefan
  */
-public class ForbbidenException extends WebApplicationException {
+public class ForbbidenException extends CMSException {
 
     public ForbbidenException(String message) {
-        super(Response.status(Response.Status.FORBIDDEN).entity(new ErrorMessage(message, 403)).type(MediaType.APPLICATION_JSON).build());
+        super(message, 403, Response.Status.FORBIDDEN);
     }
 
 }
