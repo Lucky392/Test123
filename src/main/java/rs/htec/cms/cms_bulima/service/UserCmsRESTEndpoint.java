@@ -78,10 +78,8 @@ public class UserCmsRESTEndpoint {
             em.merge(user);
             em.getTransaction().commit();
             return Response.ok("You are logged out!").build();
-        } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+        } catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e) {
             throw new NotAuthorizedException("Not authorized!");
-        } catch (Exception e) {
-            throw new WebApplicationException(Response.status(Response.Status.SERVICE_UNAVAILABLE).entity(e.getMessage()).type(MediaType.APPLICATION_JSON).build());
         }
     }
 
