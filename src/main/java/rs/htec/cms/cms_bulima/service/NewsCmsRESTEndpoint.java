@@ -21,6 +21,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import rs.htec.cms.cms_bulima.constants.MethodConstants;
+import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -73,7 +75,7 @@ public class NewsCmsRESTEndpoint {
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
+                if (helper.isAdmin(user) && helper.havePrivilege(em, user, TableConstants.NEWS, MethodConstants.ADD)) {
                     news.setCreateDate(new Date());
                     em.getTransaction().begin();
                     em.persist(news);

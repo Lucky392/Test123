@@ -6,11 +6,11 @@
 package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
-import java.util.Collection;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -26,40 +26,42 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author stefan
+ * @author marko
  */
 @Entity
-@Table(name = "CMS_USER_ROLE")
+@Table(name = "CMS_ROLE")
 @XmlRootElement
 @NamedQueries({
-    @NamedQuery(name = "CmsUserRole.findAll", query = "SELECT c FROM CmsUserRole c"),
-    @NamedQuery(name = "CmsUserRole.findById", query = "SELECT c FROM CmsUserRole c WHERE c.id = :id"),
-    @NamedQuery(name = "CmsUserRole.findByRoleName", query = "SELECT c FROM CmsUserRole c WHERE c.roleName = :roleName")})
-public class CmsUserRole implements Serializable {
+    @NamedQuery(name = "CmsRole.findAll", query = "SELECT c FROM CmsRole c"),
+    @NamedQuery(name = "CmsRole.findById", query = "SELECT c FROM CmsRole c WHERE c.id = :id"),
+    @NamedQuery(name = "CmsRole.findByName", query = "SELECT c FROM CmsRole c WHERE c.name = :name")})
+public class CmsRole implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
-    @Column(name = "ID")
+    @Column(name = "id")
     private Long id;
     @Basic(optional = false)
     @NotNull
     @Size(min = 1, max = 255)
-    @Column(name = "ROLE_NAME")
-    private String roleName;
-    @OneToMany(mappedBy = "idRole", fetch = FetchType.LAZY)
-    private Collection<CmsUser> cmsUserCollection;
+    @Column(name = "name")
+    private String name;
+    @OneToMany(mappedBy = "idRole")
+    private List<CmsUser> cmsUserList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "cmsRole")
+    private List<CmsUserPrivileges> cmsUserPrivilegesList;
 
-    public CmsUserRole() {
+    public CmsRole() {
     }
 
-    public CmsUserRole(Long id) {
+    public CmsRole(Long id) {
         this.id = id;
     }
 
-    public CmsUserRole(Long id, String roleName) {
+    public CmsRole(Long id, String name) {
         this.id = id;
-        this.roleName = roleName;
+        this.name = name;
     }
 
     public Long getId() {
@@ -70,22 +72,32 @@ public class CmsUserRole implements Serializable {
         this.id = id;
     }
 
-    public String getRoleName() {
-        return roleName;
+    public String getName() {
+        return name;
     }
 
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     @XmlTransient
     @JsonIgnore
-    public Collection<CmsUser> getCmsUserCollection() {
-        return cmsUserCollection;
+    public List<CmsUser> getCmsUserList() {
+        return cmsUserList;
     }
 
-    public void setCmsUserCollection(Collection<CmsUser> cmsUserCollection) {
-        this.cmsUserCollection = cmsUserCollection;
+    public void setCmsUserList(List<CmsUser> cmsUserList) {
+        this.cmsUserList = cmsUserList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<CmsUserPrivileges> getCmsUserPrivilegesList() {
+        return cmsUserPrivilegesList;
+    }
+
+    public void setCmsUserPrivilegesList(List<CmsUserPrivileges> cmsUserPrivilegesList) {
+        this.cmsUserPrivilegesList = cmsUserPrivilegesList;
     }
 
     @Override
@@ -98,10 +110,10 @@ public class CmsUserRole implements Serializable {
     @Override
     public boolean equals(Object object) {
         // TODO: Warning - this method won't work in the case the id fields are not set
-        if (!(object instanceof CmsUserRole)) {
+        if (!(object instanceof CmsRole)) {
             return false;
         }
-        CmsUserRole other = (CmsUserRole) object;
+        CmsRole other = (CmsRole) object;
         if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
             return false;
         }
@@ -110,7 +122,7 @@ public class CmsUserRole implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.CmsUserRole[ id=" + id + " ]";
+        return "rs.htec.cms.cms_bulima.domain.CmsRole[ id=" + id + " ]";
     }
     
 }

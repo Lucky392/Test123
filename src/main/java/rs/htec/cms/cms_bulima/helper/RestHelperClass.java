@@ -12,7 +12,9 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
+import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 import rs.htec.cms.cms_bulima.token.Base64Token;
 
@@ -22,7 +24,7 @@ import rs.htec.cms.cms_bulima.token.Base64Token;
  */
 public class RestHelperClass {
 
-    public AbstractTokenCreator getAbstractToken(){
+    public AbstractTokenCreator getAbstractToken() {
         return new Base64Token();
     }
 
@@ -48,12 +50,36 @@ public class RestHelperClass {
         return ecm;
     }
 
+    public boolean havePrivilege(EntityManager em, CmsUser user, int tableID, MethodConstants method) {
+        CmsUserPrivileges cup = (CmsUserPrivileges) em.createNamedQuery("CmsUserPrivileges.findByPK")
+                .setParameter("roleId", user.getIdRole())
+                .setParameter("tableId", tableID)
+                .getSingleResult();
+        if (cup == null) {
+            return false;
+        }
+        switch (method) {
+            case SEARCH:
+                return cup.getSearch();
+            case EDIT:
+                return cup.getEdit();
+            case ADD:
+                return cup.getAdd();
+            case DELETE:
+                return cup.getDelete();
+            default:
+                return false;
+
+        }
+
+    }
+
     public boolean isAdmin(CmsUser user) {
-        return user.getIdRole().getRoleName().equals("admin");
+        return true;
     }
 
     public boolean isNewsAdmin(CmsUser user) {
-        return user.getIdRole().getRoleName().equals("news_admin");
+        return true;
     }
 
 }

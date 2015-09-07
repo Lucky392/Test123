@@ -28,6 +28,9 @@
     <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize</class>
     <class>rs.htec.cms.cms_bulima.domain.Formation</class>
     <class>rs.htec.cms.cms_bulima.domain.CmsUserRole</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsUserPrivileges</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsTables</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsRole</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.120:3306/bulima?zeroDateTimeBehavior=convertToNull"/>

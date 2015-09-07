@@ -9,7 +9,6 @@ import java.io.Serializable;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -36,9 +35,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CmsUser.findByPassword", query = "SELECT c FROM CmsUser c WHERE c.password = :password"),
     @NamedQuery(name = "CmsUser.findByToken", query = "SELECT c FROM CmsUser c WHERE c.token = :token")})
 public class CmsUser implements Serializable {
-    @JoinColumn(name = "id_role", referencedColumnName = "ID")
-    @ManyToOne(fetch = FetchType.LAZY)
-    private CmsUserRole idRole;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,6 +54,9 @@ public class CmsUser implements Serializable {
     @Size(max = 45)
     @Column(name = "token")
     private String token;
+    @JoinColumn(name = "id_role", referencedColumnName = "id")
+    @ManyToOne
+    private CmsRole idRole;
 
     public CmsUser() {
     }
@@ -104,6 +103,14 @@ public class CmsUser implements Serializable {
         this.token = token;
     }
 
+    public CmsRole getIdRole() {
+        return idRole;
+    }
+
+    public void setIdRole(CmsRole idRole) {
+        this.idRole = idRole;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -127,14 +134,6 @@ public class CmsUser implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.CmsUser[ id=" + id + " ]";
-    }
-
-    public CmsUserRole getIdRole() {
-        return idRole;
-    }
-
-    public void setIdRole(CmsUserRole idRole) {
-        this.idRole = idRole;
     }
     
 }
