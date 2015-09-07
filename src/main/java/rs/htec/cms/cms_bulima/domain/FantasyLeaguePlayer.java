@@ -27,7 +27,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "FANTASY_LEAGUE_PLAYER")

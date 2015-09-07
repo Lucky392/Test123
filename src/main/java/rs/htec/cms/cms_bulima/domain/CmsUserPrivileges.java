@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "CMS_USER_PRIVILEGES")
@@ -30,10 +30,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CmsUserPrivileges.findBySearch", query = "SELECT c FROM CmsUserPrivileges c WHERE c.search = :search"),
     @NamedQuery(name = "CmsUserPrivileges.findByEdit", query = "SELECT c FROM CmsUserPrivileges c WHERE c.edit = :edit"),
     @NamedQuery(name = "CmsUserPrivileges.findByAdd", query = "SELECT c FROM CmsUserPrivileges c WHERE c.add = :add"),
-    @NamedQuery(name = "CmsUserPrivileges.findByDelete", query = "SELECT c FROM CmsUserPrivileges c WHERE c.delete = :delete"),
-    @NamedQuery(name = "CmsUserPrivileges.findByRoleId", query = "SELECT c FROM CmsUserPrivileges c WHERE c.cmsUserPrivilegesPK.roleId = :roleId and c.cmsUserPrivilegesPK.tableId = :tableId")})
+    @NamedQuery(name = "CmsUserPrivileges.findByDelete", query = "SELECT c FROM CmsUserPrivileges c WHERE c.delete = :delete")})
 public class CmsUserPrivileges implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected CmsUserPrivilegesPK cmsUserPrivilegesPK;
@@ -143,5 +141,5 @@ public class CmsUserPrivileges implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.CmsUserPrivileges[ cmsUserPrivilegesPK=" + cmsUserPrivilegesPK + " ]";
     }
-
+    
 }

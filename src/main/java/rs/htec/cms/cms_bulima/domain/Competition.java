@@ -25,10 +25,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "COMPETITION")
@@ -42,7 +43,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Competition.findBySport", query = "SELECT c FROM Competition c WHERE c.sport = :sport"),
     @NamedQuery(name = "Competition.findByGender", query = "SELECT c FROM Competition c WHERE c.gender = :gender")})
 public class Competition implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -132,6 +132,7 @@ public class Competition implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<SliderContent> getSliderContentList() {
         return sliderContentList;
     }
@@ -141,6 +142,7 @@ public class Competition implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<League> getLeagueList() {
         return leagueList;
     }
@@ -173,5 +175,5 @@ public class Competition implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.Competition[ id=" + id + " ]";
     }
-
+    
 }

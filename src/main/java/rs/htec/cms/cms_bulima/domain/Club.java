@@ -27,10 +27,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "CLUB")
@@ -44,9 +45,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Club.findByLogoUrl", query = "SELECT c FROM Club c WHERE c.logoUrl = :logoUrl"),
     @NamedQuery(name = "Club.findByCreateDate", query = "SELECT c FROM Club c WHERE c.createDate = :createDate")})
 public class Club implements Serializable {
-    @Lob
-    @Column(name = "logo")
-    private byte[] logo;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -69,6 +67,9 @@ public class Club implements Serializable {
     @Size(max = 255)
     @Column(name = "logoUrl")
     private String logoUrl;
+    @Lob
+    @Column(name = "logo")
+    private byte[] logo;
     @Basic(optional = false)
     @NotNull
     @Column(name = "createDate")
@@ -134,6 +135,13 @@ public class Club implements Serializable {
         this.logoUrl = logoUrl;
     }
 
+    public byte[] getLogo() {
+        return logo;
+    }
+
+    public void setLogo(byte[] logo) {
+        this.logo = logo;
+    }
 
     public Date getCreateDate() {
         return createDate;
@@ -152,6 +160,7 @@ public class Club implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<Player> getPlayerList() {
         return playerList;
     }
@@ -183,14 +192,6 @@ public class Club implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.Club[ id=" + id + " ]";
-    }
-
-    public byte[] getLogo() {
-        return logo;
-    }
-
-    public void setLogo(byte[] logo) {
-        this.logo = logo;
     }
     
 }

@@ -28,10 +28,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "PLAYER")
@@ -69,9 +70,6 @@ import javax.xml.bind.annotation.XmlTransient;
     @NamedQuery(name = "Player.findByBlockMatchdayAmount", query = "SELECT p FROM Player p WHERE p.blockMatchdayAmount = :blockMatchdayAmount"),
     @NamedQuery(name = "Player.findByFullname", query = "SELECT p FROM Player p WHERE p.fullname = :fullname")})
 public class Player implements Serializable {
-    @Lob
-    @Column(name = "photo")
-    private byte[] photo;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -108,6 +106,9 @@ public class Player implements Serializable {
     @Size(max = 255)
     @Column(name = "photoUrl")
     private String photoUrl;
+    @Lob
+    @Column(name = "photo")
+    private byte[] photo;
     @Column(name = "dateJoinedTeam")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateJoinedTeam;
@@ -274,6 +275,13 @@ public class Player implements Serializable {
         this.photoUrl = photoUrl;
     }
 
+    public byte[] getPhoto() {
+        return photo;
+    }
+
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
 
     public Date getDateJoinedTeam() {
         return dateJoinedTeam;
@@ -428,6 +436,7 @@ public class Player implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<FantasyLeaguePlayer> getFantasyLeaguePlayerList() {
         return fantasyLeaguePlayerList;
     }
@@ -499,14 +508,6 @@ public class Player implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.Player[ id=" + id + " ]";
-    }
-
-    public byte[] getPhoto() {
-        return photo;
-    }
-
-    public void setPhoto(byte[] photo) {
-        this.photo = photo;
     }
     
 }

@@ -27,10 +27,11 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "LEAGUE")
@@ -60,9 +61,9 @@ public class League implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
     @OneToMany(mappedBy = "idLeague")
-    private List<Club> clubList;
-    @OneToMany(mappedBy = "idLeague")
     private List<FavoriteClub> favoriteClubList;
+    @OneToMany(mappedBy = "idLeague")
+    private List<Club> clubList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idLeague")
     private List<Season> seasonList;
     @JoinColumn(name = "ID_COMPETITION", referencedColumnName = "ID")
@@ -114,15 +115,7 @@ public class League implements Serializable {
     }
 
     @XmlTransient
-    public List<Club> getClubList() {
-        return clubList;
-    }
-
-    public void setClubList(List<Club> clubList) {
-        this.clubList = clubList;
-    }
-
-    @XmlTransient
+    @JsonIgnore
     public List<FavoriteClub> getFavoriteClubList() {
         return favoriteClubList;
     }
@@ -132,6 +125,17 @@ public class League implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
+    public List<Club> getClubList() {
+        return clubList;
+    }
+
+    public void setClubList(List<Club> clubList) {
+        this.clubList = clubList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
     public List<Season> getSeasonList() {
         return seasonList;
     }

@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "CMS_USER")

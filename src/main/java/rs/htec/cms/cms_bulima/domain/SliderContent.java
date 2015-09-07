@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "SLIDER_CONTENT")
@@ -44,7 +44,6 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "SliderContent.findByCreateDate", query = "SELECT s FROM SliderContent s WHERE s.createDate = :createDate"),
     @NamedQuery(name = "SliderContent.findByText", query = "SELECT s FROM SliderContent s WHERE s.text = :text")})
 public class SliderContent implements Serializable {
-
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -209,5 +208,5 @@ public class SliderContent implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.SliderContent[ id=" + id + " ]";
     }
-
+    
 }

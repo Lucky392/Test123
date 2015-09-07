@@ -1,36 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="2.1" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
   <persistence-unit name="rs.htec.cms_CMS_Bulima_war_1.0PU" transaction-type="RESOURCE_LOCAL">
-    <provider>org.hibernate.ejb.HibernatePersistence</provider>
-    <class>rs.htec.cms.cms_bulima.domain.UserCms</class>
-    <class>rs.htec.cms.cms_bulima.domain.CmsUser</class>
-    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLogo</class>
-    <class>rs.htec.cms.cms_bulima.domain.User</class>
-    <class>rs.htec.cms.cms_bulima.domain.FantasyPlayer</class>
-    <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDay</class>
-    <class>rs.htec.cms.cms_bulima.domain.Matchday</class>
-    <class>rs.htec.cms.cms_bulima.domain.FantasyClub</class>
-    <class>rs.htec.cms.cms_bulima.domain.FavoriteClub</class>
-    <class>rs.htec.cms.cms_bulima.domain.League</class>
-    <class>rs.htec.cms.cms_bulima.domain.FantasyLeague</class>
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>rs.htec.cms.cms_bulima.domain.Formation</class>
     <class>rs.htec.cms.cms_bulima.domain.Emblem</class>
-    <class>rs.htec.cms.cms_bulima.domain.FantasyLeaguePlayer</class>
-    <class>rs.htec.cms.cms_bulima.domain.Nation</class>
-    <class>rs.htec.cms.cms_bulima.domain.PlayerSlot</class>
-    <class>rs.htec.cms.cms_bulima.domain.PlayerPosition</class>
-    <class>rs.htec.cms.cms_bulima.domain.FantasyManager</class>
     <class>rs.htec.cms.cms_bulima.domain.SliderContent</class>
     <class>rs.htec.cms.cms_bulima.domain.Season</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClub</class>
+    <class>rs.htec.cms.cms_bulima.domain.League</class>
+    <class>rs.htec.cms.cms_bulima.domain.User</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyLeague</class>
     <class>rs.htec.cms.cms_bulima.domain.News</class>
-    <class>rs.htec.cms.cms_bulima.domain.Competition</class>
-    <class>rs.htec.cms.cms_bulima.domain.Club</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyPlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyLeaguePlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.Matchday</class>
     <class>rs.htec.cms.cms_bulima.domain.Player</class>
-    <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize</class>
-    <class>rs.htec.cms.cms_bulima.domain.Formation</class>
-    <class>rs.htec.cms.cms_bulima.domain.CmsUserRole</class>
-    <class>rs.htec.cms.cms_bulima.domain.CmsUserPrivileges</class>
-    <class>rs.htec.cms.cms_bulima.domain.CmsTables</class>
     <class>rs.htec.cms.cms_bulima.domain.CmsRole</class>
+    <class>rs.htec.cms.cms_bulima.domain.Nation</class>
+    <class>rs.htec.cms.cms_bulima.domain.PlayerPosition</class>
+    <class>rs.htec.cms.cms_bulima.domain.PlayerSlot</class>
+    <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDay</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLogo</class>
+    <class>rs.htec.cms.cms_bulima.domain.FavoriteClub</class>
+    <class>rs.htec.cms.cms_bulima.domain.Club</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsTables</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyManager</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsUserPrivileges</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsUser</class>
+    <class>rs.htec.cms.cms_bulima.domain.Competition</class>
+    <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.120:3306/bulima?zeroDateTimeBehavior=convertToNull"/>

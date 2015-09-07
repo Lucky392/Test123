@@ -26,7 +26,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "CMS_ROLE")

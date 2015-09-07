@@ -26,10 +26,11 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author marko
+ * @author lazar
  */
 @Entity
 @Table(name = "FANTASY_PLAYER")
@@ -103,6 +104,7 @@ public class FantasyPlayer implements Serializable {
     }
 
     @XmlTransient
+    @JsonIgnore
     public List<FantasyClub> getFantasyClubList() {
         return fantasyClubList;
     }
