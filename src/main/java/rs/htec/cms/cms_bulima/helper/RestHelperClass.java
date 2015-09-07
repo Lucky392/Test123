@@ -50,9 +50,9 @@ public class RestHelperClass {
         return ecm;
     }
 
-    public boolean havePrivilege(EntityManager em, CmsUser user, int tableID, MethodConstants method) {
+    public boolean havePrivilege(EntityManager em, CmsUser user, long tableID, MethodConstants method) {
         CmsUserPrivileges cup = (CmsUserPrivileges) em.createNamedQuery("CmsUserPrivileges.findByPK")
-                .setParameter("roleId", user.getIdRole())
+                .setParameter("roleId", user.getIdRole().getId())
                 .setParameter("tableId", tableID)
                 .getSingleResult();
         if (cup == null) {
@@ -60,13 +60,13 @@ public class RestHelperClass {
         }
         switch (method) {
             case SEARCH:
-                return cup.getSearch();
+                return cup.getSearchAction();
             case EDIT:
-                return cup.getEdit();
+                return cup.getEditAction();
             case ADD:
-                return cup.getAdd();
+                return cup.getAddAction();
             case DELETE:
-                return cup.getRemove();
+                return cup.getDeleteAction();
             default:
                 return false;
 

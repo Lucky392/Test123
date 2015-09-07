@@ -54,11 +54,15 @@ public class NewsCmsRESTEndpoint {
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             if (user.getToken() != null && !user.getToken().equals("")) {
-                List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                if (news.isEmpty()) {
-                    throw new DataNotFoundException("Requested page does not exist..");
+                if (helper.havePrivilege(em, user, TableConstants.NEWS, MethodConstants.SEARCH)) {
+                    List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                    if (news.isEmpty()) {
+                        throw new DataNotFoundException("Requested page does not exist..");
+                    }
+                    return Response.ok().entity(helper.getJson(news)).build();
+                } else {
+                    throw new ForbbidenException("You don't have permission to search data");
                 }
-                return Response.ok().entity(helper.getJson(news)).build();
             } else {
                 throw new NotAuthorizedException("You are not logged in!");
             }

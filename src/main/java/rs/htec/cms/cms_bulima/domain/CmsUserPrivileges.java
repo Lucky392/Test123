@@ -18,7 +18,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  *
- * @author lazar
+ * @author marko
  */
 @Entity
 @Table(name = "CMS_USER_PRIVILEGES")
@@ -27,22 +27,23 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CmsUserPrivileges.findAll", query = "SELECT c FROM CmsUserPrivileges c"),
     @NamedQuery(name = "CmsUserPrivileges.findByRoleId", query = "SELECT c FROM CmsUserPrivileges c WHERE c.cmsUserPrivilegesPK.roleId = :roleId"),
     @NamedQuery(name = "CmsUserPrivileges.findByTableId", query = "SELECT c FROM CmsUserPrivileges c WHERE c.cmsUserPrivilegesPK.tableId = :tableId"),
-    @NamedQuery(name = "CmsUserPrivileges.findBySearch", query = "SELECT c FROM CmsUserPrivileges c WHERE c.search = :search"),
-    @NamedQuery(name = "CmsUserPrivileges.findByEdit", query = "SELECT c FROM CmsUserPrivileges c WHERE c.edit = :edit"),
-    @NamedQuery(name = "CmsUserPrivileges.findByAdd", query = "SELECT c FROM CmsUserPrivileges c WHERE c.add = :add"),
-    @NamedQuery(name = "CmsUserPrivileges.findByRemove", query = "SELECT c FROM CmsUserPrivileges c WHERE c.remove = :remove")})
+    @NamedQuery(name = "CmsUserPrivileges.findBySearchAction", query = "SELECT c FROM CmsUserPrivileges c WHERE c.searchAction = :searchAction"),
+    @NamedQuery(name = "CmsUserPrivileges.findByEditAction", query = "SELECT c FROM CmsUserPrivileges c WHERE c.editAction = :editAction"),
+    @NamedQuery(name = "CmsUserPrivileges.findByAddAction", query = "SELECT c FROM CmsUserPrivileges c WHERE c.addAction = :addAction"),
+    @NamedQuery(name = "CmsUserPrivileges.findByDeleteAction", query = "SELECT c FROM CmsUserPrivileges c WHERE c.deleteAction = :deleteAction"),
+    @NamedQuery(name = "CmsUserPrivileges.findByPK", query = "SELECT c FROM CmsUserPrivileges c WHERE c.cmsUserPrivilegesPK.roleId = :roleId AND c.cmsUserPrivilegesPK.tableId = :tableId")})
 public class CmsUserPrivileges implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected CmsUserPrivilegesPK cmsUserPrivilegesPK;
-    @Column(name = "search")
-    private Boolean search;
-    @Column(name = "edit")
-    private Boolean edit;
-    @Column(name = "add")
-    private Boolean add;
-    @Column(name = "remove")
-    private Boolean remove;
+    @Column(name = "search_action")
+    private Boolean searchAction;
+    @Column(name = "edit_action")
+    private Boolean editAction;
+    @Column(name = "add_action")
+    private Boolean addAction;
+    @Column(name = "delete_action")
+    private Boolean deleteAction;
     @JoinColumn(name = "role_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private CmsRole cmsRole;
@@ -69,36 +70,36 @@ public class CmsUserPrivileges implements Serializable {
         this.cmsUserPrivilegesPK = cmsUserPrivilegesPK;
     }
 
-    public Boolean getSearch() {
-        return search;
+    public Boolean getSearchAction() {
+        return searchAction;
     }
 
-    public void setSearch(Boolean search) {
-        this.search = search;
+    public void setSearchAction(Boolean searchAction) {
+        this.searchAction = searchAction;
     }
 
-    public Boolean getEdit() {
-        return edit;
+    public Boolean getEditAction() {
+        return editAction;
     }
 
-    public void setEdit(Boolean edit) {
-        this.edit = edit;
+    public void setEditAction(Boolean editAction) {
+        this.editAction = editAction;
     }
 
-    public Boolean getAdd() {
-        return add;
+    public Boolean getAddAction() {
+        return addAction;
     }
 
-    public void setAdd(Boolean add) {
-        this.add = add;
+    public void setAddAction(Boolean addAction) {
+        this.addAction = addAction;
     }
 
-    public Boolean getRemove() {
-        return remove;
+    public Boolean getDeleteAction() {
+        return deleteAction;
     }
 
-    public void setRemove(Boolean remove) {
-        this.remove = remove;
+    public void setDeleteAction(Boolean deleteAction) {
+        this.deleteAction = deleteAction;
     }
 
     public CmsRole getCmsRole() {

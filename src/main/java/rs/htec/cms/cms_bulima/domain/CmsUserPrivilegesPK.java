@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  *
- * @author lazar
+ * @author marko
  */
 @Embeddable
 public class CmsUserPrivilegesPK implements Serializable {
