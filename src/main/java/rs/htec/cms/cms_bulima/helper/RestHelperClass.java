@@ -66,7 +66,7 @@ public class RestHelperClass {
             case ADD:
                 return cup.getAdd();
             case DELETE:
-                return cup.getDelete();
+                return cup.getRemove();
             default:
                 return false;
 

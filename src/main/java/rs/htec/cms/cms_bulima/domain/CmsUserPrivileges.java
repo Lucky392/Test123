@@ -30,7 +30,7 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "CmsUserPrivileges.findBySearch", query = "SELECT c FROM CmsUserPrivileges c WHERE c.search = :search"),
     @NamedQuery(name = "CmsUserPrivileges.findByEdit", query = "SELECT c FROM CmsUserPrivileges c WHERE c.edit = :edit"),
     @NamedQuery(name = "CmsUserPrivileges.findByAdd", query = "SELECT c FROM CmsUserPrivileges c WHERE c.add = :add"),
-    @NamedQuery(name = "CmsUserPrivileges.findByDelete", query = "SELECT c FROM CmsUserPrivileges c WHERE c.delete = :delete")})
+    @NamedQuery(name = "CmsUserPrivileges.findByRemove", query = "SELECT c FROM CmsUserPrivileges c WHERE c.remove = :remove")})
 public class CmsUserPrivileges implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
@@ -41,8 +41,8 @@ public class CmsUserPrivileges implements Serializable {
     private Boolean edit;
     @Column(name = "add")
     private Boolean add;
-    @Column(name = "delete")
-    private Boolean delete;
+    @Column(name = "remove")
+    private Boolean remove;
     @JoinColumn(name = "role_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private CmsRole cmsRole;
@@ -93,12 +93,12 @@ public class CmsUserPrivileges implements Serializable {
         this.add = add;
     }
 
-    public Boolean getDelete() {
-        return delete;
+    public Boolean getRemove() {
+        return remove;
     }
 
-    public void setDelete(Boolean delete) {
-        this.delete = delete;
+    public void setRemove(Boolean remove) {
+        this.remove = remove;
     }
 
     public CmsRole getCmsRole() {

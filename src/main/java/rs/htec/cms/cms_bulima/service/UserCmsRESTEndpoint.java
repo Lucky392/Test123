@@ -9,8 +9,6 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
@@ -64,7 +62,6 @@ public class UserCmsRESTEndpoint {
         } catch (Exception e) {
             throw new JPAQueryException("Database query error");
         }
-
     }
 
     @GET
