@@ -51,9 +51,7 @@ public class UserCmsRESTEndpoint {
             } else {
                 if (user.getToken() == null || user.getToken().equals("")) {
                     user.setToken(tokenHelper.createToken(user.getId()));
-                    em.getTransaction().begin();
-                    em.merge(user);
-                    em.getTransaction().commit();
+                    helper.mergeObject(em, user);
                 }
                 return Response.ok(tokenHelper.encode(user.getToken())).build();
             }
@@ -71,9 +69,7 @@ public class UserCmsRESTEndpoint {
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             user.setToken(null);
-            em.getTransaction().begin();
-            em.merge(user);
-            em.getTransaction().commit();
+            helper.mergeObject(em, user);
             return Response.ok("You are logged out!").build();
         } catch (NumberFormatException | ArrayIndexOutOfBoundsException | NullPointerException e) {
             throw new NotAuthorizedException("Not authorized!");

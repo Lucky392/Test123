@@ -23,12 +23,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -65,9 +63,7 @@ public class SliderContentCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token);
             slider.setCreateDate(new Date());
-            em.getTransaction().begin();
-            em.persist(slider);
-            em.getTransaction().commit();
+            helper.persistObject(em, slider);
             return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
@@ -84,14 +80,8 @@ public class SliderContentCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.DELETE, token);
             SliderContent slider = em.find(SliderContent.class, id);
-            if (slider != null) {
-                em.getTransaction().begin();
-                em.remove(slider);
-                em.getTransaction().commit();
-                return Response.ok().build();
-            } else {
-                throw new DataNotFoundException("Slider at index: " + id + " does not exits");
-            }
+            helper.removeObject(em, slider, id);
+            return Response.ok().build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -109,9 +99,7 @@ public class SliderContentCmsRESTEndpoint {
             SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
             if (oldSlider != null) {
                 slider.setCreateDate(new Date());
-                em.getTransaction().begin();
-                em.merge(slider);
-                em.getTransaction().commit();
+                helper.mergeObject(em, slider);
                 return Response.ok("Successfully updated!").build();
             } else {
                 throw new DataNotFoundException("Slider at index" + slider.getId() + " does not exits");

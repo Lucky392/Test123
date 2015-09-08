@@ -69,9 +69,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token);
             prize.setCreateDate(new Date());
-            em.getTransaction().begin();
-            em.persist(prize);
-            em.getTransaction().commit();
+            helper.persistObject(em, prize);
             return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
@@ -86,14 +84,8 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.DELETE, token);
             QuestionOfTheDayPrize prize = em.find(QuestionOfTheDayPrize.class, id);
-            if (prize != null) {
-                em.getTransaction().begin();
-                em.remove(prize);
-                em.getTransaction().commit();
-                return Response.ok().build();
-            } else {
-                throw new DataNotFoundException("Prize at index: " + id + " does not exits");
-            }
+            helper.removeObject(em, prize, id);
+            return Response.ok().build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -111,9 +103,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
             QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
             if (oldPrize != null) {
                 prize.setCreateDate(new Date());
-                em.getTransaction().begin();
-                em.merge(prize);
-                em.getTransaction().commit();
+                helper.mergeObject(em, prize);
                 return Response.ok("Successfully updated!").build();
             } else {
                 throw new DataNotFoundException("Prize at index" + prize.getId() + " does not exits");

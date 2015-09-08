@@ -109,10 +109,7 @@ public class RestHelperClass {
         em.getTransaction().commit();
     }
 
-    public void mergeObject(EntityManager em, Object o, Long id) {
-        if (o == null) {
-            throw new DataNotFoundException("Question at index" + id + " does not exits");
-        }
+    public void mergeObject(EntityManager em, Object o) {
             em.getTransaction().begin();
             em.merge(o);
             em.getTransaction().commit();

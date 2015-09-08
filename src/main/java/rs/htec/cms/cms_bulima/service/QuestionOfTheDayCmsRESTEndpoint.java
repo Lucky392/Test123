@@ -103,7 +103,11 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
             QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
-            helper.mergeObject(em, question, question.getId());
+            if (oldQuestion != null) {
+            helper.mergeObject(em, question);                
+            }  else {
+                throw new DataNotFoundException("Slider at index" + oldQuestion.getId() + " does not exits");
+            }
             return Response.ok("Successfully updated!").build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class

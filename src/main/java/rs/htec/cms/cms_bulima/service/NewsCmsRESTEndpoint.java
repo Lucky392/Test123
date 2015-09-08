@@ -67,9 +67,7 @@ public class NewsCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
             news.setCreateDate(new Date());
-            em.getTransaction().begin();
-            em.persist(news);
-            em.getTransaction().commit();
+            helper.persistObject(em, news);
             return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
@@ -101,13 +99,11 @@ public class NewsCmsRESTEndpoint {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
             News oldNews = em.find(News.class, news.getId());
             if (oldNews != null) {
-                em.getTransaction().begin();
-                em.merge(news);
-                em.getTransaction().commit();
-                return Response.ok("Successfully updated!").build();
+            helper.mergeObject(em, news);                
             } else {
-                throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
+                throw new DataNotFoundException("Slider at index" + oldNews.getId() + " does not exits");
             }
+            return Response.ok("Successfully updated!").build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
