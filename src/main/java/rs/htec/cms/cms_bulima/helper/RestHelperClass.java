@@ -115,12 +115,4 @@ public class RestHelperClass {
             em.getTransaction().commit();
     }
 
-    public boolean isAdmin(CmsUser user) {
-        return true;
-    }
-
-    public boolean isNewsAdmin(CmsUser user) {
-        return true;
-    }
-
 }
