@@ -88,7 +88,6 @@ public class RestHelperClass {
                 return cup.getDeleteAction();
             default:
                 return false;
-
         }
 
     }

@@ -20,6 +20,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import rs.htec.cms.cms_bulima.constants.MethodConstants;
+import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -49,16 +51,12 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     public Response getQuestions(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                List<QuestionOfTheDay> question = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                if (question.isEmpty()) {
-                    throw new DataNotFoundException("Requested page does not exist..");
-                }
-                return Response.ok().entity(helper.getJson(question)).build();
-            } else {
-                throw new NotAuthorizedException("You are not logged in!");
+            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
+            List<QuestionOfTheDay> question = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            if (question.isEmpty()) {
+                throw new DataNotFoundException("Requested page does not exist..");
             }
+            return Response.ok().entity(helper.getJson(question)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -70,23 +68,16 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     public Response insertQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
-                    //question.setDate(new Date());
-                    em.getTransaction().begin();
-                    em.persist(question);
-                    em.getTransaction().commit();
-                    return Response.status(Response.Status.CREATED).build();
-                } else {
-                    throw new ForbbidenException("You don't have permission to insert data");
-                }
-            } else {
-                throw new NotAuthorizedException("You are not logged in!");
-            }
+            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token);
+            em.getTransaction().begin();
+            em.persist(question);
+            em.getTransaction().commit();
+            return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            Logger.getLogger(NewsCmsRESTEndpoint.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException(
+                    "You are not logged in!");
         }
     }
 
@@ -95,58 +86,46 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     public Response deleteQuestion(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
-                    QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
-                    if (question != null) {
-                        em.getTransaction().begin();
-                        em.remove(question);
-                        em.getTransaction().commit();
-                        return Response.ok().build();
-                    } else {
-                        throw new DataNotFoundException("News at index: " + id + " does not exits");
-                    }
-                } else {
-                    throw new ForbbidenException("You don't have permission to delete data");
-                }
+            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.DELETE, token);
+            QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
+            if (question != null) {
+                em.getTransaction().begin();
+                em.remove(question);
+                em.getTransaction().commit();
+                return Response.ok().build();
             } else {
-                throw new NotAuthorizedException("You are not logged in!");
+                throw new DataNotFoundException("News at index: " + id + " does not exits");
             }
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(NewsCmsRESTEndpoint.class
+                    .getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
         }
-        
+
     }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
+    public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question
+    ) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
-                    QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
-                    if (oldQuestion != null) {
-                        em.getTransaction().begin();
-                        em.merge(question);
-                        em.getTransaction().commit();
-                        return Response.ok("Successfully updated!").build();
-                    }  else {
-                        throw new DataNotFoundException("Question at index" + question.getId() + " does not exits");
-                    }
-                } else {
-                    throw new ForbbidenException("You don't have permission to update data");
-                }
+            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
+            QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
+            if (oldQuestion != null) {
+                em.getTransaction().begin();
+                em.merge(question);
+                em.getTransaction().commit();
+                return Response.ok("Successfully updated!").build();
             } else {
-                throw new NotAuthorizedException("You are not logged in!");
+                throw new DataNotFoundException("Question at index" + question.getId() + " does not exits");
             }
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            Logger.getLogger(NewsCmsRESTEndpoint.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException(
+                    "You are not logged in!");
         }
     }
 
