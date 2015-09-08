@@ -84,14 +84,8 @@ public class NewsCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
             News news = em.find(News.class, id);
-            if (news != null) {
-                em.getTransaction().begin();
-                em.remove(news);
-                em.getTransaction().commit();
-                return Response.ok().build();
-            } else {
-                throw new DataNotFoundException("News at index: " + id + " does not exits");
-            }
+            helper.removeObject(em, news, id);
+            return Response.ok().build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");

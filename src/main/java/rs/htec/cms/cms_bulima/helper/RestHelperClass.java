@@ -10,11 +10,13 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.ws.rs.core.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
+import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.ForbbidenException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
@@ -90,6 +92,30 @@ public class RestHelperClass {
                 return false;
         }
 
+    }
+       
+    public void persistObject(EntityManager em, Object o) {
+        em.getTransaction().begin();
+        em.persist(o);
+        em.getTransaction().commit();
+    }
+
+    public void removeObject(EntityManager em, Object o, Long id) {
+        if (o == null) {
+            throw new DataNotFoundException("News at index: " + id + " does not exits");
+        }
+        em.getTransaction().begin();
+        em.remove(o);
+        em.getTransaction().commit();
+    }
+
+    public void mergeObject(EntityManager em, Object o, Long id) {
+        if (o == null) {
+            throw new DataNotFoundException("Question at index" + id + " does not exits");
+        }
+            em.getTransaction().begin();
+            em.merge(o);
+            em.getTransaction().commit();
     }
 
     public boolean isAdmin(CmsUser user) {

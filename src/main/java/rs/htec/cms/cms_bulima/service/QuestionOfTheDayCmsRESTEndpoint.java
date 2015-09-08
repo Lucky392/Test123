@@ -22,10 +22,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
-import rs.htec.cms.cms_bulima.exception.ForbbidenException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
@@ -69,9 +67,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token);
-            em.getTransaction().begin();
-            em.persist(question);
-            em.getTransaction().commit();
+            helper.persistObject(em, question);
             return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
@@ -88,14 +84,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.DELETE, token);
             QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
-            if (question != null) {
-                em.getTransaction().begin();
-                em.remove(question);
-                em.getTransaction().commit();
-                return Response.ok().build();
-            } else {
-                throw new DataNotFoundException("News at index: " + id + " does not exits");
-            }
+            helper.removeObject(em, question, id);
+            return Response.ok().build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -113,14 +103,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
             QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
-            if (oldQuestion != null) {
-                em.getTransaction().begin();
-                em.merge(question);
-                em.getTransaction().commit();
-                return Response.ok("Successfully updated!").build();
-            } else {
-                throw new DataNotFoundException("Question at index" + question.getId() + " does not exits");
-            }
+            helper.mergeObject(em, question, question.getId());
+            return Response.ok("Successfully updated!").build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
                     .getName()).log(Level.SEVERE, null, ex);
