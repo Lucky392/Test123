@@ -21,6 +21,8 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import rs.htec.cms.cms_bulima.constants.MethodConstants;
+import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -50,13 +52,9 @@ public class SliderContentCmsRESTEndpoint {
     public Response getSlider(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                return Response.ok().entity(helper.getJson(slider)).build();
-            } else {
-                throw new NotAuthorizedException("You are not logged in!");
-            }
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+            List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            return Response.ok().entity(helper.getJson(slider)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");

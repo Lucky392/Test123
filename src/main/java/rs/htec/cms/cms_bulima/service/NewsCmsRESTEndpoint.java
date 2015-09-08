@@ -52,20 +52,12 @@ public class NewsCmsRESTEndpoint {
     public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.havePrivilege(em, user, TableConstants.NEWS, MethodConstants.SEARCH)) {
-                    List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                    if (news.isEmpty()) {
-                        throw new DataNotFoundException("Requested page does not exist..");
-                    }
-                    return Response.ok().entity(helper.getJson(news)).build();
-                } else {
-                    throw new ForbbidenException("You don't have permission to search data");
-                }
-            } else {
-                throw new NotAuthorizedException("You are not logged in!");
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+            List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            if (news.isEmpty()) {
+                throw new DataNotFoundException("Requested page does not exist..");
             }
+            return Response.ok().entity(helper.getJson(news)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -77,20 +69,12 @@ public class NewsCmsRESTEndpoint {
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user) && helper.havePrivilege(em, user, TableConstants.NEWS, MethodConstants.ADD)) {
-                    news.setCreateDate(new Date());
-                    em.getTransaction().begin();
-                    em.persist(news);
-                    em.getTransaction().commit();
-                    return Response.status(Response.Status.CREATED).build();
-                } else {
-                    throw new ForbbidenException("You don't have permission to insert data");
-                }
-            } else {
-                throw new NotAuthorizedException("You are not logged in!");
-            }
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+            news.setCreateDate(new Date());
+            em.getTransaction().begin();
+            em.persist(news);
+            em.getTransaction().commit();
+            return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -102,23 +86,15 @@ public class NewsCmsRESTEndpoint {
     public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
-                    News news = em.find(News.class, id);
-                    if (news != null) {
-                        em.getTransaction().begin();
-                        em.remove(news);
-                        em.getTransaction().commit();
-                        return Response.ok().build();
-                    } else {
-                        throw new DataNotFoundException("News at index: " + id + " does not exits");
-                    }
-                } else {
-                    throw new ForbbidenException("You don't have permission to delete data");
-                }
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
+            News news = em.find(News.class, id);
+            if (news != null) {
+                em.getTransaction().begin();
+                em.remove(news);
+                em.getTransaction().commit();
+                return Response.ok().build();
             } else {
-                throw new NotAuthorizedException("You are not logged in!");
+                throw new DataNotFoundException("News at index: " + id + " does not exits");
             }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
@@ -132,25 +108,15 @@ public class NewsCmsRESTEndpoint {
     public Response updateNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            if (user.getToken() != null && !user.getToken().equals("")) {
-                if (helper.isAdmin(user)) {
-                    News oldNews = em.find(News.class, news.getId());
-                    if (oldNews != null) {
-                        //news.setCreateDate(new Date());
-                        em.getTransaction().begin();
-                        em.merge(news);
-                        //em.persist(news);
-                        em.getTransaction().commit();
-                        return Response.ok("Successfully updated!").build();
-                    } else {
-                        throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
-                    }
-                } else {
-                    throw new ForbbidenException("You don't have permission to update data");
-                }
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+            News oldNews = em.find(News.class, news.getId());
+            if (oldNews != null) {
+                em.getTransaction().begin();
+                em.merge(news);
+                em.getTransaction().commit();
+                return Response.ok("Successfully updated!").build();
             } else {
-                throw new NotAuthorizedException("You are not logged in!");
+                throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
             }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);

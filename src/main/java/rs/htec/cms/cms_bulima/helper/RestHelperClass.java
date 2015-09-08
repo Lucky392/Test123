@@ -10,11 +10,16 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.ws.rs.core.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
+import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
+import rs.htec.cms.cms_bulima.domain.SliderContent;
+import rs.htec.cms.cms_bulima.exception.ForbbidenException;
+import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 import rs.htec.cms.cms_bulima.token.Base64Token;
 
@@ -24,8 +29,14 @@ import rs.htec.cms.cms_bulima.token.Base64Token;
  */
 public class RestHelperClass {
 
+    AbstractTokenCreator tokenHelper;
+
     public AbstractTokenCreator getAbstractToken() {
         return new Base64Token();
+    }
+
+    public RestHelperClass() {
+        tokenHelper = getAbstractToken();
     }
 
     public String getJson(List list) throws IllegalArgumentException, IllegalAccessException {
@@ -50,7 +61,18 @@ public class RestHelperClass {
         return ecm;
     }
 
-    public boolean havePrivilege(EntityManager em, CmsUser user, long tableID, MethodConstants method) {
+    public void checkUserAndPrivileges(EntityManager em, long tableId, MethodConstants method, String token) {
+        CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
+        if (user.getToken() != null && !user.getToken().equals("")) {
+            if (!havePrivilege(em, user, tableId, method)) {
+                throw new ForbbidenException("You don't have permission to search data");
+            }
+        } else {
+            throw new NotAuthorizedException("You are not logged in!");
+        }
+    }
+
+    private boolean havePrivilege(EntityManager em, CmsUser user, long tableID, MethodConstants method) {
         CmsUserPrivileges cup = (CmsUserPrivileges) em.createNamedQuery("CmsUserPrivileges.findByPK")
                 .setParameter("roleId", user.getIdRole().getId())
                 .setParameter("tableId", tableID)
