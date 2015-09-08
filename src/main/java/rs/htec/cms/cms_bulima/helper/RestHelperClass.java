@@ -91,7 +91,6 @@ public class RestHelperClass {
             default:
                 return false;
         }
-
     }
        
     public void persistObject(EntityManager em, Object o) {

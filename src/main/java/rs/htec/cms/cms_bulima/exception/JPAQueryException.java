@@ -14,9 +14,9 @@ import javax.ws.rs.core.Response;
  * @author lazar
  */
 public class JPAQueryException extends WebApplicationException {
-    
-    public JPAQueryException (String message){
+
+    public JPAQueryException(String message) {
         super(Response.status(Response.Status.EXPECTATION_FAILED).entity(new ErrorMessage(message, 417)).type(MediaType.APPLICATION_JSON).build());
     }
-    
+
 }
