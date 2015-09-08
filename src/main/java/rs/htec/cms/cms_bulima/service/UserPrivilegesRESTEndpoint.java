@@ -21,7 +21,6 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsRole;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
-import rs.htec.cms.cms_bulima.domain.CmsUserPrivilegesPK;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
@@ -51,11 +50,13 @@ public class UserPrivilegesRESTEndpoint {
                 //napravi novi izuzetak i baci ga!!!!
             }
             CmsRole role = (CmsRole) em.createNamedQuery("CmsRole.findByName").setParameter("name", userPrivileges.get(0).getCmsRole().getName()).getSingleResult();
+            long roleID = role.getId();
             for (CmsUserPrivileges cup : userPrivileges) {
-                cup.getCmsUserPrivilegesPK().setRoleId(role.getId());
-                em = helper.getEntityManager();
+                cup.getCmsUserPrivilegesPK().setRoleId(roleID);
+                cup.setCmsRole(null);
                 helper.persistObject(em, cup);
             }
+            
             return Response.status(Response.Status.CREATED).build();
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
