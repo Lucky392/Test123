@@ -40,7 +40,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     public QuestionOfTheDayCmsRESTEndpoint() {
         helper = new RestHelperClass();
-        tokenHelper = helper.getAbstractToken();
+        //tokenHelper = helper.getAbstractToken();
     }
 
     @GET

@@ -37,11 +37,9 @@ import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 public class NewsCmsRESTEndpoint {
 
     RestHelperClass helper;
-    AbstractTokenCreator tokenHelper;
 
     public NewsCmsRESTEndpoint() {
         helper = new RestHelperClass();
-        tokenHelper = helper.getAbstractToken();
     }
 
     @GET

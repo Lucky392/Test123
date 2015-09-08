@@ -38,11 +38,9 @@ import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 public class SliderContentCmsRESTEndpoint {
 
     RestHelperClass helper;
-    AbstractTokenCreator tokenHelper;
 
     public SliderContentCmsRESTEndpoint() {
         helper = new RestHelperClass();
-        tokenHelper = helper.getAbstractToken();
     }
 
     @GET
@@ -107,7 +105,6 @@ public class SliderContentCmsRESTEndpoint {
     public Response updateSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         try {
-            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
             helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
             SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
             if (oldSlider != null) {

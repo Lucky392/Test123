@@ -10,14 +10,11 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.ws.rs.core.Response;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
-import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
-import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.ForbbidenException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
@@ -32,11 +29,11 @@ public class RestHelperClass {
     AbstractTokenCreator tokenHelper;
 
     public AbstractTokenCreator getAbstractToken() {
-        return new Base64Token();
+        return tokenHelper;
     }
 
     public RestHelperClass() {
-        tokenHelper = getAbstractToken();
+        tokenHelper = new Base64Token();
     }
 
     public String getJson(List list) throws IllegalArgumentException, IllegalAccessException {
