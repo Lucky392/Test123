@@ -51,7 +51,7 @@ public class SliderContentCmsRESTEndpoint {
     public Response getSlider(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         try {
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+            helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
             List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             return Response.ok().entity(helper.getJson(slider)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
@@ -65,7 +65,7 @@ public class SliderContentCmsRESTEndpoint {
     public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         try {
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+            helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token);
             slider.setCreateDate(new Date());
             em.getTransaction().begin();
             em.persist(slider);
@@ -84,7 +84,7 @@ public class SliderContentCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
 
         try {
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
+            helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.DELETE, token);
             SliderContent slider = em.find(SliderContent.class, id);
             if (slider != null) {
                 em.getTransaction().begin();
@@ -108,7 +108,7 @@ public class SliderContentCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+            helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
             SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
             if (oldSlider != null) {
                 slider.setCreateDate(new Date());
