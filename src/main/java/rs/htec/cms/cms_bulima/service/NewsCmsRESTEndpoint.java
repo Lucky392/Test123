@@ -27,7 +27,6 @@ import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -101,7 +100,7 @@ public class NewsCmsRESTEndpoint {
             if (oldNews != null) {
             helper.mergeObject(em, news);                
             } else {
-                throw new DataNotFoundException("Slider at index" + oldNews.getId() + " does not exits");
+                throw new DataNotFoundException("Slider at index" + news.getId() + " does not exits");
             }
             return Response.ok("Successfully updated!").build();
         } catch (IllegalArgumentException ex) {

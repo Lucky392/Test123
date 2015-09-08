@@ -106,7 +106,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
             if (oldQuestion != null) {
             helper.mergeObject(em, question);                
             }  else {
-                throw new DataNotFoundException("Slider at index" + oldQuestion.getId() + " does not exits");
+                throw new DataNotFoundException("Slider at index" + question.getId() + " does not exits");
             }
             return Response.ok("Successfully updated!").build();
         } catch (IllegalArgumentException ex) {
