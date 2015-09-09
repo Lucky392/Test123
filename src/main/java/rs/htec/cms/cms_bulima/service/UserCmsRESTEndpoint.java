@@ -8,7 +8,10 @@ package rs.htec.cms.cms_bulima.service;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
@@ -34,6 +37,7 @@ public class UserCmsRESTEndpoint {
 
     @GET
     @Path("/login")
+    @Produces(MediaType.APPLICATION_JSON)
     public Response logIn(@HeaderParam("authorization") String authorization) {
         String[] userPass;
         EntityManager em = helper.getEntityManager();
@@ -53,7 +57,7 @@ public class UserCmsRESTEndpoint {
                     user.setToken(tokenHelper.createToken(user.getId()));
                     helper.mergeObject(em, user);
                 }
-                return Response.ok(tokenHelper.encode(user.getToken())).build();
+                return Response.ok().entity("{\"token\" = \"" +tokenHelper.encode(user.getToken()) + "\"}").build();
             }
         } catch (RuntimeException e) {
             throw new BasicAuthenticationException(e.getMessage());
