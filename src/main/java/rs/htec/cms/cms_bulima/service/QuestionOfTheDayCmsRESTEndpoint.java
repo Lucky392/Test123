@@ -43,9 +43,30 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     public QuestionOfTheDayCmsRESTEndpoint() {
         helper = new RestHelperClass();
         validator = new Validator();
-
     }
 
+    /**
+     * API for method: /question/{page}/{limit} This method returns JSON list of
+     * questions at defined page with defined limit. It produces
+     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:<br/> [
+     * {<br/> "date": "2015-07-20 00:00:00.0",<br/> "wrongAnswer3": "Mehmet Scholl",<br/>
+     * "question": "Wer erzielte das entscheidende Tor für den FC Bayern München
+     * in der Saison 200/01, als der FC Schalke 04 für ein paar Minuten Meister
+     * war?",<br/> "id": "1",<br/> "correctAnswer": "Patrik Andersson",<br/> "wrongAnswer1":
+     * "Giovanne Elber",<br/> "wrongAnswer2": "Stefan Effenberg"<br/> },<br/> { <br/>"date":
+     * "2015-07-21 00:00:00.0",<br/> "wrongAnswer3": "12 Minuten",<br/> "question":
+     * "Michael Tönnies erzielte den schnellsten Hattrick der Bundesliga
+     * Geschichte. Wie viele Minuten benötigte er?",<br/> "id": "2",<br/> "correctAnswer":
+     * "5 Minuten",<br/> "wrongAnswer1": "7 Minuten",<br/> "wrongAnswer2": "10 Minuten"<br/> }
+     * ]
+     *
+     * @param token
+     * @param page number of page at which we search for Question
+     * @param limit number of Question method returns
+     * @return Respond 200 OK with JSON body
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -60,26 +81,22 @@ public class QuestionOfTheDayCmsRESTEndpoint {
             return Response.ok().entity(helper.getJson(question)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            throw new NotAuthorizedException(ex.getMessage());
         }
     }
 
     /**
-     * API for this method is /rest/question
-     *This method recieves JSON object, and put it in the base. Example for JSON:
-     *      {
-                "date": "2015-07-25T00:00:00.0",
-                "wrongAnswer3": "Jürgen Kohler",
-                "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",
-                "correctAnswer": "Andreas Möller",
-                "wrongAnswer1": "Rudi Völler",
-                "wrongAnswer2": "Dede"
-              }
+     * API for this method is /rest/question This method recieves JSON object,
+     * and put it in the base. Example for JSON: { "date":
+     * "2015-07-25T00:00:00.0", "wrongAnswer3": "Jürgen Kohler", "question":
+     * "Welcher Spieler erfand die \"Schutzschwalbe\"?", "correctAnswer":
+     * "Andreas Möller", "wrongAnswer1": "Rudi Völler", "wrongAnswer2": "Dede" }
+     *
      * @param token
      * @param question
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException 
+     * @throws NotAuthorizedException
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -105,6 +122,16 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for method: /question/{id} This method find question with defined id.
+     * Id is retrieved from URL. If question with that id does not exist method
+     * throws exception. Otherwise method remove that question.
+     *
+     * @param token
+     * @param id of question that should be deleted.
+     * @return Response 200 OK
+     * @throws NotAuthorizedException
+     */
     @DELETE
     @Path("/{id}")
     public Response deleteQuestion(@HeaderParam("authorization") String token, @PathParam("id") long id) {
@@ -123,16 +150,12 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/question
-     This method recieves JSON object, and update database. Example for JSON:
-     *      {
-                "date": "2015-07-25T00:00:00.0",
-                "wrongAnswer3": "Jürgen Kohler",
-                "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",
-                "correctAnswer": "Andreas Möller",
-                "wrongAnswer1": "Rudi Völler",
-                "wrongAnswer2": "Dede"
-              }
+     * API for this method is /rest/question This method recieves JSON object,
+     * and update database. Example for JSON: { "date": "2015-07-25T00:00:00.0",
+     * "wrongAnswer3": "Jürgen Kohler", "question": "Welcher Spieler erfand die
+     * \"Schutzschwalbe\"?", "correctAnswer": "Andreas Möller", "wrongAnswer1":
+     * "Rudi Völler", "wrongAnswer2": "Dede" }
+     *
      * @param token
      * @param question
      * @return Response with status OK (200) "Successfully updated!"

@@ -45,6 +45,21 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         validator = new Validator();
     }
 
+    /**
+     * API for method: /news/{page}/{limit} This method returns JSON list of
+     * questions at defined page with defined limit. It produces
+     * APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit: <br/>[
+     * {<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id": "3",<br/> "createDate":
+     * "2014-12-03 17:11:04.0"<br/> },<br/> {<br/> "prizeMoney": "60000",<br/> "name": "Tag 4",<br/>
+     * "id": "4",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> } ]
+     *
+     * @param token
+     * @param page number of page at which we search for prizes
+     * @param limit number of prizes method returns
+     * @return Respond 200 OK with JSON body
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -64,17 +79,15 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/prize
-     *This method recieves JSON object, and put it in the base. Example for JSON:
-     *      {
-                "prizeMoney": "10000",
-                "name": "Tag 1"
-            }
+     * API for this method is /rest/prize This method recieves JSON object, and
+     * put it in the base. Example for JSON: { "prizeMoney": "10000", "name":
+     * "Tag 1" }
+     *
      * @param token
      * @param prize
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException 
+     * @throws NotAuthorizedException
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -95,6 +108,16 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         }
     }
 
+    /**
+     * API for method: /prize/{id} This method find prize with defined id. Id is
+     * retrieved from URL. If prize with that index does not exist method throws
+     * exception. Otherwise method remove that prize.
+     *
+     * @param token
+     * @param id of prize that should be deleted.
+     * @return Response 200 OK
+     * @throws NotAuthorizedException
+     */
     @DELETE
     @Path("/{id}")
     public Response deletePrize(@HeaderParam("authorization") String token, @PathParam("id") long id) {
@@ -112,12 +135,10 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/prize
-     *This method recieves JSON object, and update database. Example for JSON:
-     *      {
-                "prizeMoney": "10000",
-                "name": "Tag 1"
-            }
+     * API for this method is /rest/prize This method recieves JSON object, and
+     * update database. Example for JSON: { "prizeMoney": "10000", "name": "Tag
+     * 1" }
+     *
      * @param token
      * @param prize
      * @return Response with status OK (200) "Successfully updated!"

@@ -45,6 +45,37 @@ public class SliderContentCmsRESTEndpoint {
         validator = new Validator();
     }
 
+    /**
+     * API for method: /news/{page}/{limit} This method returns JSON list of
+     * slider content at defined page with defined limit. It produces
+     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:<br/> [
+     * {<br/> "contentUrl":
+     * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
+     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/> "idCompetition":
+     * "null",<br/> "positionInSlider": "1",<br/> "stopShowingAt": "2015-07-22
+     * 13:22:48.0",<br/> "updateAt": "2015-02-17 15:27:38.0",<br/> "id": "1",<br/> "text":
+     * "{@code <div style=\"position: absolute; font-size: 16px; padding: 10px; line-height: 18px; top: 160px;\"><div style=\"font-family: TitilliumWeb-Bold; font-size: 18px; margin-bottom: 8px;\">}Saisonpause{@code </div>}Wir
+     * starten schon bald mit der neuen Saison 2015/2016!{@code </a></div>}",<br/>
+     * "startShowingAt": "2015-05-03 18:10:00.0",<br/> "createDate": "2015-02-17
+     * 15:59:00.0"<br/> },<br/> {<br/> "contentUrl":
+     * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_patch.jpg",<br/>
+     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/> "idCompetition":
+     * "null",<br/> "positionInSlider": "1",<br/> "stopShowingAt": "2015-05-03
+     * 18:10:00.0",<br/> "updateAt": "2015-02-17 15:27:38.0",<br/> "id": "2",<br/> "text":
+     * "{@code <div style=\"position: absolute; font-size: 16px; padding: 10px; line-height: 18px; top: 140px;\"><div style=\"font-family: TitilliumWeb-Bold; font-size: 18px; margin-bottom: 8px;\">}Patch
+     * 1.2 ist online:{@code </div>}Wie geht es nächste Saison mit eurer Liga weiter?
+     * {@code <br>} Erfahrt mehr dazu auf unserer
+     * {@code<a style=\"color:white;font-size:16px\" target=\"_blank\" href=\"https://www.facebook.com/SPORT1BundesligaManager\">}Facebook
+     * Seite{@code </a>!</div>}",<br/> "startShowingAt": "2015-03-17 17:27:00.0",<br/>
+     * "createDate": "2015-02-17 15:59:00.0"<br/> } ]
+     *
+     * @param token
+     * @param page number of page at which we search for sliders
+     * @param limit number of sliders this method returns
+     * @return Respond 200 OK with JSON body
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -61,23 +92,19 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/slider
-     *This method recieves JSON object, and put it in the base. Example for JSON:
-     *      {
-                "contentUrl": "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",
-                "redirectUrl": "page=shop;sub=nspyre",
-                "showForMsec": "5000",
-                "positionInSlider": "4",
-                "stopShowingAt": "2015-05-28 12:05:00.0",
-                "updateAt": "2015-03-18 16:13:41.0",
-                "text": "",
-                "startShowingAt": "2015-03-18 16:30:00.0"
-            }
+     * API for this method is /rest/slider This method recieves JSON object, and
+     * put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
+     * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
+     * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
+     * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28 12:05:00.0",<br/>
+     * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/> "startShowingAt":
+     * "2015-03-18 16:30:00.0"<br/> }
+     *
      * @param token
      * @param slider
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException 
+     * @throws NotAuthorizedException
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -100,6 +127,16 @@ public class SliderContentCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for method: /slider/{id} This method find news with defined id. Id is
+     * retrieved from URL. If slider content with that index does not exist
+     * method throws exception. Otherwise method remove that slider content.
+     *
+     * @param token
+     * @param id of News that should be deleted.
+     * @return Response 200 OK
+     * @throws NotAuthorizedException
+     */
     @DELETE
     @Path("/{id}")
     public Response deleteSlider(@HeaderParam("authorization") String token, @PathParam("id") long id) {
@@ -118,18 +155,14 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/slider
-     *This method recieves JSON object, and update database. Example for JSON:
-     *      {
-                "contentUrl": "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",
-                "redirectUrl": "page=shop;sub=nspyre",
-                "showForMsec": "5000",
-                "positionInSlider": "4",
-                "stopShowingAt": "2015-05-28 12:05:00.0",
-                "updateAt": "2015-03-18 16:13:41.0",
-                "text": "",
-                "startShowingAt": "2015-03-18 16:30:00.0"
-            }
+     * API for this method is /rest/slider This method recieves JSON object, and
+     * update database. Example for JSON: <br/>{ "contentUrl":
+     * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
+     * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
+     * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28 12:05:00.0",<br/>
+     * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/> "startShowingAt":
+     * "2015-03-18 16:30:00.0"<br/> }
+     *
      * @param token
      * @param slider
      * @return Response with status OK (200) "Successfully updated!"
