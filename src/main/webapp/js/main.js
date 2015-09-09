@@ -20,7 +20,7 @@ var username = document.getElementById("username").value;
 var password = document.getElementById("password").value;
     $.ajax({
         type: "POST",
-        url: "http://localhost:8080/CMS_Bulima/rest/user/login",
+        url: "http://localhost:8084/CMS_Bulima/rest/user/login",
         dataType: "json",
         beforeSend: function (xhr) {
             xhr.setRequestHeader('Authorization', make_base_auth(username, password));

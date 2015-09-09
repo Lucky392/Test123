@@ -25,8 +25,10 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
@@ -37,11 +39,11 @@ import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 public class QuestionOfTheDayPrizeRESTEndpoint {
 
     RestHelperClass helper;
-    AbstractTokenCreator tokenHelper;
+    Validator validator;
 
     public QuestionOfTheDayPrizeRESTEndpoint() {
         helper = new RestHelperClass();
-        tokenHelper = helper.getAbstractToken();
+        validator = new Validator();
     }
 
     @GET
@@ -68,9 +70,13 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token);
-            prize.setCreateDate(new Date());
-            helper.persistObject(em, prize);
-            return Response.status(Response.Status.CREATED).build();
+            if (validator.checkLenght(prize.getName(), 255, true)) {
+                prize.setCreateDate(new Date());
+                helper.persistObject(em, prize);
+                return Response.status(Response.Status.CREATED).build();
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -102,9 +108,13 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
             QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
             if (oldPrize != null) {
-                prize.setCreateDate(new Date());
-                helper.mergeObject(em, prize);
-                return Response.ok("Successfully updated!").build();
+                if (validator.checkLenght(prize.getName(), 255, true)) {
+                    prize.setCreateDate(new Date());
+                    helper.mergeObject(em, prize);
+                    return Response.ok("Successfully updated!").build();
+                } else {
+                    throw new InputValidationException("Validation failed");
+                }
             } else {
                 throw new DataNotFoundException("Prize at index" + prize.getId() + " does not exits");
             }

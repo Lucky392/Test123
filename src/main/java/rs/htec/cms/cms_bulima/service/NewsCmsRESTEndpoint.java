@@ -25,8 +25,10 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 
 /**
  *
@@ -36,9 +38,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class NewsCmsRESTEndpoint {
 
     RestHelperClass helper;
+    Validator validator;
 
     public NewsCmsRESTEndpoint() {
         helper = new RestHelperClass();
+        validator = new Validator();
     }
 
     @GET
@@ -66,8 +70,15 @@ public class NewsCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
             news.setCreateDate(new Date());
-            helper.persistObject(em, news);
-            return Response.status(Response.Status.CREATED).build();
+            if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
+                    && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
+                    && validator.checkLenght(news.getNewsType(), 255, true)) {
+
+                helper.persistObject(em, news);
+                return Response.status(Response.Status.CREATED).build();
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -98,7 +109,14 @@ public class NewsCmsRESTEndpoint {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
             News oldNews = em.find(News.class, news.getId());
             if (oldNews != null) {
-            helper.mergeObject(em, news);                
+                if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
+                        && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
+                        && validator.checkLenght(news.getNewsType(), 255, true)) {
+
+                    helper.mergeObject(em, news);
+                } else {
+                    throw new InputValidationException("Validation failed");
+                }
             } else {
                 throw new DataNotFoundException("Slider at index" + news.getId() + " does not exits");
             }
@@ -108,5 +126,4 @@ public class NewsCmsRESTEndpoint {
             throw new NotAuthorizedException("You are not logged in!");
         }
     }
-
 }

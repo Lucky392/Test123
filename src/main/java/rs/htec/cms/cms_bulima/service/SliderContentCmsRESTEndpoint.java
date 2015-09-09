@@ -25,8 +25,10 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 
 /**
  *
@@ -36,9 +38,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class SliderContentCmsRESTEndpoint {
 
     RestHelperClass helper;
+    Validator validator;
 
     public SliderContentCmsRESTEndpoint() {
         helper = new RestHelperClass();
+        validator = new Validator();
     }
 
     @GET
@@ -62,9 +66,14 @@ public class SliderContentCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token);
-            slider.setCreateDate(new Date());
-            helper.persistObject(em, slider);
-            return Response.status(Response.Status.CREATED).build();
+            if (validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
+                    && validator.checkLenght(slider.getText(), 1023, true)) {
+                slider.setCreateDate(new Date());
+                helper.persistObject(em, slider);
+                return Response.status(Response.Status.CREATED).build();
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -98,9 +107,14 @@ public class SliderContentCmsRESTEndpoint {
             helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
             SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
             if (oldSlider != null) {
-                slider.setCreateDate(new Date());
-                helper.mergeObject(em, slider);
-                return Response.ok("Successfully updated!").build();
+                if (validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
+                        && validator.checkLenght(slider.getText(), 1023, true)) {
+                    slider.setCreateDate(new Date());
+                    helper.mergeObject(em, slider);
+                    return Response.ok("Successfully updated!").build();
+                } else {
+                    throw new InputValidationException("Validation failed");
+                }
             } else {
                 throw new DataNotFoundException("Slider at index" + slider.getId() + " does not exits");
             }

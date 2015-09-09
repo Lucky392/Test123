@@ -24,8 +24,10 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
@@ -36,11 +38,12 @@ import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 public class QuestionOfTheDayCmsRESTEndpoint {
 
     RestHelperClass helper;
-    AbstractTokenCreator tokenHelper;
+    Validator validator;
 
     public QuestionOfTheDayCmsRESTEndpoint() {
         helper = new RestHelperClass();
-        //tokenHelper = helper.getAbstractToken();
+        validator = new Validator();
+
     }
 
     @GET
@@ -67,8 +70,16 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token);
-            helper.persistObject(em, question);
-            return Response.status(Response.Status.CREATED).build();
+            if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
+                    && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
+                    && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
+
+                helper.persistObject(em, question);
+                return Response.status(Response.Status.CREATED).build();
+
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class
                     .getName()).log(Level.SEVERE, null, ex);
@@ -104,8 +115,14 @@ public class QuestionOfTheDayCmsRESTEndpoint {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
             QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
             if (oldQuestion != null) {
-            helper.mergeObject(em, question);                
-            }  else {
+                if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
+                        && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
+                        && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
+                    helper.mergeObject(em, question);
+                } else {
+                    throw new InputValidationException("Validation failed");
+                }
+            } else {
                 throw new DataNotFoundException("Slider at index" + question.getId() + " does not exits");
             }
             return Response.ok("Successfully updated!").build();
