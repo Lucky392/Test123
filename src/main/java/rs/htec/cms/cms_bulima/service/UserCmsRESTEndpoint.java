@@ -5,6 +5,8 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.google.gson.JsonObject;
+import javax.json.Json;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;

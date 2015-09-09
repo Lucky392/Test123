@@ -9,8 +9,6 @@ $('#logIn').click(function () {
     logIn();
 });
 
-
-
 function make_base_auth(user, password) {
     var tok = user + ':' + password;
     var hash = btoa(tok);
@@ -29,6 +27,6 @@ var password = document.getElementById("password").value;
         },
         success: function (response) {
             alert(response);
-        }
+        }   
     });
 }
