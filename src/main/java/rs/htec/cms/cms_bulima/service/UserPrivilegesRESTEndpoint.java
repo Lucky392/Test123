@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
@@ -54,6 +55,7 @@ public class UserPrivilegesRESTEndpoint {
             for (CmsUserPrivileges cup : userPrivileges) {
                 cup.getCmsUserPrivilegesPK().setRoleId(roleID);
                 cup.setCmsRole(null);
+
                 helper.persistObject(em, cup);
             }
             
@@ -64,10 +66,32 @@ public class UserPrivilegesRESTEndpoint {
         }
     }
     
+    @PUT
+    @Path("/")
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertPrivileges2(@HeaderParam("authorization") String token, List<CmsUserPrivileges> userPrivileges) {
+        try {
+            EntityManager em = helper.getEntityManager();
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+            
+            helper.persistObject(em, userPrivileges.get(0).getCmsRole());
+            
+            CmsRole role = (CmsRole) em.createNamedQuery("CmsRole.findByName").setParameter("name", userPrivileges.get(0).getCmsRole().getName()).getSingleResult();
+            for (CmsUserPrivileges cup : userPrivileges) {
+                cup.getCmsUserPrivilegesPK().setRoleId(role.getId());
+                helper.persistObject(em, cup);
+            }
+            return Response.status(Response.Status.CREATED).build();
+        } catch (IllegalArgumentException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
+        }
+    }
+
     @GET
     @Path("/get")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPrivileges(){
+    public Response getPrivileges() {
         EntityManager em = helper.getEntityManager();
         return Response.ok().entity(em.createNamedQuery("CmsUserPrivileges.findAll").getResultList()).build();
     }
