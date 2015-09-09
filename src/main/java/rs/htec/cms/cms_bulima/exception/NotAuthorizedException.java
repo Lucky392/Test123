@@ -13,6 +13,10 @@ import javax.ws.rs.core.Response;
  */
 public class NotAuthorizedException extends CMSException {
 
+    /**
+     * 
+     * @param message - message to send
+     */
     public NotAuthorizedException(String message) {
         super(message, 401, Response.Status.UNAUTHORIZED);
     }

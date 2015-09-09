@@ -5,18 +5,16 @@
  */
 package rs.htec.cms.cms_bulima.exception;
 
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
  *
  * @author lazar
  */
-public class BasicAuthenticationException extends WebApplicationException {
+public class BasicAuthenticationException extends CMSException {
     
     public BasicAuthenticationException (String message){
-        super(Response.status(Response.Status.NOT_ACCEPTABLE).entity(new ErrorMessage(message, 406)).type(MediaType.APPLICATION_JSON).build());
+        super(message, 401, Response.Status.UNAUTHORIZED);
     }
     
 }
