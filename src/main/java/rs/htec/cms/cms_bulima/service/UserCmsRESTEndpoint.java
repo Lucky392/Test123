@@ -19,6 +19,7 @@ import rs.htec.cms.cms_bulima.exception.JPAQueryException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
+import rs.htec.cms.cms_bulima.token.JsonToken;
 
 /**
  *
@@ -35,7 +36,7 @@ public class UserCmsRESTEndpoint {
         tokenHelper = helper.getAbstractToken();
     }
 
-    @GET
+    @POST
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     public Response logIn(@HeaderParam("authorization") String authorization) {
@@ -57,7 +58,8 @@ public class UserCmsRESTEndpoint {
                     user.setToken(tokenHelper.createToken(user.getId()));
                     helper.mergeObject(em, user);
                 }
-                return Response.ok().entity("{\"token\" = \"" +tokenHelper.encode(user.getToken()) + "\"}").build();
+                JsonToken jsonToken = new JsonToken(tokenHelper.encode(user.getToken()));
+                return Response.ok().entity(jsonToken).build();
             }
         } catch (RuntimeException e) {
             throw new BasicAuthenticationException(e.getMessage());
