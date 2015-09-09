@@ -84,7 +84,7 @@ public class UserCmsRESTEndpoint {
      * @throws NotAuthorizedException If user doesn't have valid authorization
      * token.
      */
-    @GET
+    @POST
     @Path("/logout")
     public Response logOut(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
