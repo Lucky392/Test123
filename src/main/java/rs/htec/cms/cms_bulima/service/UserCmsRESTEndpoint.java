@@ -46,7 +46,7 @@ public class UserCmsRESTEndpoint {
      *
      * @param authorization Basic HTTP authorization.
      * @return Response 200 OK with custom authorization value in JSON body.
-     * @throws BasicAuthenticationException - Response 401 Unauthorized if user doesn't exist.
+     * @throws BasicAuthenticationException Response 401 Unauthorized if user doesn't exist.
      */
     @POST
     @Path("/login")
