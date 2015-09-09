@@ -45,7 +45,44 @@ public class NewsCmsRESTEndpoint {
         validator = new Validator();
     }
 
-    
+    /**
+     * API for method: /news/{page}/{limit}<br>
+     * This method returns JSON list of news at defined page with defined limit.
+     * It produces APPLICATION_JSON media type. Example for JSON list for 1
+     * page, 2 limit: <br/>
+     * [{<br/>
+     * "idFantasyClub": "null",<br/>
+     * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
+     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
+     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",<br/>
+     * "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",<br/>
+     * "id": "4",<br/>
+     * "newsDate": "2015-07-20 15:32:35.0",<br/>
+     * "newsType": "transfer",<br/>
+     * "createDate": "2015-07-20 15:32:36.0",<br/>
+     * "idFantasyLeague": "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=7175 ]"<br/>
+     * },<br/>
+     * {<br/>
+     * "idFantasyClub": "rs.htec.cms.cms_bulima.domain.FantasyClub[ id=27483 ]",<br/>
+     * "newsHeadlineMobile": "NEUE AUFSTELLUNG",<br/>
+     * "newsHeadlineWeb": "NEUE AUFSTELLUNG",<br/>
+     * "newsMessageWeb": "System: 4-3-3{@code <br/>}Tor: Langerak{@code <br/>}Abwehr: Garcia,
+     * Schär, Matip, Felipe{@code <br/>}Mittelfeld: Clemens, Holtby,
+     * Schwegler{@code <br/>}Sturm: Kurányi, Kachunga, Osako", "newsMessageMobile": "Für
+     * den kommenden 2. Spieltag hast du ein 4-3-3-System mit folgenden Spielern
+     * aufgestellt:{@code <br/>}Tor: Langerak{@code <br/>}Abwehr: Garcia, Schär, Matip,
+     * Felipe{@code <br/>}Mittelfeld: Clemens, Holtby, Schwegler{@code <br/>}Sturm: Kurányi,
+     * Kachunga, Osako",<br/> "id": "5",<br/> "newsDate": "2015-08-17 14:47:54.0",<br/>
+     * "newsType": "lineup",<br/> "createDate": "2015-07-20 15:33:48.0",<br/>
+     * "idFantasyLeague": "null"<br/> } ]
+     * @param token
+     * @param page number of page at which we search for News
+     * @param limit number of News method returns
+     * @return {@link Response} Response {@link Status#OK} 200 OK with JSON body
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
+
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -79,8 +116,8 @@ public class NewsCmsRESTEndpoint {
      * @param news
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException 
-     */
+     * @throws NotAuthorizedException
+    **/
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
@@ -103,6 +140,16 @@ public class NewsCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for method: /news/{id} This method find news with defined id. Id is
+     * retrieved from URL. If News with that index does not exist method throws
+     * exception. Otherwise method remove that News.
+     *
+     * @param token
+     * @param id of News that should be deleted.
+     * @return Response 200 OK
+     * @throws NotAuthorizedException
+     */
     @DELETE
     @Path("/{id}")
     public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
@@ -119,16 +166,14 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/news
-     *This method recieves JSON object, and update database. Example for JSON:
-     *      {
-                "newsHeadlineMobile": "NEUER TRANSFER",
-                "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",
-                "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",
-                "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",
-                "newsDate": "2015-07-20T15:32:35.0",
-                "newsType": "transfer"
-            }
+     * API for this method is /rest/news This method recieves JSON object, and
+     * update database. Example for JSON: { "newsHeadlineMobile": "NEUER
+     * TRANSFER", "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",
+     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
+     * Sport1", "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
+     * Chipirones zu Sport1", "newsDate": "2015-07-20T15:32:35.0", "newsType":
+     * "transfer" }
+     *
      * @param token
      * @param news
      * @return Response with status OK (200) "Successfully updated!"
