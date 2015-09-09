@@ -60,6 +60,25 @@ public class SliderContentCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for this method is /rest/slider
+     *This method recieves JSON object, and put it in the base. Example for JSON:
+     *      {
+                "contentUrl": "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",
+                "redirectUrl": "page=shop;sub=nspyre",
+                "showForMsec": "5000",
+                "positionInSlider": "4",
+                "stopShowingAt": "2015-05-28 12:05:00.0",
+                "updateAt": "2015-03-18 16:13:41.0",
+                "text": "",
+                "startShowingAt": "2015-03-18 16:30:00.0"
+            }
+     * @param token
+     * @param slider
+     * @return Response with status CREATED (201)
+     * @throws InputValidationException
+     * @throws NotAuthorizedException 
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
@@ -98,6 +117,26 @@ public class SliderContentCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for this method is /rest/slider
+     *This method recieves JSON object, and update database. Example for JSON:
+     *      {
+                "contentUrl": "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",
+                "redirectUrl": "page=shop;sub=nspyre",
+                "showForMsec": "5000",
+                "positionInSlider": "4",
+                "stopShowingAt": "2015-05-28 12:05:00.0",
+                "updateAt": "2015-03-18 16:13:41.0",
+                "text": "",
+                "startShowingAt": "2015-03-18 16:30:00.0"
+            }
+     * @param token
+     * @param slider
+     * @return Response with status OK (200) "Successfully updated!"
+     * @throws InputValidationException
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

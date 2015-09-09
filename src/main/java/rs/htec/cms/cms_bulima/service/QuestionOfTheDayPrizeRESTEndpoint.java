@@ -29,7 +29,6 @@ import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
-import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -64,6 +63,19 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         }
     }
 
+    /**
+     * API for this method is /rest/prize
+     *This method recieves JSON object, and put it in the base. Example for JSON:
+     *      {
+                "prizeMoney": "10000",
+                "name": "Tag 1"
+            }
+     * @param token
+     * @param prize
+     * @return Response with status CREATED (201)
+     * @throws InputValidationException
+     * @throws NotAuthorizedException 
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
@@ -99,6 +111,20 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
 
     }
 
+    /**
+     * API for this method is /rest/prize
+     *This method recieves JSON object, and update database. Example for JSON:
+     *      {
+                "prizeMoney": "10000",
+                "name": "Tag 1"
+            }
+     * @param token
+     * @param prize
+     * @return Response with status OK (200) "Successfully updated!"
+     * @throws InputValidationException
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

@@ -20,6 +20,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
@@ -28,7 +29,6 @@ import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
-import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 
 /**
  *
@@ -64,6 +64,23 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for this method is /rest/question
+     *This method recieves JSON object, and put it in the base. Example for JSON:
+     *      {
+                "date": "2015-07-25T00:00:00.0",
+                "wrongAnswer3": "Jürgen Kohler",
+                "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",
+                "correctAnswer": "Andreas Möller",
+                "wrongAnswer1": "Rudi Völler",
+                "wrongAnswer2": "Dede"
+              }
+     * @param token
+     * @param question
+     * @return Response with status CREATED (201)
+     * @throws InputValidationException
+     * @throws NotAuthorizedException 
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
@@ -75,7 +92,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
                     && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
 
                 helper.persistObject(em, question);
-                return Response.status(Response.Status.CREATED).build();
+                return Response.status(Status.CREATED).build();
 
             } else {
                 throw new InputValidationException("Validation failed");
@@ -105,6 +122,24 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     }
 
+    /**
+     * API for this method is /rest/question
+     This method recieves JSON object, and update database. Example for JSON:
+     *      {
+                "date": "2015-07-25T00:00:00.0",
+                "wrongAnswer3": "Jürgen Kohler",
+                "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",
+                "correctAnswer": "Andreas Möller",
+                "wrongAnswer1": "Rudi Völler",
+                "wrongAnswer2": "Dede"
+              }
+     * @param token
+     * @param question
+     * @return Response with status OK (200) "Successfully updated!"
+     * @throws InputValidationException
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

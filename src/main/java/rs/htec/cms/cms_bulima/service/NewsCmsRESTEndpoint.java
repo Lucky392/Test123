@@ -45,6 +45,7 @@ public class NewsCmsRESTEndpoint {
         validator = new Validator();
     }
 
+    
     @GET
     @Path("/{page}/{limit}/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -63,6 +64,23 @@ public class NewsCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for this method is /rest/news
+     *This method recieves JSON object, and put it in the base. Example for JSON:
+     *      {
+                "newsHeadlineMobile": "NEUER TRANSFER",
+                "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",
+                "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",
+                "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",
+                "newsDate": "2015-07-20T15:32:35.0",
+                "newsType": "transfer"
+            }
+     * @param token token is header param
+     * @param news
+     * @return Response with status CREATED (201)
+     * @throws InputValidationException
+     * @throws NotAuthorizedException 
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
@@ -100,6 +118,24 @@ public class NewsCmsRESTEndpoint {
         }
     }
 
+    /**
+     * API for this method is /rest/news
+     *This method recieves JSON object, and update database. Example for JSON:
+     *      {
+                "newsHeadlineMobile": "NEUER TRANSFER",
+                "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",
+                "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",
+                "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu Sport1",
+                "newsDate": "2015-07-20T15:32:35.0",
+                "newsType": "transfer"
+            }
+     * @param token
+     * @param news
+     * @return Response with status OK (200) "Successfully updated!"
+     * @throws InputValidationException
+     * @throws DataNotFoundException
+     * @throws NotAuthorizedException
+     */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
