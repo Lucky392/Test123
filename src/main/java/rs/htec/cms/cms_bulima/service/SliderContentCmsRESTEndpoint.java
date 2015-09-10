@@ -72,7 +72,7 @@ public class SliderContentCmsRESTEndpoint {
      * @param token
      * @param page number of page at which we search for sliders
      * @param limit number of sliders this method returns
-     * @return Respond 200 OK with JSON body
+     * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
      * @throws NotAuthorizedException
      */

@@ -56,7 +56,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * @param token
      * @param page number of page at which we search for prizes
      * @param limit number of prizes method returns
-     * @return Respond 200 OK with JSON body
+     * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
      * @throws NotAuthorizedException
      */

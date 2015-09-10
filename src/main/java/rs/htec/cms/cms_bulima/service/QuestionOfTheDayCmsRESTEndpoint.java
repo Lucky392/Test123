@@ -18,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -48,37 +49,44 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     /**
      * API for method: /question/{page}/{limit} This method returns JSON list of
      * questions at defined page with defined limit. It produces
-     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:<br/> [
-     * {<br/> "date": "2015-07-20 00:00:00.0",<br/> "wrongAnswer3": "Mehmet Scholl",<br/>
+     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
+     * limit:<br/> [ {<br/> "date": "2015-07-20 00:00:00.0",<br/>
+     * "wrongAnswer3": "Mehmet Scholl",<br/>
      * "question": "Wer erzielte das entscheidende Tor für den FC Bayern München
      * in der Saison 200/01, als der FC Schalke 04 für ein paar Minuten Meister
-     * war?",<br/> "id": "1",<br/> "correctAnswer": "Patrik Andersson",<br/> "wrongAnswer1":
-     * "Giovanne Elber",<br/> "wrongAnswer2": "Stefan Effenberg"<br/> },<br/> { <br/>"date":
-     * "2015-07-21 00:00:00.0",<br/> "wrongAnswer3": "12 Minuten",<br/> "question":
-     * "Michael Tönnies erzielte den schnellsten Hattrick der Bundesliga
-     * Geschichte. Wie viele Minuten benötigte er?",<br/> "id": "2",<br/> "correctAnswer":
-     * "5 Minuten",<br/> "wrongAnswer1": "7 Minuten",<br/> "wrongAnswer2": "10 Minuten"<br/> }
-     * ]
+     * war?",<br/> "id": "1",<br/> "correctAnswer": "Patrik Andersson",<br/>
+     * "wrongAnswer1": "Giovanne Elber",<br/> "wrongAnswer2": "Stefan
+     * Effenberg"<br/> },<br/> { <br/>"date": "2015-07-21 00:00:00.0",<br/>
+     * "wrongAnswer3": "12 Minuten",<br/> "question": "Michael Tönnies erzielte
+     * den schnellsten Hattrick der Bundesliga Geschichte. Wie viele Minuten
+     * benötigte er?",<br/> "id": "2",<br/> "correctAnswer": "5 Minuten",<br/>
+     * "wrongAnswer1": "7 Minuten",<br/> "wrongAnswer2": "10 Minuten"<br/> } ]
      *
      * @param token
      * @param page number of page at which we search for Question
      * @param limit number of Question method returns
-     * @return Respond 200 OK with JSON body
+     * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
      * @throws NotAuthorizedException
      */
     @GET
-    @Path("/{page}/{limit}/")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getQuestions(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+    public Response getQuestions(@HeaderParam("authorization") String token, @QueryParam("page") int page, @QueryParam("limit") int limit,
+            @QueryParam("column") String column, @QueryParam("order") String order, @QueryParam("search") String search) {
         EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
-            List<QuestionOfTheDay> question = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            if (question.isEmpty()) {
+            List<QuestionOfTheDay> questions;
+            if (search.isEmpty()) {
+                questions = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else {
+                questions = em.createNamedQuery("QuestionOfTheDay.findByQuestionLike").setParameter("question", "%"+search+"%").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            }
+            if (questions.isEmpty()) {
                 throw new DataNotFoundException("Requested page does not exist..");
             }
-            return Response.ok().entity(helper.getJson(question)).build();
+            return Response.ok().entity(helper.getJson(questions)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException(ex.getMessage());
@@ -88,9 +96,10 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     /**
      * API for this method is /rest/question This method recieves JSON object,
      * and put it in the base. Example for JSON: {<br/> "date":
-     * "2015-07-25T00:00:00.0",<br/> "wrongAnswer3": "Jürgen Kohler",<br/> "question":
-     * "Welcher Spieler erfand die \"Schutzschwalbe\"?",<br/> "correctAnswer":
-     * "Andreas Möller",<br/> "wrongAnswer1": "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
+     * "2015-07-25T00:00:00.0",<br/> "wrongAnswer3": "Jürgen Kohler",<br/>
+     * "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",<br/>
+     * "correctAnswer": "Andreas Möller",<br/> "wrongAnswer1": "Rudi
+     * Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
      * @param token
      * @param question
@@ -151,10 +160,11 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     /**
      * API for this method is /rest/question This method recieves JSON object,
-     * and update database. Example for JSON: { <br/>"date": "2015-07-25T00:00:00.0",<br/>
-     * "wrongAnswer3": "Jürgen Kohler",<br/> "question": "Welcher Spieler erfand die
-     * \"Schutzschwalbe\"?",<br/> "correctAnswer": "Andreas Möller",<br/> "wrongAnswer1":
-     * "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
+     * and update database. Example for JSON: { <br/>"date":
+     * "2015-07-25T00:00:00.0",<br/>
+     * "wrongAnswer3": "Jürgen Kohler",<br/> "question": "Welcher Spieler erfand
+     * die \"Schutzschwalbe\"?",<br/> "correctAnswer": "Andreas Möller",<br/>
+     * "wrongAnswer1": "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
      * @param token
      * @param question

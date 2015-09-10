@@ -6,7 +6,9 @@
 package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -37,7 +39,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "QuestionOfTheDay.findByWrongAnswer1", query = "SELECT q FROM QuestionOfTheDay q WHERE q.wrongAnswer1 = :wrongAnswer1"),
     @NamedQuery(name = "QuestionOfTheDay.findByWrongAnswer2", query = "SELECT q FROM QuestionOfTheDay q WHERE q.wrongAnswer2 = :wrongAnswer2"),
     @NamedQuery(name = "QuestionOfTheDay.findByWrongAnswer3", query = "SELECT q FROM QuestionOfTheDay q WHERE q.wrongAnswer3 = :wrongAnswer3"),
-    @NamedQuery(name = "QuestionOfTheDay.findByDate", query = "SELECT q FROM QuestionOfTheDay q WHERE q.date = :date")})
+    @NamedQuery(name = "QuestionOfTheDay.findByDate", query = "SELECT q FROM QuestionOfTheDay q WHERE q.date = :date"),
+    @NamedQuery(name = "QuestionOfTheDay.findByQuestionLike", query = "SELECT q FROM QuestionOfTheDay q WHERE q.question LIKE :question")})
 public class QuestionOfTheDay implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
@@ -167,5 +170,5 @@ public class QuestionOfTheDay implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.QuestionOfTheDay[ id=" + id + " ]";
     }
-    
+
 }

@@ -5,6 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -12,6 +15,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -19,6 +23,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -92,14 +97,33 @@ public class NewsCmsRESTEndpoint {
      *
      */
     @GET
-    @Path("?page={page}&limit={limit}&column={column}&order={order}&search={search}")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNews(@HeaderParam("authorization") String token, @PathParam("page") int page,
-            @PathParam("limit") int limit, @PathParam("column") String column, @PathParam("order") String order, @PathParam("search") String search) {
+    public Response getNews(@HeaderParam("authorization") String token, @QueryParam("page") int page,
+            @QueryParam("limit") int limit, @QueryParam("column") String column, @QueryParam("order") String order,
+            @QueryParam("search") String search, @DefaultValue("0") @QueryParam("minDate") long minDate, @DefaultValue("0") @QueryParam("maxDate") long maxDate,
+            @QueryParam("typeOfNews") String typeOfNews) {
         EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
-            List<News> news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            List<News> news;
+            if (typeOfNews != null) {
+                //news = em.createNamedQuery("News.findByNewsType").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (minDate != 0 && maxDate != 0 && search != null) {
+                Date d1 = new Date(minDate);
+                Date d2 = new Date(maxDate);
+                search = "%" + search + "%";
+                news = em.createNamedQuery("News.findAllByLikeBetweenDate").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (minDate != 0 && maxDate != 0) {
+                Date d1 = new Date(minDate);
+                Date d2 = new Date(maxDate);
+                news = em.createNamedQuery("News.findByNewsBetweenDate").setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (search != null) {
+                search = "%" + search + "%";
+                news = em.createNamedQuery("News.findAllByLike").setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else {
+                news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            }
             if (news.isEmpty()) {
                 throw new DataNotFoundException("Requested page does not exist..");
             }
@@ -112,20 +136,19 @@ public class NewsCmsRESTEndpoint {
 
     /**
      * API for this method is /rest/news This method recieves JSON object, and
-     * put it in the base. Example for JSON: 
-     * {<br/> "newsHeadlineMobile": "NEUER
+     * put it in the base. Example for JSON: {<br/> "newsHeadlineMobile": "NEUER
      * TRANSFER",<br/> "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
      * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
-     * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/> "newsType":
-     * "transfer" <br/>}
+     * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
+     * "newsType": "transfer" <br/>}
      *
      * @param token token is header param
      * @param news
      * @return Response with status CREATED (201)
      * @throws InputValidationException
      * @throws NotAuthorizedException
-    *
+     *
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -180,8 +203,8 @@ public class NewsCmsRESTEndpoint {
      * TRANSFER",<br/> "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
      * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
-     * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/> "newsType":
-     * "transfer"<br/> }
+     * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
+     * "newsType": "transfer"<br/> }
      *
      * @param token
      * @param news

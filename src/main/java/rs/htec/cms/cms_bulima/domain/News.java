@@ -39,7 +39,10 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "News.findByNewsDate", query = "SELECT n FROM News n WHERE n.newsDate = :newsDate"),
     @NamedQuery(name = "News.findByNewsHeadlineWeb", query = "SELECT n FROM News n WHERE n.newsHeadlineWeb = :newsHeadlineWeb"),
     @NamedQuery(name = "News.findByCreateDate", query = "SELECT n FROM News n WHERE n.createDate = :createDate"),
-    @NamedQuery(name = "News.findByNewsHeadlineMobile", query = "SELECT n FROM News n WHERE n.newsHeadlineMobile = :newsHeadlineMobile")})
+    @NamedQuery(name = "News.findByNewsHeadlineMobile", query = "SELECT n FROM News n WHERE n.newsHeadlineMobile = :newsHeadlineMobile"),
+    @NamedQuery(name = "News.findAllByLike", query = "SELECT n FROM News n WHERE n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord"),
+    @NamedQuery(name = "News.findByNewsBetweenDate", query = "SELECT n FROM News n WHERE n.newsDate BETWEEN :min AND :max"),
+    @NamedQuery(name = "News.findAllByLikeBetweenDate", query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord)")})
 public class News implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
