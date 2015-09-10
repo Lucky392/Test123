@@ -6,6 +6,9 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.google.gson.JsonObject;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.json.Json;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
@@ -15,8 +18,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import rs.htec.cms.cms_bulima.constants.MethodConstants;
+import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
+import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
@@ -35,6 +41,24 @@ public class UserCmsRESTEndpoint {
     public UserCmsRESTEndpoint() {
         helper = new RestHelperClass();
         tokenHelper = helper.getAbstractToken();
+    }
+    
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsers(@HeaderParam("authorization") String token){
+        EntityManager em = helper.getEntityManager();
+        try {
+            helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
+            List<CmsUser> users = em.createNamedQuery("CmsUser.findAll").getResultList();
+            if (users.isEmpty()) {
+                throw new DataNotFoundException("Requested page does not exist..");
+            }
+            return Response.ok().entity(users).build();
+        } catch (IllegalArgumentException e) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, e);
+            throw new NotAuthorizedException("You are not logged in!");
+        }
     }
 
     /**
