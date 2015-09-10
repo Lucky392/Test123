@@ -87,10 +87,10 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     /**
      * API for this method is /rest/question This method recieves JSON object,
-     * and put it in the base. Example for JSON: { "date":
-     * "2015-07-25T00:00:00.0", "wrongAnswer3": "Jürgen Kohler", "question":
-     * "Welcher Spieler erfand die \"Schutzschwalbe\"?", "correctAnswer":
-     * "Andreas Möller", "wrongAnswer1": "Rudi Völler", "wrongAnswer2": "Dede" }
+     * and put it in the base. Example for JSON: {<br/> "date":
+     * "2015-07-25T00:00:00.0",<br/> "wrongAnswer3": "Jürgen Kohler",<br/> "question":
+     * "Welcher Spieler erfand die \"Schutzschwalbe\"?",<br/> "correctAnswer":
+     * "Andreas Möller",<br/> "wrongAnswer1": "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
      * @param token
      * @param question
@@ -151,10 +151,10 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     /**
      * API for this method is /rest/question This method recieves JSON object,
-     * and update database. Example for JSON: { "date": "2015-07-25T00:00:00.0",
-     * "wrongAnswer3": "Jürgen Kohler", "question": "Welcher Spieler erfand die
-     * \"Schutzschwalbe\"?", "correctAnswer": "Andreas Möller", "wrongAnswer1":
-     * "Rudi Völler", "wrongAnswer2": "Dede" }
+     * and update database. Example for JSON: { <br/>"date": "2015-07-25T00:00:00.0",<br/>
+     * "wrongAnswer3": "Jürgen Kohler",<br/> "question": "Welcher Spieler erfand die
+     * \"Schutzschwalbe\"?",<br/> "correctAnswer": "Andreas Möller",<br/> "wrongAnswer1":
+     * "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
      * @param token
      * @param question
