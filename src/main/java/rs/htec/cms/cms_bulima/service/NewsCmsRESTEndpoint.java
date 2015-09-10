@@ -100,20 +100,25 @@ public class NewsCmsRESTEndpoint {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getNews(@HeaderParam("authorization") String token, @QueryParam("page") int page,
-            @QueryParam("limit") int limit, @QueryParam("column") String column, @QueryParam("order") String order,
-            @QueryParam("search") String search, @DefaultValue("0") @QueryParam("minDate") long minDate, @DefaultValue("0") @QueryParam("maxDate") long maxDate,
-            @QueryParam("typeOfNews") String typeOfNews) {
+            @QueryParam("limit") int limit, @QueryParam("column") String column, @QueryParam("search") String search,
+            @DefaultValue("0") @QueryParam("minDate") long minDate, @DefaultValue("0") @QueryParam("maxDate") long maxDate) {
         EntityManager em = helper.getEntityManager();
-        List<News> news = null;
+
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
-            if (typeOfNews != null) {
-                //news = em.createNamedQuery("News.findByNewsType").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (minDate != 0 && maxDate != 0 && search != null) {
+
+            List<News> news = null;
+            if (minDate != 0 && maxDate != 0 && search != null) {
                 Date d1 = new Date(minDate);
                 Date d2 = new Date(maxDate);
                 search = "%" + search + "%";
-                news = em.createNamedQuery("News.findAllByLikeBetweenDate").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                String order = "asc";
+                if (column.startsWith("-")) {
+                    column = column.substring(1);
+                    order = "desc";
+                }
+                String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord) ORDER BY CASE :column_name WHEN 'id' THEN n.id WHEN 'newsDate' THEN n.newsDate WHEN 'createDate' THEN n.createDate END " + order;
+                news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setParameter("column_name", column).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             } else if (minDate != 0 && maxDate != 0) {
                 Date d1 = new Date(minDate);
                 Date d2 = new Date(maxDate);
