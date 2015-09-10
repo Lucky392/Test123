@@ -104,9 +104,9 @@ public class NewsCmsRESTEndpoint {
             @QueryParam("search") String search, @DefaultValue("0") @QueryParam("minDate") long minDate, @DefaultValue("0") @QueryParam("maxDate") long maxDate,
             @QueryParam("typeOfNews") String typeOfNews) {
         EntityManager em = helper.getEntityManager();
+        List<News> news = null;
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
-            List<News> news;
             if (typeOfNews != null) {
                 //news = em.createNamedQuery("News.findByNewsType").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             } else if (minDate != 0 && maxDate != 0 && search != null) {
@@ -124,7 +124,7 @@ public class NewsCmsRESTEndpoint {
             } else {
                 news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             }
-            if (news.isEmpty()) {
+            if (news == null && news.isEmpty()) {
                 throw new DataNotFoundException("Requested page does not exist..");
             }
             return Response.ok().entity(helper.getJson(news)).build();
