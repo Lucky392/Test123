@@ -147,7 +147,6 @@ public class NewsCmsRESTEndpoint {
                 search = "%" + search + "%";
                 news = em.createNamedQuery("News.findAllByLike").setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             } else if (orderingColumn != null) {
-//              minDate=1438387200000&maxDate=1439164800000
                 if (orderingColumn.startsWith("-")) {
                     orderingColumn = orderingColumn.substring(1) + " desc";
                 }
@@ -174,8 +173,33 @@ public class NewsCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         String query = "SELECT distinct newsType FROM News n";
         List<String> list = em.createQuery(query).getResultList();
+        return Response.ok().entity(list).build();
+    }
+
+    @GET
+    @Path("/type")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsByType(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @DefaultValue("id") @QueryParam("column") String orderingColumn,
+            @QueryParam("searchType") String searchType, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
+
+        EntityManager em = helper.getEntityManager();
         try {
-            return Response.ok().entity(helper.getJson(list)).build();
+            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+            List<News> news;
+            Date d1 = new Date(minDate);
+            Date d2;
+            if (maxDate == 0) {
+                d2 = new Date(System.currentTimeMillis());
+            } else {
+                d2 = new Date(maxDate);
+            }
+            if (orderingColumn.startsWith("-")) {
+                orderingColumn = orderingColumn.substring(1) + " desc";
+            }
+            String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND n.newsType = :type ORDER BY " + orderingColumn;
+            news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("type", searchType).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            return Response.ok().entity(helper.getJson(news)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
@@ -184,8 +208,9 @@ public class NewsCmsRESTEndpoint {
 
     /**
      * API for this method is /rest/news This method recieves JSON object, and
-     * put it in the base. Example for JSON: {<br/> "newsHeadlineMobile": "NEUER
-     * TRANSFER",<br/> "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
+     * put it in the base. Example for JSON: {<br/>
+     * "newsHeadlineMobile": "NEUER TRANSFER",<br/> "newsHeadlineWeb": "NEUES
+     * VOM TRANSFERMARKT",<br/>
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
      * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
      * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
@@ -213,10 +238,13 @@ public class NewsCmsRESTEndpoint {
                 return Response.status(Response.Status.CREATED).build();
             } else {
                 throw new InputValidationException("Validation failed");
+
             }
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            Logger.getLogger(NewsCmsRESTEndpoint.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException(
+                    "You are not logged in!");
         }
     }
 
@@ -238,10 +266,14 @@ public class NewsCmsRESTEndpoint {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
             News news = em.find(News.class, id);
             helper.removeObject(em, news, id);
-            return Response.ok().build();
+
+            return Response.ok()
+                    .build();
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            Logger.getLogger(NewsCmsRESTEndpoint.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException(
+                    "You are not logged in!");
         }
     }
 
@@ -269,7 +301,8 @@ public class NewsCmsRESTEndpoint {
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
             News oldNews = em.find(News.class, news.getId());
-            if (oldNews != null) {
+            if (oldNews
+                    != null) {
                 if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                         && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                         && validator.checkLenght(news.getNewsType(), 255, true)) {
@@ -281,10 +314,14 @@ public class NewsCmsRESTEndpoint {
             } else {
                 throw new DataNotFoundException("Slider at index" + news.getId() + " does not exits");
             }
-            return Response.ok("Successfully updated!").build();
+
+            return Response.ok(
+                    "Successfully updated!").build();
         } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            Logger.getLogger(NewsCmsRESTEndpoint.class
+                    .getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException(
+                    "You are not logged in!");
         }
     }
 }

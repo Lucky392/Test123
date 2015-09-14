@@ -23,6 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
@@ -95,7 +96,7 @@ public class News implements Serializable {
         this.id = id;
         this.createDate = createDate;
     }
-
+    @XmlElement
     public Long getId() {
         return id;
     }
@@ -103,7 +104,7 @@ public class News implements Serializable {
     public void setId(Long id) {
         this.id = id;
     }
-
+    @XmlElement
     public String getNewsType() {
         return newsType;
     }
@@ -111,7 +112,7 @@ public class News implements Serializable {
     public void setNewsType(String newsType) {
         this.newsType = newsType;
     }
-
+    @XmlElement
     public Date getNewsDate() {
         return newsDate;
     }
@@ -119,7 +120,7 @@ public class News implements Serializable {
     public void setNewsDate(Date newsDate) {
         this.newsDate = newsDate;
     }
-
+    @XmlElement
     public String getNewsHeadlineWeb() {
         return newsHeadlineWeb;
     }
@@ -127,7 +128,7 @@ public class News implements Serializable {
     public void setNewsHeadlineWeb(String newsHeadlineWeb) {
         this.newsHeadlineWeb = newsHeadlineWeb;
     }
-
+    @XmlElement
     public String getNewsMessageWeb() {
         return newsMessageWeb;
     }
@@ -135,7 +136,7 @@ public class News implements Serializable {
     public void setNewsMessageWeb(String newsMessageWeb) {
         this.newsMessageWeb = newsMessageWeb;
     }
-
+    @XmlElement
     public Date getCreateDate() {
         return createDate;
     }
@@ -143,7 +144,7 @@ public class News implements Serializable {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-
+    @XmlElement
     public String getNewsHeadlineMobile() {
         return newsHeadlineMobile;
     }
@@ -151,7 +152,7 @@ public class News implements Serializable {
     public void setNewsHeadlineMobile(String newsHeadlineMobile) {
         this.newsHeadlineMobile = newsHeadlineMobile;
     }
-
+    @XmlElement
     public String getNewsMessageMobile() {
         return newsMessageMobile;
     }
@@ -159,7 +160,7 @@ public class News implements Serializable {
     public void setNewsMessageMobile(String newsMessageMobile) {
         this.newsMessageMobile = newsMessageMobile;
     }
-
+    @XmlElement
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }
@@ -167,7 +168,7 @@ public class News implements Serializable {
     public void setIdFantasyLeague(FantasyLeague idFantasyLeague) {
         this.idFantasyLeague = idFantasyLeague;
     }
-
+    @XmlElement
     public FantasyClub getIdFantasyClub() {
         return idFantasyClub;
     }
