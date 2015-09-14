@@ -40,9 +40,11 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "News.findByNewsHeadlineWeb", query = "SELECT n FROM News n WHERE n.newsHeadlineWeb = :newsHeadlineWeb"),
     @NamedQuery(name = "News.findByCreateDate", query = "SELECT n FROM News n WHERE n.createDate = :createDate"),
     @NamedQuery(name = "News.findByNewsHeadlineMobile", query = "SELECT n FROM News n WHERE n.newsHeadlineMobile = :newsHeadlineMobile"),
-    @NamedQuery(name = "News.findAllByLike", query = "SELECT n FROM News n WHERE n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord order by :column_name"),
-    @NamedQuery(name = "News.findByNewsBetweenDate", query = "SELECT n FROM News n WHERE n.newsDate BETWEEN :min AND :max ORDER BY  (CASE :column_name WHEN id THEN n.id WHEN newsDate THEN n.newsDate WHEN createDate THEN n.createDate END) desc"),
-    @NamedQuery(name = "News.findAllByLikeBetweenDate", query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord) ORDER BY CASE :column_name WHEN 'id' THEN n.id WHEN 'newsDate' THEN n.newsDate WHEN 'createDate' THEN n.createDate END")})
+    @NamedQuery(name = "News.findAllByLike", query = "SELECT n FROM News n WHERE n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord"), //order by :column_name
+    @NamedQuery(name = "News.findByNewsBetweenDate", query = "SELECT n FROM News n WHERE n.newsDate BETWEEN :min AND :max"),
+    @NamedQuery(name = "News.findAllByLikeBetweenDate", query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord)")})
+
+    // ORDER BY CASE :column_name WHEN 'id' THEN n.id WHEN 'newsDate' THEN n.newsDate WHEN 'createDate' THEN n.createDate END
 public class News implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id

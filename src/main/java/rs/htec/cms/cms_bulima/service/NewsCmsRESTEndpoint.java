@@ -5,9 +5,6 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -26,6 +23,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.News;
@@ -91,48 +89,93 @@ public class NewsCmsRESTEndpoint {
      * @param token
      * @param page number of page at which we search for News
      * @param limit number of News method returns
+     * @param orderingColumn
+     * @param search
+     * @param minDate
+     * @param maxDate
      * @return {@link Response} Response {@link Status#OK} 200 OK with JSON body
      * @throws DataNotFoundException
      * @throws NotAuthorizedException
      *
      */
-    @GET
+    @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNews(@HeaderParam("authorization") String token, @QueryParam("page") int page,
-            @QueryParam("limit") int limit, @QueryParam("column") String column, @QueryParam("search") String search,
-            @DefaultValue("0") @QueryParam("minDate") long minDate, @DefaultValue("0") @QueryParam("maxDate") long maxDate) {
-        EntityManager em = helper.getEntityManager();
+    public Response getNews(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
+            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
 
+        EntityManager em = helper.getEntityManager();
         try {
             helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
 
-            List<News> news = null;
-            if (minDate != 0 && maxDate != 0 && search != null) {
+            List<News> news;
+            if (minDate != 0 && maxDate != 0 && search != null && orderingColumn != null) {
                 Date d1 = new Date(minDate);
                 Date d2 = new Date(maxDate);
                 search = "%" + search + "%";
-                String order = "asc";
-                if (column.startsWith("-")) {
-                    column = column.substring(1);
-                    order = "desc";
+                if (orderingColumn.startsWith("-")) {
+                    orderingColumn = orderingColumn.substring(1) + " desc";
                 }
-                String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord) ORDER BY CASE :column_name WHEN 'id' THEN n.id WHEN 'newsDate' THEN n.newsDate WHEN 'createDate' THEN n.createDate END " + order;
-                news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setParameter("column_name", column).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+                String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord) ORDER BY " + orderingColumn;
+                news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (minDate != 0 && maxDate != 0 && search != null) {
+                Date d1 = new Date(minDate);
+                Date d2 = new Date(maxDate);
+                search = "%" + search + "%";
+                news = em.createNamedQuery("News.findAllByLikeBetweenDate").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (minDate != 0 && maxDate != 0 && orderingColumn != null) {
+                Date d1 = new Date(minDate);
+                Date d2 = new Date(maxDate);
+                if (orderingColumn.startsWith("-")) {
+                    orderingColumn = orderingColumn.substring(1) + " desc";
+                }
+                String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) ORDER BY " + orderingColumn;
+                news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             } else if (minDate != 0 && maxDate != 0) {
                 Date d1 = new Date(minDate);
                 Date d2 = new Date(maxDate);
                 news = em.createNamedQuery("News.findByNewsBetweenDate").setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (search != null && orderingColumn != null) {
+                search = "%" + search + "%";
+                if (orderingColumn.startsWith("-")) {
+                    orderingColumn = orderingColumn.substring(1) + " desc";
+                }
+                String query = "SELECT n FROM News n WHERE (n.newsType LIKE :searchedWord OR n.newsHeadlineWeb LIKE :searchedWord OR n.newsHeadlineMobile LIKE :searchedWord) ORDER BY " + orderingColumn;
+                news = em.createQuery(query).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             } else if (search != null) {
                 search = "%" + search + "%";
                 news = em.createNamedQuery("News.findAllByLike").setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            } else if (orderingColumn != null) {
+//              minDate=1438387200000&maxDate=1439164800000
+                if (orderingColumn.startsWith("-")) {
+                    orderingColumn = orderingColumn.substring(1) + " desc";
+                }
+                String query = "SELECT n FROM News n ORDER BY " + orderingColumn;
+                news = em.createQuery(query).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             } else {
                 news = em.createNamedQuery("News.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
             }
-            if (news == null && news.isEmpty()) {
+            if (news == null || news.isEmpty()) {
                 throw new DataNotFoundException("Requested page does not exist..");
             }
             return Response.ok().entity(helper.getJson(news)).build();
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
+        }
+    }
+
+    @GET
+    @Path("/newsType")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsType(@HeaderParam("authorization") String token) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        String query = "SELECT distinct newsType FROM News n";
+        List<String> list = em.createQuery(query).getResultList();
+        try {
+            return Response.ok().entity(helper.getJson(list)).build();
         } catch (IllegalArgumentException | IllegalAccessException ex) {
             Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");

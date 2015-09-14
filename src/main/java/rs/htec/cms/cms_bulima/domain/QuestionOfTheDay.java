@@ -40,8 +40,12 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "QuestionOfTheDay.findByWrongAnswer2", query = "SELECT q FROM QuestionOfTheDay q WHERE q.wrongAnswer2 = :wrongAnswer2"),
     @NamedQuery(name = "QuestionOfTheDay.findByWrongAnswer3", query = "SELECT q FROM QuestionOfTheDay q WHERE q.wrongAnswer3 = :wrongAnswer3"),
     @NamedQuery(name = "QuestionOfTheDay.findByDate", query = "SELECT q FROM QuestionOfTheDay q WHERE q.date = :date"),
-    @NamedQuery(name = "QuestionOfTheDay.findByQuestionLike", query = "SELECT q FROM QuestionOfTheDay q WHERE q.question LIKE :question")})
+    @NamedQuery(name = "QuestionOfTheDay.findByQuestionLike", query = "SELECT q FROM QuestionOfTheDay q WHERE q.question LIKE :question"),
+    @NamedQuery(name = "QuestionOfTheDay.findAllQuestionsByLike", query = "SELECT q FROM QuestionOfTheDay q WHERE (q.question LIKE :searchedWord OR q.correctAnswer LIKE :searchedWord OR q.wrongAnswer1 LIKE :searchedWord OR q.wrongAnswer2 LIKE :searchedWord OR q.wrongAnswer3 LIKE :searchedWord)"),
+    @NamedQuery(name = "QuestionOfTheDay.findAllByLikeBetweenDate", query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) AND (q.question LIKE :searchedWord OR q.correctAnswer LIKE :searchedWord OR q.wrongAnswer1 LIKE :searchedWord OR q.wrongAnswer2 LIKE :searchedWord OR q.wrongAnswer3 LIKE :searchedWord)"),
+    @NamedQuery(name = "QuestionOfTheDay.findByQuestionsBetweenDate", query = "SELECT q FROM QuestionOfTheDay q WHERE q.date BETWEEN :min AND :max")})
 public class QuestionOfTheDay implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
