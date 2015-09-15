@@ -18,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
@@ -51,4 +52,27 @@ public class StatisticRESTEndPoint {
             return Response.ok().entity(helper.getJson(fm)).build();
         }
     }
+    
+    @GET
+    @Path("club/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFantasyClub(@HeaderParam("authorization") String token, @PathParam("id") long id){
+        EntityManager em = helper.getEntityManager();
+        try {
+            helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+            List<FantasyClub> fc;
+            String query = "SELECT f FROM FantasyClub f JOIN f.idFantasyManager u WHERE u.id = " + id;
+            fc = em.createQuery(query).getResultList();
+            if (fc.isEmpty()){
+                throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
+            } else {
+                return Response.ok().entity(helper.getJson(fc)).build();
+            }
+        } catch (IllegalArgumentException | IllegalAccessException ex) {
+            Logger.getLogger(StatisticRESTEndPoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new NotAuthorizedException("You are not logged in!");
+        }
+    }
+    
+    
 }
