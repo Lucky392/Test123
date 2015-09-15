@@ -18,4 +18,5 @@ public interface TableConstants {
     public static final long QUESTION_OF_THE_DAY_PRIZE = 5;
     public static final long USER_PRIVILEGES = 6;
     public static final long CMS_ROLE = 7;
+    public static final long STATISTICS = 8;
 }
