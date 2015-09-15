@@ -173,7 +173,7 @@ public class Season implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.Season[ id=" + id + " ]";
+        return id + "";
     }
     
 }

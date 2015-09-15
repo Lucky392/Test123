@@ -184,7 +184,7 @@ public class Club implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.Club[ id=" + id + " ]";
+        return id + "";
     }
 
     public byte[] getLogo() {

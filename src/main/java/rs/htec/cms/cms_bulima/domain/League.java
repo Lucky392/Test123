@@ -174,7 +174,7 @@ public class League implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.League[ id=" + id + " ]";
+        return id + "";
     }
     
 }

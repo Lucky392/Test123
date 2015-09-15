@@ -219,7 +219,7 @@ public class Auction implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.Auction[ id=" + id + " ]";
+        return id + "";
     }
 
     @XmlTransient

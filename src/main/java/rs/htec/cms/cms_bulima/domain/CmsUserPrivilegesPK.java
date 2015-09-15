@@ -76,7 +76,7 @@ public class CmsUserPrivilegesPK implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.CmsUserPrivilegesPK[ roleId=" + roleId + ", tableId=" + tableId + " ]";
+        return "Role id = " + roleId + ", table id = " + tableId;
     }
     
 }

@@ -124,7 +124,7 @@ public class Nation implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.Nation[ id=" + id + " ]";
+        return id + "";
     }
     
 }

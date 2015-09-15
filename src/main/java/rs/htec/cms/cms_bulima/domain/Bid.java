@@ -179,7 +179,7 @@ public class Bid implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.Bid[ id=" + id + " ]";
+        return id + "";
     }
     
 }

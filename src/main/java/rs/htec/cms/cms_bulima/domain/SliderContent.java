@@ -206,7 +206,7 @@ public class SliderContent implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.SliderContent[ id=" + id + " ]";
+        return id + "";
     }
     
 }

@@ -129,7 +129,7 @@ public class Emblem implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.Emblem[ id=" + id + " ]";
+        return id + "";
     }
 
     public byte[] getEmblem() {

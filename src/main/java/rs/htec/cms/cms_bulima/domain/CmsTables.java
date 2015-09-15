@@ -110,7 +110,7 @@ public class CmsTables implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.CmsTables[ id=" + id + " ]";
+        return id + "";
     }
     
 }

@@ -119,7 +119,7 @@ public class QuestionOfTheDayPrize implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize[ id=" + id + " ]";
+        return id + "";
     }
     
 }

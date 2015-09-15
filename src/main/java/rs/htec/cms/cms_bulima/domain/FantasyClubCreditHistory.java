@@ -163,7 +163,7 @@ public class FantasyClubCreditHistory implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory[ id=" + id + " ]";
+        return id + "";
     }
     
 }

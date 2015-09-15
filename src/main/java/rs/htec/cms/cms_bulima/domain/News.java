@@ -199,7 +199,7 @@ public class News implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.News[ id=" + id + " ]";
+        return id + "";
     }
     
 }

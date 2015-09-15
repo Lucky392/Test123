@@ -124,7 +124,7 @@ public class PlayerPosition implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.PlayerPosition[ id=" + id + " ]";
+        return id + "";
     }
     
 }

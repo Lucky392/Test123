@@ -138,7 +138,7 @@ public class PlayerSlot implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.PlayerSlot[ id=" + id + " ]";
+        return id + "";
     }
     
 }

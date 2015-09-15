@@ -122,7 +122,7 @@ public class CmsRole implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.CmsRole[ id=" + id + " ]";
+        return id + "";
     }
     
 }

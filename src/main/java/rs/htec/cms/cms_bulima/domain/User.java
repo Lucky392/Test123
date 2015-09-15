@@ -280,7 +280,7 @@ public class User implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.User[ id=" + id + " ]";
+        return id + "";
     }
     
 }

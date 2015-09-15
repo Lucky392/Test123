@@ -159,7 +159,7 @@ public class FantasyPlayer implements Serializable {
 
     @Override
     public String toString() {
-        return "rs.htec.cms.cms_bulima.domain.FantasyPlayer[ id=" + id + " ]";
+        return id + "";
     }
     
 }
