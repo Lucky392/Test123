@@ -29,31 +29,26 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  */
 @Path("/statistics")
 public class StatisticRESTEndPoint {
-    
+
     RestHelperClass helper;
 
     public StatisticRESTEndPoint() {
         helper = new RestHelperClass();
     }
-    
+
     @GET
     @Path("/{email}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyManager(@HeaderParam("authorization") String token, @PathParam("email") String email){
+    public Response getFantasyManager(@HeaderParam("authorization") String token, @PathParam("email") String email) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-            List<FantasyManager> fm;
-            String query = "SELECT f FROM FantasyManager f JOIN f.idUser u WHERE u.email = '" + email + "'";
-            fm = em.createQuery(query).getResultList();
-            if (fm.isEmpty()){
-                throw new DataNotFoundException("There is no Fantasy Managers for this user!");
-            } else {
-                return Response.ok().entity(helper.getJson(fm)).build();
-            }
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StatisticRESTEndPoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<FantasyManager> fm;
+        String query = "SELECT f FROM FantasyManager f JOIN f.idUser u WHERE u.email = '" + email + "'";
+        fm = em.createQuery(query).getResultList();
+        if (fm.isEmpty()) {
+            throw new DataNotFoundException("There is no Fantasy Managers for this user!");
+        } else {
+            return Response.ok().entity(helper.getJson(fm)).build();
         }
     }
 }

@@ -48,25 +48,29 @@ public class SliderContentCmsRESTEndpoint {
     /**
      * API for method: /news/{page}/{limit} This method returns JSON list of
      * slider content at defined page with defined limit. It produces
-     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:<br/> [
-     * {<br/> "contentUrl":
+     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
+     * limit:<br/> [ {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
-     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/> "idCompetition":
-     * "null",<br/> "positionInSlider": "1",<br/> "stopShowingAt": "2015-07-22
-     * 13:22:48.0",<br/> "updateAt": "2015-02-17 15:27:38.0",<br/> "id": "1",<br/> "text":
+     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/>
+     * "idCompetition": "null",<br/> "positionInSlider": "1",<br/>
+     * "stopShowingAt": "2015-07-22 13:22:48.0",<br/> "updateAt": "2015-02-17
+     * 15:27:38.0",<br/> "id": "1",<br/> "text":
      * "{@code <div style=\"position: absolute; font-size: 16px; padding: 10px; line-height: 18px; top: 160px;\"><div style=\"font-family: TitilliumWeb-Bold; font-size: 18px; margin-bottom: 8px;\">}Saisonpause{@code </div>}Wir
-     * starten schon bald mit der neuen Saison 2015/2016!{@code </a></div>}",<br/>
+     * starten schon bald mit der neuen Saison
+     * 2015/2016!{@code </a></div>}",<br/>
      * "startShowingAt": "2015-05-03 18:10:00.0",<br/> "createDate": "2015-02-17
      * 15:59:00.0"<br/> },<br/> {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_patch.jpg",<br/>
-     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/> "idCompetition":
-     * "null",<br/> "positionInSlider": "1",<br/> "stopShowingAt": "2015-05-03
-     * 18:10:00.0",<br/> "updateAt": "2015-02-17 15:27:38.0",<br/> "id": "2",<br/> "text":
+     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/>
+     * "idCompetition": "null",<br/> "positionInSlider": "1",<br/>
+     * "stopShowingAt": "2015-05-03 18:10:00.0",<br/> "updateAt": "2015-02-17
+     * 15:27:38.0",<br/> "id": "2",<br/> "text":
      * "{@code <div style=\"position: absolute; font-size: 16px; padding: 10px; line-height: 18px; top: 140px;\"><div style=\"font-family: TitilliumWeb-Bold; font-size: 18px; margin-bottom: 8px;\">}Patch
-     * 1.2 ist online:{@code </div>}Wie geht es nächste Saison mit eurer Liga weiter?
-     * {@code <br>} Erfahrt mehr dazu auf unserer
+     * 1.2 ist online:{@code </div>}Wie geht es nächste Saison mit eurer Liga
+     * weiter? {@code <br>} Erfahrt mehr dazu auf unserer
      * {@code<a style=\"color:white;font-size:16px\" target=\"_blank\" href=\"https://www.facebook.com/SPORT1BundesligaManager\">}Facebook
-     * Seite{@code </a>!</div>}",<br/> "startShowingAt": "2015-03-17 17:27:00.0",<br/>
+     * Seite{@code </a>!</div>}",<br/> "startShowingAt": "2015-03-17
+     * 17:27:00.0",<br/>
      * "createDate": "2015-02-17 15:59:00.0"<br/> } ]
      *
      * @param token
@@ -81,14 +85,9 @@ public class SliderContentCmsRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getSlider(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
-            List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            return Response.ok().entity(helper.getJson(slider)).build();
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
-        }
+        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
+        List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        return Response.ok().entity(helper.getJson(slider)).build();
     }
 
     /**
@@ -96,9 +95,10 @@ public class SliderContentCmsRESTEndpoint {
      * put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
      * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
-     * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28 12:05:00.0",<br/>
-     * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/> "startShowingAt":
-     * "2015-03-18 16:30:00.0"<br/> }
+     * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28
+     * 12:05:00.0",<br/>
+     * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/>
+     * "startShowingAt": "2015-03-18 16:30:00.0"<br/> }
      *
      * @param token
      * @param slider
@@ -159,9 +159,10 @@ public class SliderContentCmsRESTEndpoint {
      * update database. Example for JSON: <br/>{ "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
      * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
-     * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28 12:05:00.0",<br/>
-     * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/> "startShowingAt":
-     * "2015-03-18 16:30:00.0"<br/> }
+     * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28
+     * 12:05:00.0",<br/>
+     * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/>
+     * "startShowingAt": "2015-03-18 16:30:00.0"<br/> }
      *
      * @param token
      * @param slider

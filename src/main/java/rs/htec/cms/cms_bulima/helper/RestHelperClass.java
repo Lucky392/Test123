@@ -7,6 +7,8 @@ package rs.htec.cms.cms_bulima.helper;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -37,14 +39,19 @@ public class RestHelperClass {
         tokenHelper = new Base64Token();
     }
 
-    public String getJson(List list) throws IllegalArgumentException, IllegalAccessException {
+    public String getJson(List list) {
         JSONArray jsonList = new JSONArray();
         for (Object o : list) {
             JSONObject obj1 = new JSONObject();
             for (Field field : o.getClass().getDeclaredFields()) {
                 if (!field.getName().equals("serialVersionUID")) {
                     field.setAccessible(true);
-                    String s = field.get(o) + "";
+                    String s = "";
+                    try {
+                        s = field.get(o) + "";
+                    } catch (IllegalArgumentException | IllegalAccessException ex) {
+                        Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                     obj1.put(field.getName(), s);
                 }
             }

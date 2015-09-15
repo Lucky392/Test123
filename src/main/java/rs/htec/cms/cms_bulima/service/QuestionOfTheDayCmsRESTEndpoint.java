@@ -78,67 +78,62 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getQuestionss(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page,
-            @DefaultValue("10")@QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
+    public Response getQuestionss(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
 
-            List<QuestionOfTheDay> questions = null;
-            if (minDate != 0 && maxDate != 0 && search != null && orderingColumn != null) {
-                Date d1 = new Date(minDate);
-                Date d2 = new Date(maxDate);
-                search = "%" + search + "%";
-                if (orderingColumn.startsWith("-")) {
-                    orderingColumn = orderingColumn.substring(1) + " desc";
-                }
-                String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) AND (q.question LIKE :searchedWord OR q.correctAnswer LIKE :searchedWord OR q.wrongAnswer1 LIKE :searchedWord OR q.wrongAnswer2 LIKE :searchedWord OR q.wrongAnswer3 LIKE :searchedWord) ORDER BY " + orderingColumn;
-                questions = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (minDate != 0 && maxDate != 0 && search != null) {
-                Date d1 = new Date(minDate);
-                Date d2 = new Date(maxDate);
-                search = "%" + search + "%";
-                questions = em.createNamedQuery("QuestionOfTheDay.findAllByLikeBetweenDate").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (minDate != 0 && maxDate != 0 && orderingColumn != null) {
-                Date d1 = new Date(minDate);
-                Date d2 = new Date(maxDate);
-                if (orderingColumn.startsWith("-")) {
-                    orderingColumn = orderingColumn.substring(1) + " desc";
-                }
-                String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) ORDER BY " + orderingColumn;
-                questions = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (minDate != 0 && maxDate != 0) {
-                Date d1 = new Date(minDate);
-                Date d2 = new Date(maxDate);
-                questions = em.createNamedQuery("QuestionOfTheDay.findByQuestionsBetweenDate").setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (search != null && orderingColumn != null) {
-                search = "%" + search + "%";
-                if (orderingColumn.startsWith("-")) {
-                    orderingColumn = orderingColumn.substring(1) + " desc";
-                }
-                String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) ORDER BY " + orderingColumn;
-                questions = em.createQuery(query).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (search != null) {
-                search = "%" + search + "%";
-                questions = em.createNamedQuery("QuestionOfTheDay.findAllQuestionsByLike").setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else if (orderingColumn != null) {
-                if (orderingColumn.startsWith("-")) {
-                    orderingColumn = orderingColumn.substring(1) + " desc";
-                }
-                String query = "SELECT q FROM QuestionOfTheDay q WHERE ORDER BY " + orderingColumn;
-                questions = em.createQuery(query).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            } else {
-                questions = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        List<QuestionOfTheDay> questions = null;
+        if (minDate != 0 && maxDate != 0 && search != null && orderingColumn != null) {
+            Date d1 = new Date(minDate);
+            Date d2 = new Date(maxDate);
+            search = "%" + search + "%";
+            if (orderingColumn.startsWith("-")) {
+                orderingColumn = orderingColumn.substring(1) + " desc";
             }
-            if (questions == null || questions.isEmpty()) {
-                throw new DataNotFoundException("Requested page does not exist..");
+            String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) AND (q.question LIKE :searchedWord OR q.correctAnswer LIKE :searchedWord OR q.wrongAnswer1 LIKE :searchedWord OR q.wrongAnswer2 LIKE :searchedWord OR q.wrongAnswer3 LIKE :searchedWord) ORDER BY " + orderingColumn;
+            questions = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else if (minDate != 0 && maxDate != 0 && search != null) {
+            Date d1 = new Date(minDate);
+            Date d2 = new Date(maxDate);
+            search = "%" + search + "%";
+            questions = em.createNamedQuery("QuestionOfTheDay.findAllByLikeBetweenDate").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else if (minDate != 0 && maxDate != 0 && orderingColumn != null) {
+            Date d1 = new Date(minDate);
+            Date d2 = new Date(maxDate);
+            if (orderingColumn.startsWith("-")) {
+                orderingColumn = orderingColumn.substring(1) + " desc";
             }
-            return Response.ok().entity(helper.getJson(questions)).build();
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+            String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) ORDER BY " + orderingColumn;
+            questions = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else if (minDate != 0 && maxDate != 0) {
+            Date d1 = new Date(minDate);
+            Date d2 = new Date(maxDate);
+            questions = em.createNamedQuery("QuestionOfTheDay.findByQuestionsBetweenDate").setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else if (search != null && orderingColumn != null) {
+            search = "%" + search + "%";
+            if (orderingColumn.startsWith("-")) {
+                orderingColumn = orderingColumn.substring(1) + " desc";
+            }
+            String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) ORDER BY " + orderingColumn;
+            questions = em.createQuery(query).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else if (search != null) {
+            search = "%" + search + "%";
+            questions = em.createNamedQuery("QuestionOfTheDay.findAllQuestionsByLike").setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else if (orderingColumn != null) {
+            if (orderingColumn.startsWith("-")) {
+                orderingColumn = orderingColumn.substring(1) + " desc";
+            }
+            String query = "SELECT q FROM QuestionOfTheDay q WHERE ORDER BY " + orderingColumn;
+            questions = em.createQuery(query).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        } else {
+            questions = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         }
+        if (questions == null || questions.isEmpty()) {
+            throw new DataNotFoundException("Requested page does not exist..");
+        }
+        return Response.ok().entity(helper.getJson(questions)).build();
     }
 
     /**

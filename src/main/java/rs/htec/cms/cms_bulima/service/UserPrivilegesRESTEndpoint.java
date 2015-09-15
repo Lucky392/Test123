@@ -22,6 +22,7 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsRole;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
+import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
@@ -43,11 +44,16 @@ public class UserPrivilegesRESTEndpoint {
      * This method gets authorization token from HTTP header and list of user
      * privileges in JSON format and insert them into database. Example for JSON
      * <br/>
-     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/> "addAction": true,<br/>
-     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId": 1 <br/>},<br/> "cmsRole":
-     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction": true,<br/> "editAction": true,<br/>
-     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/>
-     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>} <br/>}<br/> ]
+     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/>
+     * "addAction": true,<br/>
+     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId":
+     * 1 <br/>},<br/> "cmsRole":
+     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction":
+     * true,<br/> "editAction": true,<br/>
+     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK":
+     * <br/>{<br/>
+     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>}
+     * <br/>}<br/> ]
      *
      * @param token
      * @param userPrivileges
@@ -82,16 +88,22 @@ public class UserPrivilegesRESTEndpoint {
         }
     }
 
-     /**
+    /**
      * API for method: /privileges<br/>
      * This method gets authorization token from HTTP header and list of user
-     * privileges in JSON format and updates them into database. Example for JSON
+     * privileges in JSON format and updates them into database. Example for
+     * JSON
      * <br/>
-     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/> "addAction": true,<br/>
-     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId": 1 <br/>},<br/> "cmsRole":
-     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction": true,<br/> "editAction": true,<br/>
-     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/>
-     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>} <br/>}<br/> ]
+     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/>
+     * "addAction": true,<br/>
+     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId":
+     * 1 <br/>},<br/> "cmsRole":
+     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction":
+     * true,<br/> "editAction": true,<br/>
+     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK":
+     * <br/>{<br/>
+     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>}
+     * <br/>}<br/> ]
      *
      * @param token
      * @param userPrivileges
@@ -123,28 +135,38 @@ public class UserPrivilegesRESTEndpoint {
 
     /**
      * API for method: /privileges<br/>
-     * This method gets authorization token from HTTP header
-     * privileges in JSON format and insert them into database. Example for JSON
+     * This method gets authorization token from HTTP header privileges in JSON
+     * format and insert them into database. Example for JSON
      * <br/>
-     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/> "addAction": true,<br/>
-     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId": 1 <br/>},<br/> "cmsRole":
-     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction": true,<br/> "editAction": true,<br/>
-     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/>
-     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>} <br/>}<br/> ]
+     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/>
+     * "addAction": true,<br/>
+     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId":
+     * 1 <br/>},<br/> "cmsRole":
+     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction":
+     * true,<br/> "editAction": true,<br/>
+     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK":
+     * <br/>{<br/>
+     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>}
+     * <br/>}<br/> ]
      *
      * @param token
      * @return {@link Response} Response {@link Status#OK} 200 CREATED
      * @throws NotAuthorizedException
-     * @throws ForbbidenException
+     * @throws DataNotFoundException
      *
      */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrivileges(@HeaderParam("authorization") String token) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.SEARCH, token);
-        return Response.ok().entity(em.createNamedQuery("CmsUserPrivileges.findAll").getResultList()).build();
+        try {
+            EntityManager em = helper.getEntityManager();
+            helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.SEARCH, token);
+            return Response.ok().entity(em.createNamedQuery("CmsUserPrivileges.findAll").getResultList()).build();
+        } catch (Exception ex){
+            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            throw new DataNotFoundException("Data not found!");
+        }
     }
 
 }

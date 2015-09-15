@@ -48,9 +48,10 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     /**
      * API for method: /news/{page}/{limit} This method returns JSON list of
      * questions at defined page with defined limit. It produces
-     * APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit: <br/>[
-     * {<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id": "3",<br/> "createDate":
-     * "2014-12-03 17:11:04.0"<br/> },<br/> {<br/> "prizeMoney": "60000",<br/> "name": "Tag 4",<br/>
+     * APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit:
+     * <br/>[ {<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id":
+     * "3",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> },<br/> {<br/>
+     * "prizeMoney": "60000",<br/> "name": "Tag 4",<br/>
      * "id": "4",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> } ]
      *
      * @param token
@@ -65,23 +66,18 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrize(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
-            List<QuestionOfTheDayPrize> prize = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            if (prize.isEmpty()) {
-                throw new DataNotFoundException("Requested page does not exist..");
-            }
-            return Response.ok().entity(helper.getJson(prize)).build();
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
+        List<QuestionOfTheDayPrize> prize = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        if (prize.isEmpty()) {
+            throw new DataNotFoundException("Requested page does not exist..");
         }
+        return Response.ok().entity(helper.getJson(prize)).build();
     }
 
     /**
      * API for this method is /rest/prize This method recieves JSON object, and
-     * put it in the base. Example for JSON: {<br/> "prizeMoney": "10000",<br/> "name":
-     * "Tag 1" <br/>}
+     * put it in the base. Example for JSON: {<br/> "prizeMoney": "10000",<br/>
+     * "name": "Tag 1" <br/>}
      *
      * @param token
      * @param prize
@@ -136,8 +132,8 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
 
     /**
      * API for this method is /rest/prize This method recieves JSON object, and
-     * update database. Example for JSON: { <br/>"prizeMoney": "10000", <br/>"name": "Tag
-     * 1" <br/>}
+     * update database. Example for JSON: { <br/>"prizeMoney": "10000",
+     * <br/>"name": "Tag 1" <br/>}
      *
      * @param token
      * @param prize
