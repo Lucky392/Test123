@@ -119,7 +119,5 @@ public class RestHelperClass {
             em.merge(o);
             em.getTransaction().commit();
     }
-
-    
     
 }

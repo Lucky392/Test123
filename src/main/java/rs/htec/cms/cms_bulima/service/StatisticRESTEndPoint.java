@@ -6,8 +6,6 @@
 package rs.htec.cms.cms_bulima.service;
 
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -21,9 +19,9 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Auction;
 import rs.htec.cms.cms_bulima.domain.Bid;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
+import rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
-import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
@@ -116,6 +114,22 @@ public class StatisticRESTEndPoint {
             throw new DataNotFoundException("There is no Bids for this Auction!");
         } else {
             return Response.ok().entity(helper.getJson(bids)).build();
+        }
+    }
+    
+    @GET
+    @Path("creditHistory/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getCreditHistory(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<FantasyClubCreditHistory> creditHistory;
+        String query = "SELECT f FROM FantasyClubCreditHistory f WHERE f.idFantasyClub.id = " + id;
+        creditHistory = em.createQuery(query).getResultList();
+        if (creditHistory.isEmpty()) {
+            throw new DataNotFoundException("There is no credit history for this club!");
+        } else {
+            return Response.ok().entity(helper.getJson(creditHistory)).build();
         }
     }
 }

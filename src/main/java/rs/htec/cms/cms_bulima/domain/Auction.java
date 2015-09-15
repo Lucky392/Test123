@@ -45,6 +45,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "Auction.findByAuctionFinishedTimestamp", query = "SELECT a FROM Auction a WHERE a.auctionFinishedTimestamp = :auctionFinishedTimestamp"),
     @NamedQuery(name = "Auction.findByCreateDate", query = "SELECT a FROM Auction a WHERE a.createDate = :createDate")})
 public class Auction implements Serializable {
+    @OneToMany(mappedBy = "idAuction")
+    private List<FantasyClubCreditHistory> fantasyClubCreditHistoryList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -218,6 +220,16 @@ public class Auction implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.Auction[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubCreditHistory> getFantasyClubCreditHistoryList() {
+        return fantasyClubCreditHistoryList;
+    }
+
+    public void setFantasyClubCreditHistoryList(List<FantasyClubCreditHistory> fantasyClubCreditHistoryList) {
+        this.fantasyClubCreditHistoryList = fantasyClubCreditHistoryList;
     }
     
 }
