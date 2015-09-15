@@ -29,6 +29,8 @@
     <class>rs.htec.cms.cms_bulima.domain.CmsUser</class>
     <class>rs.htec.cms.cms_bulima.domain.Competition</class>
     <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize</class>
+    <class>rs.htec.cms.cms_bulima.domain.Bid</class>
+    <class>rs.htec.cms.cms_bulima.domain.Auction</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.120:3306/bulima?zeroDateTimeBehavior=convertToNull"/>

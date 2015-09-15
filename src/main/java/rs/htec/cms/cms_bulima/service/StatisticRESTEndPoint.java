@@ -18,6 +18,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.Auction;
+import rs.htec.cms.cms_bulima.domain.Bid;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -38,7 +40,7 @@ public class StatisticRESTEndPoint {
     }
 
     @GET
-    @Path("/{email}")
+    @Path("manager/{email}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFantasyManager(@HeaderParam("authorization") String token, @PathParam("email") String email) {
         EntityManager em = helper.getEntityManager();
@@ -52,27 +54,68 @@ public class StatisticRESTEndPoint {
             return Response.ok().entity(helper.getJson(fm)).build();
         }
     }
-    
+
     @GET
     @Path("club/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyClub(@HeaderParam("authorization") String token, @PathParam("id") long id){
+    public Response getFantasyClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-            List<FantasyClub> fc;
-            String query = "SELECT f FROM FantasyClub f JOIN f.idFantasyManager u WHERE u.id = " + id;
-            fc = em.createQuery(query).getResultList();
-            if (fc.isEmpty()){
-                throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
-            } else {
-                return Response.ok().entity(helper.getJson(fc)).build();
-            }
-        } catch (IllegalArgumentException | IllegalAccessException ex) {
-            Logger.getLogger(StatisticRESTEndPoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<FantasyClub> fc;
+        String query = "SELECT f FROM FantasyClub f JOIN f.idFantasyManager u WHERE u.id = " + id;
+        fc = em.createQuery(query).getResultList();
+        if (fc.isEmpty()) {
+            throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
+        } else {
+            return Response.ok().entity(helper.getJson(fc)).build();
+        }
+    }
+
+    @GET
+    @Path("auction/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAuctionsForClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<Auction> auctions;
+        String query = "SELECT a FROM Auction a WHERE a.idFantasyClubSeller.id = " + id;
+        auctions = em.createQuery(query).getResultList();
+        if (auctions.isEmpty()) {
+            throw new DataNotFoundException("There is no Auctions for this Club!");
+        } else {
+            return Response.ok().entity(helper.getJson(auctions)).build();
+        }
+    }
+ 
+    @GET
+    @Path("bid/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBidsForClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<Bid> bids;
+        String query = "SELECT b FROM Bid b WHERE b.idFantasyClubBidder.id = " + id;
+        bids = em.createQuery(query).getResultList();
+        if (bids.isEmpty()) {
+            throw new DataNotFoundException("There is no Bids for this Club!");
+        } else {
+            return Response.ok().entity(helper.getJson(bids)).build();
         }
     }
     
-    
+    @GET
+    @Path("auction/bid/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBidsForAuction(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<Bid> bids;
+        String query = "SELECT b FROM Bid b WHERE b.idAuction.id = " + id;
+        bids = em.createQuery(query).getResultList();
+        if (bids.isEmpty()) {
+            throw new DataNotFoundException("There is no Bids for this Auction!");
+        } else {
+            return Response.ok().entity(helper.getJson(bids)).build();
+        }
+    }
 }

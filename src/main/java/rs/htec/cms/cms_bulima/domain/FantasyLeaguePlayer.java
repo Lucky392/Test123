@@ -7,6 +7,7 @@ package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -18,12 +19,15 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -39,6 +43,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "FantasyLeaguePlayer.findByIsInAuction", query = "SELECT f FROM FantasyLeaguePlayer f WHERE f.isInAuction = :isInAuction"),
     @NamedQuery(name = "FantasyLeaguePlayer.findByCreateDate", query = "SELECT f FROM FantasyLeaguePlayer f WHERE f.createDate = :createDate")})
 public class FantasyLeaguePlayer implements Serializable {
+    @OneToMany(mappedBy = "idFantasyLeaguePlayer")
+    private List<Auction> auctionList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -160,6 +166,16 @@ public class FantasyLeaguePlayer implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.FantasyLeaguePlayer[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Auction> getAuctionList() {
+        return auctionList;
+    }
+
+    public void setAuctionList(List<Auction> auctionList) {
+        this.auctionList = auctionList;
     }
     
 }

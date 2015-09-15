@@ -40,15 +40,15 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "Emblem.findByUrl", query = "SELECT e FROM Emblem e WHERE e.url = :url"),
     @NamedQuery(name = "Emblem.findByCreateDate", query = "SELECT e FROM Emblem e WHERE e.createDate = :createDate")})
 public class Emblem implements Serializable {
+    @Lob
+    @Column(name = "emblem")
+    private byte[] emblem;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "ID")
     private Long id;
-    @Lob
-    @Column(name = "emblem")
-    private byte[] emblem;
     @Size(max = 255)
     @Column(name = "url")
     private String url;
@@ -80,13 +80,6 @@ public class Emblem implements Serializable {
         this.id = id;
     }
 
-    public byte[] getEmblem() {
-        return emblem;
-    }
-
-    public void setEmblem(byte[] emblem) {
-        this.emblem = emblem;
-    }
 
     public String getUrl() {
         return url;
@@ -137,6 +130,14 @@ public class Emblem implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.Emblem[ id=" + id + " ]";
+    }
+
+    public byte[] getEmblem() {
+        return emblem;
+    }
+
+    public void setEmblem(byte[] emblem) {
+        this.emblem = emblem;
     }
     
 }

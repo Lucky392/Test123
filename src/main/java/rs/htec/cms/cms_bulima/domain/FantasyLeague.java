@@ -61,6 +61,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyLeague.findByWarnedAt", query = "SELECT f FROM FantasyLeague f WHERE f.warnedAt = :warnedAt"),
     @NamedQuery(name = "FantasyLeague.findByUpdatedForSeason", query = "SELECT f FROM FantasyLeague f WHERE f.updatedForSeason = :updatedForSeason")})
 public class FantasyLeague implements Serializable {
+    @OneToMany(mappedBy = "idFantasyLeague")
+    private List<Auction> auctionList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -406,6 +408,16 @@ public class FantasyLeague implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Auction> getAuctionList() {
+        return auctionList;
+    }
+
+    public void setAuctionList(List<Auction> auctionList) {
+        this.auctionList = auctionList;
     }
     
 }

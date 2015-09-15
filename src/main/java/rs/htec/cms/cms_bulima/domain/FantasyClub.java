@@ -58,6 +58,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyClub.findByAmountSubstituteBenchSlots", query = "SELECT f FROM FantasyClub f WHERE f.amountSubstituteBenchSlots = :amountSubstituteBenchSlots"),
     @NamedQuery(name = "FantasyClub.findByIsLineUpChangedByCoTrainer", query = "SELECT f FROM FantasyClub f WHERE f.isLineUpChangedByCoTrainer = :isLineUpChangedByCoTrainer")})
 public class FantasyClub implements Serializable {
+    @OneToMany(mappedBy = "idFantasyClubSeller")
+    private List<Auction> auctionList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFantasyClubBidder")
+    private List<Bid> bidList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -393,6 +397,26 @@ public class FantasyClub implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.FantasyClub[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Auction> getAuctionList() {
+        return auctionList;
+    }
+
+    public void setAuctionList(List<Auction> auctionList) {
+        this.auctionList = auctionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Bid> getBidList() {
+        return bidList;
+    }
+
+    public void setBidList(List<Bid> bidList) {
+        this.bidList = bidList;
     }
     
 }
