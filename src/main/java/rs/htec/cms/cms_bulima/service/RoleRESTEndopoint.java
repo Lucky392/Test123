@@ -41,9 +41,10 @@ public class RoleRESTEndopoint {
      * "name": "admin",<br/> "id": 1 <br/>},<br/> {<br/> "name": "custom1",<br/>
      * "id": 2 <br/>}<br/> ]<br/>
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException
+     * @throws DataNotFoundException Example for this exception: <br/>{<br/>
+     * "errorMessage": "Requested page does not exist..",<br/> "errorCode": 404 <br/>}
      *
      */
     @GET

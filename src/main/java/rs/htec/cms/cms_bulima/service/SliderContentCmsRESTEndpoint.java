@@ -7,8 +7,6 @@ package rs.htec.cms.cms_bulima.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -19,7 +17,6 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -27,7 +24,6 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
-import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -74,12 +70,11 @@ public class SliderContentCmsRESTEndpoint {
      * 17:27:00.0",<br/>
      * "createDate": "2015-02-17 15:59:00.0"<br/> } ]
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param page number of page at which we search for sliders
      * @param limit number of sliders this method returns
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @GET
     @Path("/{page}/{limit}/")
@@ -101,11 +96,10 @@ public class SliderContentCmsRESTEndpoint {
      * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/>
      * "startShowingAt": "2015-03-18 16:30:00.0"<br/> }
      *
-     * @param token
-     * @param slider
+     * @param token is a header parameter for checking permission
+     * @param slider is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -127,10 +121,9 @@ public class SliderContentCmsRESTEndpoint {
      * retrieved from URL. If slider content with that index does not exist
      * method throws exception. Otherwise method remove that slider content.
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param id of News that should be deleted.
      * @return Response 200 OK
-     * @throws NotAuthorizedException
      */
     @DELETE
     @Path("/{id}")
@@ -152,12 +145,11 @@ public class SliderContentCmsRESTEndpoint {
      * "updateAt": "2015-03-18 16:13:41.0",<br/> "text": "",<br/>
      * "startShowingAt": "2015-03-18 16:30:00.0"<br/> }
      *
-     * @param token
-     * @param slider
+     * @param token is a header parameter for checking permission
+     * @param slider is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
