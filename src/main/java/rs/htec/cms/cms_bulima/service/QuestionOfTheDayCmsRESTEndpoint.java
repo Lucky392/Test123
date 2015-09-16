@@ -7,8 +7,6 @@ package rs.htec.cms.cms_bulima.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -29,7 +27,6 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
-import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -64,16 +61,16 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * benötigte er?",<br/> "id": "2",<br/> "correctAnswer": "5 Minuten",<br/>
      * "wrongAnswer1": "7 Minuten",<br/> "wrongAnswer2": "10 Minuten"<br/> } ]
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param page number of page at which we search for Question
      * @param limit number of Question method returns
-     * @param orderingColumn
-     * @param search
-     * @param minDate
-     * @param maxDate
+     * @param orderingColumn column name for ordering
+     * @param search word for searching question, correctAnswer, wrongAnswer1,
+     * wrongAnswer2, wrongAnswer3
+     * @param minDate is a start date for filtering
+     * @param maxDate is a end date for filtering
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @GET
     @Path("/")
@@ -144,33 +141,25 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * "correctAnswer": "Andreas Möller",<br/> "wrongAnswer1": "Rudi
      * Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
-     * @param token
-     * @param question
+     * @param token is a header parameter for checking permission
+     * @param question is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token);
-            if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
-                    && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
-                    && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token);
+        if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
+                && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
+                && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
 
-                helper.persistObject(em, question);
-                return Response.status(Status.CREATED).build();
+            helper.persistObject(em, question);
+            return Response.status(Status.CREATED).build();
 
-            } else {
-                throw new InputValidationException("Validation failed");
-            }
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException(
-                    "You are not logged in!");
+        } else {
+            throw new InputValidationException("Validation failed");
         }
     }
 
@@ -179,25 +168,18 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * Id is retrieved from URL. If question with that id does not exist method
      * throws exception. Otherwise method remove that question.
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param id of question that should be deleted.
      * @return Response 200 OK
-     * @throws NotAuthorizedException
      */
     @DELETE
     @Path("/{id}")
     public Response deleteQuestion(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.DELETE, token);
-            QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
-            helper.removeObject(em, question, id);
-            return Response.ok().build();
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
-        }
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.DELETE, token);
+        QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
+        helper.removeObject(em, question, id);
+        return Response.ok().build();
 
     }
 
@@ -209,12 +191,11 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * die \"Schutzschwalbe\"?",<br/> "correctAnswer": "Andreas Möller",<br/>
      * "wrongAnswer1": "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
-     * @param token
-     * @param question
+     * @param token is a header parameter for checking permission
+     * @param question is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -222,27 +203,21 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question
     ) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
-            QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
-            if (oldQuestion != null) {
-                if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
-                        && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
-                        && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
-                    helper.mergeObject(em, question);
-                } else {
-                    throw new InputValidationException("Validation failed");
-                }
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
+        QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
+        if (oldQuestion != null) {
+            if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
+                    && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
+                    && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
+                helper.mergeObject(em, question);
             } else {
-                throw new DataNotFoundException("Slider at index" + question.getId() + " does not exits");
+                throw new InputValidationException("Validation failed");
             }
-            return Response.ok("Successfully updated!").build();
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(QuestionOfTheDayCmsRESTEndpoint.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException(
-                    "You are not logged in!");
+        } else {
+            throw new DataNotFoundException("Slider at index" + question.getId() + " does not exits");
         }
+        return Response.ok("Successfully updated!").build();
+
     }
 
 }

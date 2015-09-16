@@ -7,8 +7,6 @@ package rs.htec.cms.cms_bulima.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -23,13 +21,11 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
-import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -49,7 +45,7 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /news<br>
+     * API for method: /news
      * This method returns JSON list of news at defined page with defined limit.
      * It produces APPLICATION_JSON media type. Example for JSON list for 1
      * page, 2 limit: <br/>
@@ -86,16 +82,16 @@ public class NewsCmsRESTEndpoint {
      * "newsType": "lineup",<br/> "createDate": "2015-07-20 15:33:48.0",<br/>
      * "idFantasyLeague": "null"<br/> } ] You can also
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param page number of page at which we search for News
      * @param limit number of News method returns
-     * @param orderingColumn
-     * @param search
-     * @param minDate
-     * @param maxDate
-     * @return {@link Response} Response {@link Status#OK} 200 OK with JSON body
+     * @param orderingColumn column name for ordering
+     * @param search word for searching newsType, newsHeadlineWeb,
+     * newsHeadlineMobile
+     * @param minDate is a start date for filtering
+     * @param maxDate is a end date for filtering
+     * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      *
      */
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
@@ -160,6 +156,12 @@ public class NewsCmsRESTEndpoint {
         return Response.ok().entity(helper.getJson(news)).build();
     }
 
+    /**
+     * This method return list of newsType in JSON
+     *
+     * @param token is a header parameter for checking permission
+     * @return Response 200 OK status with JSON body
+     */
     @GET
     @Path("/newsType")
     @Produces(MediaType.APPLICATION_JSON)
@@ -206,11 +208,10 @@ public class NewsCmsRESTEndpoint {
      * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
      * "newsType": "transfer" <br/>}
      *
-     * @param token token is header param
-     * @param news
+     * @param token is a header parameter for checking permission
+     * @param news is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException
      *
      */
     @PUT
@@ -236,10 +237,9 @@ public class NewsCmsRESTEndpoint {
      * retrieved from URL. If News with that index does not exist method throws
      * exception. Otherwise method remove that News.
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param id of News that should be deleted.
      * @return Response 200 OK
-     * @throws NotAuthorizedException
      */
     @DELETE
     @Path("/{id}")
@@ -260,42 +260,33 @@ public class NewsCmsRESTEndpoint {
      * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
      * "newsType": "transfer"<br/> }
      *
-     * @param token
-     * @param news
+     * @param token is a header parameter for checking permission
+     * @param news is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
-            News oldNews = em.find(News.class, news.getId());
-            if (oldNews
-                    != null) {
-                if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
-                        && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
-                        && validator.checkLenght(news.getNewsType(), 255, true)) {
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+        News oldNews = em.find(News.class, news.getId());
+        if (oldNews
+                != null) {
+            if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
+                    && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
+                    && validator.checkLenght(news.getNewsType(), 255, true)) {
 
-                    helper.mergeObject(em, news);
-                } else {
-                    throw new InputValidationException("Validation failed");
-                }
+                helper.mergeObject(em, news);
             } else {
-                throw new DataNotFoundException("Slider at index" + news.getId() + " does not exits");
+                throw new InputValidationException("Validation failed");
             }
-
-            return Response.ok(
-                    "Successfully updated!").build();
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException(
-                    "You are not logged in!");
+        } else {
+            throw new DataNotFoundException("Slider at index" + news.getId() + " does not exits");
         }
+
+        return Response.ok("Successfully updated!").build();
     }
 }

@@ -7,8 +7,6 @@ package rs.htec.cms.cms_bulima.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -26,7 +24,6 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
-import rs.htec.cms.cms_bulima.exception.NotAuthorizedException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -54,12 +51,11 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * "prizeMoney": "60000",<br/> "name": "Tag 4",<br/>
      * "id": "4",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> } ]
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param page number of page at which we search for prizes
      * @param limit number of prizes method returns
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @GET
     @Path("/{page}/{limit}")
@@ -75,32 +71,26 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/prize This method recieves JSON object, and
+     * API for this method is /rest/prize This method receives JSON object, and
      * put it in the base. Example for JSON: {<br/> "prizeMoney": "10000",<br/>
      * "name": "Tag 1" <br/>}
      *
-     * @param token
-     * @param prize
+     * @param token is a header parameter for checking permission
+     * @param prize is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException
-     * @throws NotAuthorizedException
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token);
-            if (validator.checkLenght(prize.getName(), 255, true)) {
-                prize.setCreateDate(new Date());
-                helper.persistObject(em, prize);
-                return Response.status(Response.Status.CREATED).build();
-            } else {
-                throw new InputValidationException("Validation failed");
-            }
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token);
+        if (validator.checkLenght(prize.getName(), 255, true)) {
+            prize.setCreateDate(new Date());
+            helper.persistObject(em, prize);
+            return Response.status(Response.Status.CREATED).build();
+        } else {
+            throw new InputValidationException("Validation failed");
         }
     }
 
@@ -109,25 +99,18 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * retrieved from URL. If prize with that index does not exist method throws
      * exception. Otherwise method remove that prize.
      *
-     * @param token
+     * @param token is a header parameter for checking permission
      * @param id of prize that should be deleted.
      * @return Response 200 OK
-     * @throws NotAuthorizedException
      */
     @DELETE
     @Path("/{id}")
     public Response deletePrize(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.DELETE, token);
-            QuestionOfTheDayPrize prize = em.find(QuestionOfTheDayPrize.class, id);
-            helper.removeObject(em, prize, id);
-            return Response.ok().build();
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
-        }
-
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.DELETE, token);
+        QuestionOfTheDayPrize prize = em.find(QuestionOfTheDayPrize.class, id);
+        helper.removeObject(em, prize, id);
+        return Response.ok().build();
     }
 
     /**
@@ -135,35 +118,29 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * update database. Example for JSON: { <br/>"prizeMoney": "10000",
      * <br/>"name": "Tag 1" <br/>}
      *
-     * @param token
-     * @param prize
+     * @param token is a header parameter for checking permission
+     * @param prize is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException
      * @throws DataNotFoundException
-     * @throws NotAuthorizedException
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
-            QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
-            if (oldPrize != null) {
-                if (validator.checkLenght(prize.getName(), 255, true)) {
-                    prize.setCreateDate(new Date());
-                    helper.mergeObject(em, prize);
-                    return Response.ok("Successfully updated!").build();
-                } else {
-                    throw new InputValidationException("Validation failed");
-                }
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
+        QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
+        if (oldPrize != null) {
+            if (validator.checkLenght(prize.getName(), 255, true)) {
+                prize.setCreateDate(new Date());
+                helper.mergeObject(em, prize);
+                return Response.ok("Successfully updated!").build();
             } else {
-                throw new DataNotFoundException("Prize at index" + prize.getId() + " does not exits");
+                throw new InputValidationException("Validation failed");
             }
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException("You are not logged in!");
+        } else {
+            throw new DataNotFoundException("Prize at index" + prize.getId() + " does not exits");
         }
     }
 }
