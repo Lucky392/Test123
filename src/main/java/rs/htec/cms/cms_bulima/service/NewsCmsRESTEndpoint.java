@@ -91,7 +91,9 @@ public class NewsCmsRESTEndpoint {
      * @param minDate is a start date for filtering
      * @param maxDate is a end date for filtering
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException
+     * @throws DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
      *
      */
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
@@ -211,7 +213,9 @@ public class NewsCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param news is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
-     * @throws InputValidationException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
      *
      */
     @PUT
@@ -263,8 +267,12 @@ public class NewsCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param news is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
-     * @throws InputValidationException
-     * @throws DataNotFoundException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
+     * @throws DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "News at index 54 does not exits",<br/>
+     * "errorCode": 404<br/> }
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -284,7 +292,7 @@ public class NewsCmsRESTEndpoint {
                 throw new InputValidationException("Validation failed");
             }
         } else {
-            throw new DataNotFoundException("Slider at index" + news.getId() + " does not exits");
+            throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
         }
 
         return Response.ok("Successfully updated!").build();

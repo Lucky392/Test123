@@ -70,7 +70,9 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * @param minDate is a start date for filtering
      * @param maxDate is a end date for filtering
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException
+     * @throws DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
      */
     @GET
     @Path("/")
@@ -144,7 +146,9 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param question is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
-     * @throws InputValidationException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -194,8 +198,12 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param question is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
-     * @throws InputValidationException
-     * @throws DataNotFoundException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
+     * @throws DataNotFoundException DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "Question at index 54 does not exits",<br/>
+     * "errorCode": 404<br/> }
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
@@ -214,7 +222,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
                 throw new InputValidationException("Validation failed");
             }
         } else {
-            throw new DataNotFoundException("Slider at index" + question.getId() + " does not exits");
+            throw new DataNotFoundException("Question at index" + question.getId() + " does not exits");
         }
         return Response.ok("Successfully updated!").build();
 

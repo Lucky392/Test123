@@ -74,7 +74,9 @@ public class SliderContentCmsRESTEndpoint {
      * @param page number of page at which we search for sliders
      * @param limit number of sliders this method returns
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException
+     * @throws DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "There is no sliders!",<br/>
+     * "errorCode": 404<br/> }
      */
     @GET
     @Path("/{page}/{limit}/")
@@ -83,7 +85,11 @@ public class SliderContentCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
         List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        return Response.ok().entity(helper.getJson(slider)).build();
+        if (slider.isEmpty()) {
+            return Response.ok().entity(helper.getJson(slider)).build();
+        } else {
+            throw new DataNotFoundException("There is no sliders!");
+        }
     }
 
     /**
@@ -99,7 +105,9 @@ public class SliderContentCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param slider is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
-     * @throws InputValidationException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -148,8 +156,12 @@ public class SliderContentCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param slider is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
-     * @throws InputValidationException
-     * @throws DataNotFoundException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
+     * @throws DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "Slider at index 54 does not exits",<br/>
+     * "errorCode": 404<br/> }
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)

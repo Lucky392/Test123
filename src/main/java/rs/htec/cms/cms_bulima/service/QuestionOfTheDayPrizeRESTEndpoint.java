@@ -55,7 +55,9 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * @param page number of page at which we search for prizes
      * @param limit number of prizes method returns
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException
+     * @throws DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
      */
     @GET
     @Path("/{page}/{limit}")
@@ -78,7 +80,9 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param prize is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
-     * @throws InputValidationException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
@@ -121,8 +125,12 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param prize is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
-     * @throws InputValidationException
-     * @throws DataNotFoundException
+     * @throws InputValidationException Example for this exception: <br/> {<br/>
+     * "errorMessage": "Validation failed",<br/>
+     * "errorCode": 400<br/> }
+     * @throws DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "Prize at index 54 does not exits",<br/>
+     * "errorCode": 404<br/> }
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
