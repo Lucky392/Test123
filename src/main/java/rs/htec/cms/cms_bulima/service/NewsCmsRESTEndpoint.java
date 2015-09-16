@@ -179,21 +179,21 @@ public class NewsCmsRESTEndpoint {
             @QueryParam("searchType") String searchType, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
 
         EntityManager em = helper.getEntityManager();
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
-            List<News> news;
-            Date d1 = new Date(minDate);
-            Date d2;
-            if (maxDate == 0) {
-                d2 = new Date(System.currentTimeMillis());
-            } else {
-                d2 = new Date(maxDate);
-            }
-            if (orderingColumn.startsWith("-")) {
-                orderingColumn = orderingColumn.substring(1) + " desc";
-            }
-            String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND n.newsType = :type ORDER BY " + orderingColumn;
-            news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("type", searchType).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-            return Response.ok().entity(helper.getJson(news)).build();
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        List<News> news;
+        Date d1 = new Date(minDate);
+        Date d2;
+        if (maxDate == 0) {
+            d2 = new Date(System.currentTimeMillis());
+        } else {
+            d2 = new Date(maxDate);
+        }
+        if (orderingColumn.startsWith("-")) {
+            orderingColumn = orderingColumn.substring(1) + " desc";
+        }
+        String query = "SELECT n FROM News n WHERE (n.newsDate BETWEEN :min AND :max) AND n.newsType = :type ORDER BY " + orderingColumn;
+        news = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("type", searchType).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        return Response.ok().entity(helper.getJson(news)).build();
     }
 
     /**
@@ -217,24 +217,17 @@ public class NewsCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
-            news.setCreateDate(new Date());
-            if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
-                    && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
-                    && validator.checkLenght(news.getNewsType(), 255, true)) {
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+        news.setCreateDate(new Date());
+        if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
+                && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
+                && validator.checkLenght(news.getNewsType(), 255, true)) {
 
-                helper.persistObject(em, news);
-                return Response.status(Response.Status.CREATED).build();
-            } else {
-                throw new InputValidationException("Validation failed");
+            helper.persistObject(em, news);
+            return Response.status(Response.Status.CREATED).build();
+        } else {
+            throw new InputValidationException("Validation failed");
 
-            }
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException(
-                    "You are not logged in!");
         }
     }
 
@@ -252,19 +245,10 @@ public class NewsCmsRESTEndpoint {
     @Path("/{id}")
     public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        try {
-            helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
-            News news = em.find(News.class, id);
-            helper.removeObject(em, news, id);
-
-            return Response.ok()
-                    .build();
-        } catch (IllegalArgumentException ex) {
-            Logger.getLogger(NewsCmsRESTEndpoint.class
-                    .getName()).log(Level.SEVERE, null, ex);
-            throw new NotAuthorizedException(
-                    "You are not logged in!");
-        }
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
+        News news = em.find(News.class, id);
+        helper.removeObject(em, news, id);
+        return Response.ok().build();
     }
 
     /**
