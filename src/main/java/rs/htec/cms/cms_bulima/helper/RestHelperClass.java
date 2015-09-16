@@ -67,12 +67,16 @@ public class RestHelperClass {
     }
 
     public void checkUserAndPrivileges(EntityManager em, long tableId, MethodConstants method, String token) {
-        CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
-        if (user.getToken() != null && !user.getToken().equals("")) {
-            if (!havePrivilege(em, user, tableId, method)) {
-                throw new ForbbidenException("You don't have permission to search data");
+        try {
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
+            if (user.getToken() != null && !user.getToken().equals("")) {
+                if (!havePrivilege(em, user, tableId, method)) {
+                    throw new ForbbidenException("You don't have permission to search data");
+                }
+            } else {
+                throw new NotAuthorizedException("You are not logged in!");
             }
-        } else {
+        } catch (NullPointerException | ArrayIndexOutOfBoundsException | IllegalArgumentException ex) {
             throw new NotAuthorizedException("You are not logged in!");
         }
     }
@@ -98,7 +102,7 @@ public class RestHelperClass {
                 return false;
         }
     }
-       
+
     public void persistObject(EntityManager em, Object o) {
         em.getTransaction().begin();
         em.persist(o);
@@ -115,9 +119,9 @@ public class RestHelperClass {
     }
 
     public void mergeObject(EntityManager em, Object o) {
-            em.getTransaction().begin();
-            em.merge(o);
-            em.getTransaction().commit();
+        em.getTransaction().begin();
+        em.merge(o);
+        em.getTransaction().commit();
     }
-    
+
 }
