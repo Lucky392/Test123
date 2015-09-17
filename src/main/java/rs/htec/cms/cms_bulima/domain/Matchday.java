@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -47,6 +48,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "Matchday.findByIsCalculated", query = "SELECT m FROM Matchday m WHERE m.isCalculated = :isCalculated"),
     @NamedQuery(name = "Matchday.findByIsCompleted", query = "SELECT m FROM Matchday m WHERE m.isCompleted = :isCompleted")})
 public class Matchday implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchday")
+    private List<FantasyClubValuation> fantasyClubValuationList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -221,6 +224,16 @@ public class Matchday implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubValuation> getFantasyClubValuationList() {
+        return fantasyClubValuationList;
+    }
+
+    public void setFantasyClubValuationList(List<FantasyClubValuation> fantasyClubValuationList) {
+        this.fantasyClubValuationList = fantasyClubValuationList;
     }
     
 }

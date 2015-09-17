@@ -47,6 +47,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyManager.findByCreateDate", query = "SELECT f FROM FantasyManager f WHERE f.createDate = :createDate"),
     @NamedQuery(name = "FantasyManager.findByProfilePhotoUrl", query = "SELECT f FROM FantasyManager f WHERE f.profilePhotoUrl = :profilePhotoUrl")})
 public class FantasyManager implements Serializable {
+    @OneToMany(mappedBy = "idFantasyManager")
+    private List<PremiumHistory> premiumHistoryList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -209,6 +211,16 @@ public class FantasyManager implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<PremiumHistory> getPremiumHistoryList() {
+        return premiumHistoryList;
+    }
+
+    public void setPremiumHistoryList(List<PremiumHistory> premiumHistoryList) {
+        this.premiumHistoryList = premiumHistoryList;
     }
     
 }

@@ -20,7 +20,9 @@ import rs.htec.cms.cms_bulima.domain.Auction;
 import rs.htec.cms.cms_bulima.domain.Bid;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory;
+import rs.htec.cms.cms_bulima.domain.FantasyClubValuation;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
+import rs.htec.cms.cms_bulima.domain.PremiumHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
@@ -260,8 +262,8 @@ public class StatisticRESTEndPoint {
      * @param id is id of Fantasy Club
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for this exception:<br/> {<br/>
-     * "errorMessage": "There is no credit history for this club!",<br/> "errorCode":
-     * 404 <br/>}
+     * "errorMessage": "There is no credit history for this club!",<br/>
+     * "errorCode": 404 <br/>}
      */
     @GET
     @Path("creditHistory/{id}")
@@ -276,6 +278,167 @@ public class StatisticRESTEndPoint {
             throw new DataNotFoundException("There is no credit history for this club!");
         } else {
             return Response.ok().entity(helper.getJson(creditHistory)).build();
+        }
+    }
+
+    /**
+     * This method return JSON list of Valuation for one League in one
+     * Matchday.It produces APPLICATION_JSON media type. Example for JSON
+     * list:<br/>
+     * [ { <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff": "0",<br/>
+     * "creditDiff": "0",<br/>
+     * "marketValue": "8574147",<br/> "positionUpdateAt": "2015-07-28
+     * 10:16:28.0",<br/>
+     * "positionDiff": "9",<br/> "blmPoints": "0",<br/> "blmPointsUpdateAt":
+     * "2015-07-28 10:16:28.0",<br/> "idFantasyClub": "24036",<br/>
+     * "idMatchday": "1",<br/>
+     * "winMatchdaysUpdateAt": "2015-07-28 10:16:28.0",<br/> "id": "9",<br/>
+     * "position": "9",<br/> "marketValueUpdateAt": "2015-07-28
+     * 10:16:28.0",<br/> "createDate": "2015-07-28 10:16:28.0"<br/> },<br/>
+     * {<br/> "winMatchdays": "0.0",<br/> "blmPointsDiff": "13",<br/>
+     * "creditDiff": "39000",<br/> "marketValue": "13612245",<br/>
+     * "positionUpdateAt": "2015-07-28 10:16:28.0",<br/> "positionDiff":
+     * "3",<br/>
+     * "blmPoints": "13",<br/> "blmPointsUpdateAt": "2015-07-28
+     * 10:16:28.0",<br/>
+     * "idFantasyClub": "27288",<br/> "idMatchday": "1",<br/>
+     * "winMatchdaysUpdateAt": "2015-07-28 10:16:28.0",<br/> "id": "3",<br/>
+     * "position": "3",<br/>
+     * "marketValueUpdateAt": "2015-07-28 10:16:28.0",<br/> "createDate":
+     * "2015-07-28 10:16:28.0"<br/> } ]
+     *
+     * @param token is a header parameter for checking permission
+     * @param idLeague is id of Fantasy League
+     * @param idMatchday is id of Matchday
+     * @return Response 200 OK with JSON body
+     * @throws DataNotFoundException Example for this exception:<br/> {<br/>
+     * "errorMessage": "There is no valuation for clubs in this league!",<br/>
+     * "errorCode": 404 <br/>}
+     */
+    @GET
+    @Path("valuationLeague/{idLeague}/{idMatchday}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getLeagueValuation(@HeaderParam("authorization") String token, @PathParam("idLeague") long idLeague, @PathParam("idMatchday") long idMatchday) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<FantasyClubValuation> valuation;
+        String query = "SELECT fcv FROM FantasyClubValuation fcv JOIN fcv.idFantasyClub fc JOIN fc.idFantasyLeague fl WHERE fl.id = " + idLeague + " AND fcv.idMatchday.id = " + idMatchday;
+        valuation = em.createQuery(query).getResultList();
+        if (valuation.isEmpty()) {
+            throw new DataNotFoundException("There is no valuation for clubs in this league!");
+        } else {
+            return Response.ok().entity(helper.getJson(valuation)).build();
+        }
+    }
+
+    /**
+     * This method return JSON object of Valuation for one Club in one
+     * Matchday.It produces APPLICATION_JSON media type. Example for JSON
+     * object:<br/> [ { <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff":
+     * "0",<br/> "creditDiff": "0",<br/> "marketValue": "8574147",<br/>
+     * "positionUpdateAt": "2015-07-28 10:16:28.0",<br/> "positionDiff":
+     * "9",<br/> "blmPoints": "0",<br/> "blmPointsUpdateAt": "2015-07-28
+     * 10:16:28.0",<br/> "idFantasyClub": "24036",<br/> "idMatchday": "1",<br/>
+     * "winMatchdaysUpdateAt": "2015-07-28 10:16:28.0",<br/> "id": "9",<br/>
+     * "position": "9",<br/> "marketValueUpdateAt": "2015-07-28
+     * 10:16:28.0",<br/> "createDate": "2015-07-28 10:16:28.0"<br/> } ]
+     *
+     * @param token is a header parameter for checking permission
+     * @param idClub is id of Fantasy Club
+     * @param idMatchday is id of Matchday
+     * @return Response 200 OK with JSON body
+     * @throws DataNotFoundException Example for this exception:<br/> {<br/>
+     * "errorMessage": "There is no valuation for this club!",<br/>
+     * "errorCode": 404 <br/>}
+     */
+    @GET
+    @Path("valuationClub/{idClub}/{idMatchday}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getClubValuation(@HeaderParam("authorization") String token, @PathParam("idClub") long idClub, @PathParam("idMatchday") long idMatchday) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<FantasyClubValuation> fcv;
+        String query = "SELECT fcv FROM FantasyClubValuation fcv WHERE fcv.idFantasyClub.id = " + idClub + " AND fcv.idMatchday.id = " + idMatchday;
+        fcv = em.createQuery(query).getResultList();
+        if (fcv.isEmpty()) {
+            throw new DataNotFoundException("There is no valuation for this club!");
+        } else {
+            return Response.ok().entity(helper.getJson(fcv)).build();
+        }
+    }
+
+    /**
+     * This method return JSON list of Premium History for one User. It produces
+     * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
+     * <br/>"idUser": "54483",<br/> "charges": "1",<br/> "idFantasyClub":
+     * "52162",<br/> "idReward": "null",<br/>
+     * "premiumCurrency": "25",<br/> "updatedPremiumCurrency": "null",<br/>
+     * "idPremiumAction": "8",<br/> "idFantasyManager": "51978",<br/>
+     * "idPremiumItem": "4",<br/> "updatedCharges": "1",<br/> "id": "989",<br/>
+     * "createDate": "2015-07-22 11:55:23.0"<br/> },<br/> { <br/>"idUser":
+     * "54483",<br/> "charges": "1",<br/> "idFantasyClub": "52162",<br/>
+     * "idReward": "null",<br/> "premiumCurrency": "25",<br/>
+     * "updatedPremiumCurrency": "null",<br/> "idPremiumAction": "7",<br/>
+     * "idFantasyManager": "51978",<br/> "idPremiumItem": "null",<br/>
+     * "updatedCharges": "1",<br/> "id": "78432",<br/> "createDate": "2015-07-31
+     * 07:44:19.0"<br/> } ]
+     *
+     * @param token is a header parameter for checking permission
+     * @param email is email for what user you want Fantasy Managers
+     * @return Response 200 OK with JSON body
+     * @throws DataNotFoundException Example for this exception:<br/> {<br/>
+     * "errorMessage": "There is no Premium History for this user!",<br/>
+     * "errorCode": 404 <br/>}
+     */
+    @GET
+    @Path("premiumHistoryUser/{email}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPremiumHistoryUser(@HeaderParam("authorization") String token, @PathParam("email") String email) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<PremiumHistory> history;
+        String query = "SELECT ph FROM PremiumHistory ph JOIN ph.idUser u WHERE u.email = '" + email + "'";
+        history = em.createQuery(query).getResultList();
+        if (history.isEmpty()) {
+            throw new DataNotFoundException("There is no Premium History for this user!");
+        } else {
+            return Response.ok().entity(helper.getJson(history)).build();
+        }
+    }
+
+    /**
+     * This method return JSON list of Premium History for one Club. It produces
+     * APPLICATION_JSON media type. Example for JSON object: <br/>[ { <br/>"idUser":
+     * "29867",<br/> "charges": "1",<br/> "idFantasyClub": "27434",<br/> "idReward": "null",<br/>
+     * "premiumCurrency": "158",<br/> "updatedPremiumCurrency": "11",<br/>
+     * "idPremiumAction": "1",<br/> "idFantasyManager": "27805",<br/> "idPremiumItem":
+     * "null",<br/> "updatedCharges": "1",<br/> "id": "1",<br/> "createDate": "2015-07-20
+     * 15:32:35.0"<br/> },<br/> {<br/> "idUser": "29867",<br/> "charges": "1",<br/> "idFantasyClub":
+     * "27434",<br/> "idReward": "null",<br/> "premiumCurrency": "112",<br/>
+     * "updatedPremiumCurrency": "11",<br/> "idPremiumAction": "1",<br/>
+     * "idFantasyManager": "27805",<br/> "idPremiumItem": "null",<br/> "updatedCharges":
+     * "1",<br/> "id": "305",<br/> "createDate": "2015-07-21 14:01:26.0"<br/> } ]
+     *
+     * @param token is a header parameter for checking permission
+     * @param idClub is id of Fantasy Club
+     * @return Response 200 OK with JSON body
+     * @throws DataNotFoundException Example for this exception:<br/> {<br/>
+     * "errorMessage": "There is no Premium History for this Club!",<br/>
+     * "errorCode": 404 <br/>}
+     */
+    @GET
+    @Path("premiumHistoryClub/{idClub}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPremiumHistoryClub(@HeaderParam("authorization") String token, @PathParam("idClub") long idClub) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<PremiumHistory> history;
+        String query = "SELECT ph FROM PremiumHistory ph WHERE ph.idFantasyClub.id = " + idClub;
+        history = em.createQuery(query).getResultList();
+        if (history.isEmpty()) {
+            throw new DataNotFoundException("There is no Premium History for this Club!");
+        } else {
+            return Response.ok().entity(helper.getJson(history)).build();
         }
     }
 }

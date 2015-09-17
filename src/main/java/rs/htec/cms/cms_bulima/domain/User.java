@@ -52,6 +52,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "User.findByPayingUser", query = "SELECT u FROM User u WHERE u.payingUser = :payingUser"),
     @NamedQuery(name = "User.findByPremiumStatusActiveTimestamp", query = "SELECT u FROM User u WHERE u.premiumStatusActiveTimestamp = :premiumStatusActiveTimestamp")})
 public class User implements Serializable {
+    @OneToMany(mappedBy = "idUser")
+    private List<PremiumHistory> premiumHistoryList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -281,6 +283,16 @@ public class User implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<PremiumHistory> getPremiumHistoryList() {
+        return premiumHistoryList;
+    }
+
+    public void setPremiumHistoryList(List<PremiumHistory> premiumHistoryList) {
+        this.premiumHistoryList = premiumHistoryList;
     }
     
 }

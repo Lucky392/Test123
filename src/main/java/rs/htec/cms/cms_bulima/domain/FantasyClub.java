@@ -58,6 +58,10 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyClub.findByAmountSubstituteBenchSlots", query = "SELECT f FROM FantasyClub f WHERE f.amountSubstituteBenchSlots = :amountSubstituteBenchSlots"),
     @NamedQuery(name = "FantasyClub.findByIsLineUpChangedByCoTrainer", query = "SELECT f FROM FantasyClub f WHERE f.isLineUpChangedByCoTrainer = :isLineUpChangedByCoTrainer")})
 public class FantasyClub implements Serializable {
+    @OneToMany(mappedBy = "idFantasyClub")
+    private List<PremiumHistory> premiumHistoryList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFantasyClub")
+    private List<FantasyClubValuation> fantasyClubValuationList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFantasyClub")
     private List<FantasyClubCreditHistory> fantasyClubCreditHistoryList;
     @OneToMany(mappedBy = "idFantasyClubSeller")
@@ -429,6 +433,26 @@ public class FantasyClub implements Serializable {
 
     public void setFantasyClubCreditHistoryList(List<FantasyClubCreditHistory> fantasyClubCreditHistoryList) {
         this.fantasyClubCreditHistoryList = fantasyClubCreditHistoryList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubValuation> getFantasyClubValuationList() {
+        return fantasyClubValuationList;
+    }
+
+    public void setFantasyClubValuationList(List<FantasyClubValuation> fantasyClubValuationList) {
+        this.fantasyClubValuationList = fantasyClubValuationList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<PremiumHistory> getPremiumHistoryList() {
+        return premiumHistoryList;
+    }
+
+    public void setPremiumHistoryList(List<PremiumHistory> premiumHistoryList) {
+        this.premiumHistoryList = premiumHistoryList;
     }
     
 }
