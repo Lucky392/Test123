@@ -106,21 +106,21 @@ public class NewsCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         List<News> news;
-        StringBuilder queryy = new StringBuilder("SELECT n FROM News n ");
+        StringBuilder query = new StringBuilder("SELECT n FROM News n ");
         
         if (minDate != 0 && maxDate != 0) {
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            queryy.append("WHERE n.newsDate BETWEEN ").append(d1).append(" AND ").append(d2);
+            query.append("WHERE n.newsDate BETWEEN ").append(d1).append(" AND ").append(d2);
         }
 
         if (newsType != null) {
-            queryy.append(minDate != 0 ? " AND" : "WHERE").append(" n.newsType = '").append(newsType).append("'");
+            query.append(minDate != 0 ? " AND" : "WHERE").append(" n.newsType = '").append(newsType).append("'");
         }
         
         if (search != null) {
             search = "%" + search + "%";
-            queryy.append(minDate != 0 || newsType != null ? " AND" : "WHERE")
+            query.append(minDate != 0 || newsType != null ? " AND" : "WHERE")
                     .append(" n.newsHeadlineWeb LIKE '")
                     .append(search)
                     .append("' OR n.newsHeadlineMobile LIKE '")
@@ -133,10 +133,10 @@ public class NewsCmsRESTEndpoint {
             if (orderingColumn.startsWith("-")) {
                 orderingColumn = orderingColumn.substring(1) + " desc";
             }
-            queryy.append(" ORDER BY ").append(orderingColumn);
+            query.append(" ORDER BY ").append(orderingColumn);
         }
-        System.out.println("QUERY " + queryy);
-        news = em.createQuery(queryy.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        System.out.println("QUERY " + query);
+        news = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
 
         if (news == null || news.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");

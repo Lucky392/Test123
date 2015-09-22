@@ -70,7 +70,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * @param minDate is a start date for filtering
      * @param maxDate is a end date for filtering
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
      * "errorMessage": "Requested page does not exist..",<br/>
      * "errorCode": 404<br/> }
      */
@@ -84,51 +85,36 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
 
         List<QuestionOfTheDay> questions = null;
-        if (minDate != 0 && maxDate != 0 && search != null && orderingColumn != null) {
+
+        StringBuilder query = new StringBuilder("SELECT q FROM QuestionOfTheDay q ");
+
+        if (minDate != 0 && maxDate != 0) {
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            search = "%" + search + "%";
-            if (orderingColumn.startsWith("-")) {
-                orderingColumn = orderingColumn.substring(1) + " desc";
-            }
-            String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) AND (q.question LIKE :searchedWord OR q.correctAnswer LIKE :searchedWord OR q.wrongAnswer1 LIKE :searchedWord OR q.wrongAnswer2 LIKE :searchedWord OR q.wrongAnswer3 LIKE :searchedWord) ORDER BY " + orderingColumn;
-            questions = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else if (minDate != 0 && maxDate != 0 && search != null) {
-            Date d1 = new Date(minDate);
-            Date d2 = new Date(maxDate);
-            search = "%" + search + "%";
-            questions = em.createNamedQuery("QuestionOfTheDay.findAllByLikeBetweenDate").setParameter("min", d1).setParameter("max", d2).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else if (minDate != 0 && maxDate != 0 && orderingColumn != null) {
-            Date d1 = new Date(minDate);
-            Date d2 = new Date(maxDate);
-            if (orderingColumn.startsWith("-")) {
-                orderingColumn = orderingColumn.substring(1) + " desc";
-            }
-            String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) ORDER BY " + orderingColumn;
-            questions = em.createQuery(query).setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else if (minDate != 0 && maxDate != 0) {
-            Date d1 = new Date(minDate);
-            Date d2 = new Date(maxDate);
-            questions = em.createNamedQuery("QuestionOfTheDay.findByQuestionsBetweenDate").setParameter("min", d1).setParameter("max", d2).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else if (search != null && orderingColumn != null) {
-            search = "%" + search + "%";
-            if (orderingColumn.startsWith("-")) {
-                orderingColumn = orderingColumn.substring(1) + " desc";
-            }
-            String query = "SELECT q FROM QuestionOfTheDay q WHERE (q.date BETWEEN :min AND :max) ORDER BY " + orderingColumn;
-            questions = em.createQuery(query).setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else if (search != null) {
-            search = "%" + search + "%";
-            questions = em.createNamedQuery("QuestionOfTheDay.findAllQuestionsByLike").setParameter("searchedWord", search).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else if (orderingColumn != null) {
-            if (orderingColumn.startsWith("-")) {
-                orderingColumn = orderingColumn.substring(1) + " desc";
-            }
-            String query = "SELECT q FROM QuestionOfTheDay q WHERE ORDER BY " + orderingColumn;
-            questions = em.createQuery(query).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        } else {
-            questions = em.createNamedQuery("QuestionOfTheDay.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+            query.append("WHERE (q.date BETWEEN ").append(d1).append(" AND ").append(d2);
         }
+
+        if (search != null) {
+            search = "%" + search + "%";
+            query.append(minDate != 0 ? " AND" : "WHERE")
+                    .append(" q.question LIKE '")
+                    .append(search)
+                    .append("' OR q.correctAnswer LIKE '")
+                    .append(search).append("' OR q.wrongAnswer1 LIKE '")
+                    .append(search).append("' OR n.wrongAnswer2 LIKE '")
+                    .append(search).append("' OR n.wrongAnswer3 LIKE '")
+                    .append(search).append("'");
+        }
+
+        if (orderingColumn != null) {
+            if (orderingColumn.startsWith("-")) {
+                orderingColumn = orderingColumn.substring(1) + " desc";
+            }
+            query.append(" ORDER BY ").append(orderingColumn);
+        }
+        System.out.println("QUERY " + query);
+        questions = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+
         if (questions == null || questions.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
@@ -201,7 +187,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
-     * @throws DataNotFoundException DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * @throws DataNotFoundException DataNotFoundException DataNotFoundException
+     * Example for exception:<br/> {<br/>
      * "errorMessage": "Question at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
