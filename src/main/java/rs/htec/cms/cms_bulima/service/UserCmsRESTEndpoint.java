@@ -83,8 +83,10 @@ public class UserCmsRESTEndpoint {
     @POST
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response logIn(@HeaderParam("authorization") String authorization) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response logIn(@HeaderParam("authorization") String authorization, String branko) {
         String[] userPass;
+        System.out.println("Blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         EntityManager em = helper.getEntityManager();
         try {
             userPass = tokenHelper.decodeBasicAuth(authorization);
@@ -111,7 +113,7 @@ public class UserCmsRESTEndpoint {
      * authorization parameter from the HTTP header, it checks whether the user
      * logged in, and if so, logging it out.
      *
-     * @param token HTTP header athorization token.
+     * @param token HTTP header authorization token.
      * @return Response 200 OK.
      */
     @POST

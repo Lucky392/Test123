@@ -21,13 +21,37 @@
         <servlet-name>Jersey REST Service</servlet-name>
         <url-pattern>/rest/*</url-pattern>
     </servlet-mapping>
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>org.apache.catalina.filters.CorsFilter</filter-class>
+        <init-param>
+            <param-name>cors.allowed.headers</param-name>
+            <param-value>
+                Content-Type,
+                X-Requested-With,
+                accept,
+                Origin,
+                Access-Control-Request-Method,
+                Access-Control-Request-Headers,
+                Authorization,
+                Access-Control-Allow-Origin</param-value>
+        </init-param> 
+        <init-param>
+            <param-name>cors.allowed.origins</param-name>
+            <param-value>*</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/rest/*</url-pattern>
+    </filter-mapping>
     
-<!--    <security-role id="role_admin">
+    <!--    <security-role id="role_admin">
         <description>This is role 1 (Admin)</description>
         <role-name>admin</role-name>
     </security-role>-->
     
-<!--    <security-constraint>
+    <!--    <security-constraint>
         <web-resource-collection>
             <web-resource-name>BasicSecurityExample</web-resource-name>
             <url-pattern>/rest/news/nesto</url-pattern>
