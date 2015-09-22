@@ -114,8 +114,10 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyManager> fm;
-        String query = "SELECT f FROM FantasyManager f JOIN f.idUser u WHERE u.email = '" + email + "'";
-        fm = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyManager f JOIN f.idUser u WHERE u.email = ");
+        query.append("'").append(email).append("'");
+//        String qudery = "SELECT f FROM FantasyManager f JOIN f.idUser u WHERE u.email = '" + email + "'";
+        fm = em.createQuery(query.toString()).getResultList();
         if (fm.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Managers for this user!");
         } else {
@@ -207,8 +209,10 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<Auction> auctions;
-        String query = "SELECT a FROM Auction a WHERE a.idFantasyClubSeller.id = " + id;
-        auctions = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT a FROM Auction a WHERE a.idFantasyClubSeller.id = ");
+        query.append(id);
+//        String query = "SELECT a FROM Auction a WHERE a.idFantasyClubSeller.id = " + id;
+        auctions = em.createQuery(query.toString()).getResultList();
         if (auctions.isEmpty()) {
             throw new DataNotFoundException("There is no Auction for this Club!");
         } else {
@@ -281,8 +285,10 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<Bid> bids;
-        String query = "SELECT b FROM Bid b WHERE b.idAuction.id = " + id;
-        bids = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT b FROM Bid b WHERE b.idAuction.id = ");
+        query.append(id);
+//        String query = "SELECT b FROM Bid b WHERE b.idAuction.id = " + id;
+        bids = em.createQuery(query.toString()).getResultList();
         if (bids.isEmpty()) {
             throw new DataNotFoundException("There is no Bids for this Auction!");
         } else {
@@ -367,8 +373,10 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClubValuation> valuation;
-        String query = "SELECT fcv FROM FantasyClubValuation fcv JOIN fcv.idFantasyClub fc JOIN fc.idFantasyLeague fl WHERE fl.id = " + idLeague + " AND fcv.idMatchday.id = " + idMatchday;
-        valuation = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT fcv FROM FantasyClubValuation fcv JOIN fcv.idFantasyClub fc JOIN fc.idFantasyLeague fl WHERE fl.id = ");
+        query.append(idLeague).append(" AND fcv.idMatchday.id = ").append(idMatchday);
+//        String query = "SELECT fcv FROM FantasyClubValuation fcv JOIN fcv.idFantasyClub fc JOIN fc.idFantasyLeague fl WHERE fl.id = " + idLeague + " AND fcv.idMatchday.id = " + idMatchday;
+        valuation = em.createQuery(query.toString()).getResultList();
         if (valuation.isEmpty()) {
             throw new DataNotFoundException("There is no valuation for clubs in this league!");
         } else {
@@ -443,8 +451,10 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<PremiumHistory> history;
-        String query = "SELECT ph FROM PremiumHistory ph JOIN ph.idUser u WHERE u.email = '" + email + "'";
-        history = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT ph FROM PremiumHistory ph JOIN ph.idUser u WHERE u.email = '");
+        query.append(email).append("'");
+//        String query = "SELECT ph FROM PremiumHistory ph JOIN ph.idUser u WHERE u.email = '" + email + "'";
+        history = em.createQuery(query.toString()).getResultList();
         if (history.isEmpty()) {
             throw new DataNotFoundException("There is no Premium History for this user!");
         } else {
