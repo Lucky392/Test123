@@ -91,7 +91,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         if (minDate != 0 && maxDate != 0) {
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append("WHERE (q.date BETWEEN ").append(d1).append(" AND ").append(d2);
+            query.append("WHERE q.date BETWEEN '").append(d1).append("' AND '").append(d2).append("'");
         }
 
         if (search != null) {
@@ -114,7 +114,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         }
         System.out.println("QUERY " + query);
         questions = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-
+        System.out.println(query);
         if (questions == null || questions.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }

@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -87,8 +88,9 @@ public class NewsCmsRESTEndpoint {
      * @param orderingColumn column name for ordering
      * @param search word for searching newsType, newsHeadlineWeb,
      * newsHeadlineMobile
-     * @param minDate is a start date for filtering
-     * @param maxDate is a end date for filtering
+     * @param minDate is a start date for filtering time in millis
+     * @param maxDate is a end date for filtering time in millis
+     * @param newsType type of News
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -109,9 +111,10 @@ public class NewsCmsRESTEndpoint {
         StringBuilder query = new StringBuilder("SELECT n FROM News n ");
         
         if (minDate != 0 && maxDate != 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append("WHERE n.newsDate BETWEEN ").append(d1).append(" AND ").append(d2);
+            query.append("WHERE n.newsDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
         }
 
         if (newsType != null) {
@@ -135,9 +138,8 @@ public class NewsCmsRESTEndpoint {
             }
             query.append(" ORDER BY ").append(orderingColumn);
         }
-        System.out.println("QUERY " + query);
         news = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-
+        System.out.println(query);
         if (news == null || news.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
