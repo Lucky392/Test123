@@ -33,7 +33,7 @@ public class RoleRESTEndopoint {
     }
 
     /**
-     * API for method: /role<br/>
+     * API for method: .../rest/role<br/>
      * This method gets authorization token from HTTP header return roles in
      * JSON format. Example for JSON:<br/>
      * [<br/>
@@ -44,7 +44,8 @@ public class RoleRESTEndopoint {
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for this exception: <br/>{<br/>
-     * "errorMessage": "Requested page does not exist..",<br/> "errorCode": 404 <br/>}
+     * "errorMessage": "Requested page does not exist..",<br/> "errorCode": 404
+     * <br/>}
      *
      */
     @GET

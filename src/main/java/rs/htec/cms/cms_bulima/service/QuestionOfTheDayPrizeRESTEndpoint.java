@@ -43,8 +43,8 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for method: /news/{page}/{limit} This method returns JSON list of
-     * questions at defined page with defined limit. It produces
+     * API for method: .../rest/prize/{page}/{limit} This method returns JSON
+     * list of questions at defined page with defined limit. It produces
      * APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit:
      * <br/>[ {<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id":
      * "3",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> },<br/> {<br/>
@@ -73,8 +73,9 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/prize This method receives JSON object, and
-     * put it in the base. Example for JSON: {<br/> "prizeMoney": "10000",<br/>
+     * API for this method is .../rest/prize This method receives JSON object,
+     * and put it in the base. Example for JSON: {<br/> "prizeMoney":
+     * "10000",<br/>
      * "name": "Tag 1" <br/>}
      *
      * @param token is a header parameter for checking permission
@@ -99,9 +100,9 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for method: /prize/{id} This method find prize with defined id. Id is
-     * retrieved from URL. If prize with that index does not exist method throws
-     * exception. Otherwise method remove that prize.
+     * API for method: .../rest/prize/{id} This method find prize with defined
+     * id. Id is retrieved from URL. If prize with that index does not exist
+     * method throws exception. Otherwise method remove that prize.
      *
      * @param token is a header parameter for checking permission
      * @param id of prize that should be deleted.
@@ -118,8 +119,8 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/prize This method recieves JSON object, and
-     * update database. Example for JSON: { <br/>"prizeMoney": "10000",
+     * API for this method is .../rest/prize This method recieves JSON object,
+     * and update database. Example for JSON: { <br/>"prizeMoney": "10000",
      * <br/>"name": "Tag 1" <br/>}
      *
      * @param token is a header parameter for checking permission
@@ -128,7 +129,8 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
-     * @throws DataNotFoundException DataNotFoundException Example for exception:<br/> {<br/>
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
      * "errorMessage": "Prize at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */

@@ -45,8 +45,8 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * This method return list of users in JSON object. Example for JSON: <br/>[
-     * {<br/>
+     * API for this method: .../rest/user This method return list of users in
+     * JSON object. Example for JSON: <br/>[ {<br/>
      * "idRole": {<br/> "name": "admin",<br/> "id": 1 <br/>}, <br/>"userName":
      * "marko", <br/>"token": "TOKEN##1",<br/> "password": "makic",<br/> "id":
      * 1<br/> } ]
@@ -68,7 +68,7 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /rest/user/login Method that accepts HTTP Basic
+     * API for method: .../rest/user/login Method that accepts HTTP Basic
      * authentication from HTTP header, checks in the database whether the user
      * exists and if so, returns custom token that in future calls should be put
      * in the authorization parameter of the HTTP header. Example for JSON:
@@ -107,7 +107,7 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /rest/user/logout The method, which receives
+     * API for method: .../rest/user/logout The method, which receives
      * authorization parameter from the HTTP header, it checks whether the user
      * logged in, and if so, logging it out.
      *
@@ -125,6 +125,8 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
+     * API for this method: .../rest/user This method recieves JSON object, and
+     * put him in the base.
      *
      * @param token is a header parameter for checking permission
      * @param user is object that Jackson convert from JSON

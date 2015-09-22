@@ -46,10 +46,13 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /question/{page}/{limit} This method returns JSON list of
-     * questions at defined page with defined limit. It produces
-     * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
-     * limit:<br/> [ {<br/> "date": "2015-07-20 00:00:00.0",<br/>
+     * API for method:
+     * .../rest/question?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE
+     * This method returns JSON list of questions.Default value for page is 1,
+     * and for limit is 10. You can put your values for page, limit,
+     * orderColumn, searchWord, start and end date. It produces APPLICATION_JSON
+     * media type. Example for JSON list for 1 page, 2 limit:<br/> [ {<br/>
+     * "date": "2015-07-20 00:00:00.0",<br/>
      * "wrongAnswer3": "Mehmet Scholl",<br/>
      * "question": "Wer erzielte das entscheidende Tor für den FC Bayern München
      * in der Saison 200/01, als der FC Schalke 04 für ein paar Minuten Meister
@@ -122,7 +125,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/question This method recieves JSON object,
+     * API for this method is .../rest/question This method recieves JSON object,
      * and put it in the base. Example for JSON: {<br/> "date":
      * "2015-07-25T00:00:00.0",<br/> "wrongAnswer3": "Jürgen Kohler",<br/>
      * "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",<br/>
@@ -154,7 +157,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /question/{id} This method find question with defined id.
+     * API for method: .../rest/question/{id} This method find question with defined id.
      * Id is retrieved from URL. If question with that id does not exist method
      * throws exception. Otherwise method remove that question.
      *

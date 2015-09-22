@@ -40,9 +40,9 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method returns JSON list of Fantasy Managers for one user. It
-     * produces APPLICATION_JSON media type. Example for JSON list: <br/>[
-     * {<br/>
+     * API for this method: .../rest/statistics/manager/{email} This method
+     * returns JSON list of Fantasy Managers for one user. It produces
+     * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
      * "idUser": "1",<br/> "firstname": "Wilhelm",<br/> "fantasyClubList":
      * "[1]",<br/>
      * "idFavClub": "null",<br/> "id": "1",<br/> "secondLeague": "0",<br/>
@@ -84,9 +84,9 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method returns JSON list of Fantasy Clubs for one Fantasy Manager.
-     * It produces APPLICATION_JSON media type. Example for JSON list: <br/>[
-     * {<br/>
+     * API for this method: .../rest/statistics/club/{id} This method returns
+     * JSON list of Fantasy Clubs for one Fantasy Manager. It produces
+     * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
      * "lastLogin": "2014-08-04 14:36:54.0",<br/> "totalBLMPoints": "0",<br/>
      * "auctionList": "[]",<br/> "changeLineUpTimestamp": "null",<br/>
      * "activity": "removed",<br/> "firstLogin": "2014-08-04 14:36:54.0",<br/>
@@ -131,8 +131,9 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method returns JSON list of Auction for one Fantasy Club. It
-     * produces APPLICATION_JSON media type. Example for JSON list: <br/>[ {
+     * API for this method: .../rest/statistics/auction/{id} This method returns
+     * JSON list of Auction for one Fantasy Club. It produces APPLICATION_JSON
+     * media type. Example for JSON list: <br/>[ {
      * <br/>"startPrice": "100000",<br/> "idFantasyClubSeller": "27434",<br/>
      * "auctionEndTimestamp": "2015-07-20 15:32:35.0",<br/>
      * "fantasyClubCreditHistoryList": "[]",<br/>
@@ -179,8 +180,9 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method returns JSON list of Bids for one Fantasy Club. It produces
-     * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
+     * API for this method: .../rest/statistics/bid/{id} This method returns
+     * JSON list of Bids for one Fantasy Club. It produces APPLICATION_JSON
+     * media type. Example for JSON list: <br/>[ {<br/>
      * "bidManagerPrice": "0",<br/> "idAuction": "1203343",<br/> "bidManager":
      * "0",<br/>
      * "idFantasyClubBidder": "100",<br/> "id": "187030",<br/> "biddingPrice":
@@ -220,8 +222,9 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method returns JSON list of Bids for one Auction. It produces
-     * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
+     * API for this method: .../rest/statistics/auction/bid/{id} This method
+     * returns JSON list of Bids for one Auction. It produces APPLICATION_JSON
+     * media type. Example for JSON list: <br/>[ {<br/>
      * "bidManagerPrice": "0",<br/> "idAuction": "2137720",<br/> "bidManager":
      * "0",<br/>
      * "idFantasyClubBidder": "100",<br/> "id": "257568",<br/> "biddingPrice":
@@ -255,8 +258,9 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method returns JSON list of Credit History for one Fantasy Club. It
-     * produces APPLICATION_JSON media type. Example for JSON list: <br/> [ {
+     * API for this method: .../rest/statistics/creditHistory/{id} This method
+     * returns JSON list of Credit History for one Fantasy Club. It produces
+     * APPLICATION_JSON media type. Example for JSON list: <br/> [ {
      * <br/> "updatedCredit": "16502803",<br/> "idFantasyClub": "100",<br/>
      * "idAuction": "null",<br/> "action": "QUESTION_OF_THE_DAY",<br/> "id":
      * "380601",<br/> "credit": "10000",<br/> "createDate": "2015-07-29
@@ -291,9 +295,10 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method return JSON list of Valuation for one League in one
-     * Matchday.It produces APPLICATION_JSON media type. Example for JSON
-     * list:<br/>
+     * API for this method:
+     * .../rest/statistics/valuationLeague/{idLeague}/{idMatchday} This method
+     * return JSON list of Valuation for one League in one Matchday.It produces
+     * APPLICATION_JSON media type. Example for JSON list:<br/>
      * [ { <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff": "0",<br/>
      * "creditDiff": "0",<br/>
      * "marketValue": "8574147",<br/> "positionUpdateAt": "2015-07-28
@@ -343,10 +348,12 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method return JSON object of Valuation for one Club in one
-     * Matchday.It produces APPLICATION_JSON media type. Example for JSON
-     * object:<br/> [ { <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff":
-     * "0",<br/> "creditDiff": "0",<br/> "marketValue": "8574147",<br/>
+     * API for this method:
+     * .../rest/statistics/valuationClub/{idClub}/{idMatchday} This method
+     * return JSON object of Valuation for one Club in one Matchday.It produces
+     * APPLICATION_JSON media type. Example for JSON object:<br/> [ {
+     * <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff": "0",<br/> "creditDiff":
+     * "0",<br/> "marketValue": "8574147",<br/>
      * "positionUpdateAt": "2015-07-28 10:16:28.0",<br/> "positionDiff":
      * "9",<br/> "blmPoints": "0",<br/> "blmPointsUpdateAt": "2015-07-28
      * 10:16:28.0",<br/> "idFantasyClub": "24036",<br/> "idMatchday": "1",<br/>
@@ -380,7 +387,8 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method return JSON list of Premium History for one User. It produces
+     * API for this method: .../rest/statistics/premiumHistoryUser/{email} This
+     * method return JSON list of Premium History for one User. It produces
      * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
      * <br/>"idUser": "54483",<br/> "charges": "1",<br/> "idFantasyClub":
      * "52162",<br/> "idReward": "null",<br/>
@@ -421,17 +429,21 @@ public class StatisticRESTEndPoint {
     }
 
     /**
-     * This method return JSON list of Premium History for one Club. It produces
-     * APPLICATION_JSON media type. Example for JSON object: <br/>[ { <br/>"idUser":
-     * "29867",<br/> "charges": "1",<br/> "idFantasyClub": "27434",<br/> "idReward": "null",<br/>
+     * API for this method: .../rest/statistics/premiumHistoryClub/{idClub} This
+     * method return JSON list of Premium History for one Club. It produces
+     * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
+     * <br/>"idUser": "29867",<br/> "charges": "1",<br/> "idFantasyClub":
+     * "27434",<br/> "idReward": "null",<br/>
      * "premiumCurrency": "158",<br/> "updatedPremiumCurrency": "11",<br/>
-     * "idPremiumAction": "1",<br/> "idFantasyManager": "27805",<br/> "idPremiumItem":
-     * "null",<br/> "updatedCharges": "1",<br/> "id": "1",<br/> "createDate": "2015-07-20
-     * 15:32:35.0"<br/> },<br/> {<br/> "idUser": "29867",<br/> "charges": "1",<br/> "idFantasyClub":
-     * "27434",<br/> "idReward": "null",<br/> "premiumCurrency": "112",<br/>
+     * "idPremiumAction": "1",<br/> "idFantasyManager": "27805",<br/>
+     * "idPremiumItem": "null",<br/> "updatedCharges": "1",<br/> "id": "1",<br/>
+     * "createDate": "2015-07-20 15:32:35.0"<br/> },<br/> {<br/> "idUser":
+     * "29867",<br/> "charges": "1",<br/> "idFantasyClub": "27434",<br/>
+     * "idReward": "null",<br/> "premiumCurrency": "112",<br/>
      * "updatedPremiumCurrency": "11",<br/> "idPremiumAction": "1",<br/>
-     * "idFantasyManager": "27805",<br/> "idPremiumItem": "null",<br/> "updatedCharges":
-     * "1",<br/> "id": "305",<br/> "createDate": "2015-07-21 14:01:26.0"<br/> } ]
+     * "idFantasyManager": "27805",<br/> "idPremiumItem": "null",<br/>
+     * "updatedCharges": "1",<br/> "id": "305",<br/> "createDate": "2015-07-21
+     * 14:01:26.0"<br/> } ]
      *
      * @param token is a header parameter for checking permission
      * @param idClub is id of Fantasy Club

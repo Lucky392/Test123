@@ -43,8 +43,8 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /news/{page}/{limit} This method returns JSON list of
-     * slider content at defined page with defined limit. It produces
+     * API for method: .../rest/slider/{page}/{limit} This method returns JSON
+     * list of slider content at defined page with defined limit. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
      * limit:<br/> [ {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
@@ -93,8 +93,8 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/slider This method recieves JSON object, and
-     * put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
+     * API for this method is .../rest/slider This method recieves JSON object,
+     * and put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
      * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
      * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28
@@ -125,9 +125,10 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /slider/{id} This method find news with defined id. Id is
-     * retrieved from URL. If slider content with that index does not exist
-     * method throws exception. Otherwise method remove that slider content.
+     * API for method: .../rest/slider/{id} This method find news with defined
+     * id. Id is retrieved from URL. If slider content with that index does not
+     * exist method throws exception. Otherwise method remove that slider
+     * content.
      *
      * @param token is a header parameter for checking permission
      * @param id of News that should be deleted.
@@ -144,8 +145,8 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/slider This method recieves JSON object, and
-     * update database. Example for JSON: <br/>{ "contentUrl":
+     * API for this method is .../rest/slider This method recieves JSON object,
+     * and update database. Example for JSON: <br/>{ "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
      * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
      * "positionInSlider": "4",<br/> "stopShowingAt": "2015-05-28

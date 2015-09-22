@@ -46,9 +46,12 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /news This method returns JSON list of news at defined
-     * page with defined limit. It produces APPLICATION_JSON media type. Example
-     * for JSON list for 1 page, 2 limit: <br/>
+     * API for method:
+     * .../rest/news?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE&newsType=VALUE
+     * This method returns JSON list. Default value for page is 1, and for limit
+     * is 10. You can put your values for page, limit, orderColumn, searchWord,
+     * start and end date, newsType. It produces APPLICATION_JSON media type.
+     * Example for JSON list for 1 page, 2 limit: <br/>
      * [{<br/>
      * "idFantasyClub": "null",<br/>
      * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
@@ -85,7 +88,8 @@ public class NewsCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for News
      * @param limit number of News method returns
-     * @param orderingColumn column name for ordering
+     * @param orderingColumn column name for ordering, if you put "-" before
+     * column name, that mean DESC ordering.
      * @param search word for searching newsType, newsHeadlineWeb,
      * newsHeadlineMobile
      * @param minDate is a start date for filtering time in millis
@@ -109,7 +113,7 @@ public class NewsCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         List<News> news;
         StringBuilder query = new StringBuilder("SELECT n FROM News n ");
-        
+
         if (minDate != 0 && maxDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
@@ -120,7 +124,7 @@ public class NewsCmsRESTEndpoint {
         if (newsType != null) {
             query.append(minDate != 0 ? " AND" : "WHERE").append(" n.newsType = '").append(newsType).append("'");
         }
-        
+
         if (search != null) {
             search = "%" + search + "%";
             query.append(minDate != 0 || newsType != null ? " AND" : "WHERE")
@@ -147,7 +151,12 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * This method return list of newsType in JSON
+     * API for method: .../rest/news/newsType This method return list of
+     * newsType in JSON. Example for JSON: <br/>[<br/> "important",<br/>
+     * "Stryking",<br/> "transfer",<br/>
+     * "matchday",<br/> "lineup",<br/> "welcome",<br/> "reward",<br/>
+     * "leagueJoined",<br/> "clubLeft",<br/>
+     * "leagueNameChanged"<br/> ]
      *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK status with JSON body
@@ -164,8 +173,8 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/news This method recieves JSON object, and
-     * put it in the base. Example for JSON: {<br/>
+     * API for this method is .../rest/news This method recieves JSON object,
+     * and put it in the base. Example for JSON that you need to send: {<br/>
      * "newsHeadlineMobile": "NEUER TRANSFER",<br/> "newsHeadlineWeb": "NEUES
      * VOM TRANSFERMARKT",<br/>
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
@@ -200,9 +209,9 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * API for method: /news/{id} This method find news with defined id. Id is
-     * retrieved from URL. If News with that index does not exist method throws
-     * exception. Otherwise method remove that News.
+     * API for method: .../rest/news/{id} This method find news with defined id.
+     * Id is retrieved from URL. If News with that index does not exist method
+     * throws exception. Otherwise method remove that News.
      *
      * @param token is a header parameter for checking permission
      * @param id of News that should be deleted.
@@ -219,9 +228,10 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/news This method recieves JSON object, and
-     * update database. Example for JSON: {<br/> "newsHeadlineMobile": "NEUER
-     * TRANSFER",<br/> "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
+     * API for this method is .../rest/news This method recieves JSON object,
+     * and update database. Example for JSON that you need to send: {<br/>
+     * "newsHeadlineMobile": "NEUER TRANSFER",<br/> "newsHeadlineWeb": "NEUES
+     * VOM TRANSFERMARKT",<br/>
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
      * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
      * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>

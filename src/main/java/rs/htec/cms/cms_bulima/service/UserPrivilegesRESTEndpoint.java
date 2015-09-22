@@ -36,9 +36,9 @@ public class UserPrivilegesRESTEndpoint {
     }
 
     /**
-     * API for method: /privileges<br/>
-     * This method gets authorization token from HTTP header and list of user
-     * privileges in JSON format and insert them into database. Example for JSON
+     * API for method: .../rest/privileges This method gets authorization token
+     * from HTTP header and list of user privileges in JSON format and insert
+     * them into database. Example for JSON
      * <br/>
      * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/>
      * "addAction": true,<br/>
@@ -117,9 +117,9 @@ public class UserPrivilegesRESTEndpoint {
 //        return Response.status(Response.Status.CREATED).build();
 //    }
     /**
-     * API for method: /privileges<br/>
-     * This method gets authorization token from HTTP header privileges in JSON
-     * format and insert them into database. Example for JSON
+     * API for method: .../rest/privileges This method gets authorization token
+     * from HTTP header privileges in JSON format and insert them into database.
+     * Example for JSON
      * <br/>
      * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/>
      * "addAction": true,<br/>
@@ -145,8 +145,8 @@ public class UserPrivilegesRESTEndpoint {
     public Response getPrivileges(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.SEARCH, token);
-        List <CmsUserPrivileges> cup = em.createNamedQuery("CmsUserPrivileges.findAll").getResultList();
-        if (cup.isEmpty()){
+        List<CmsUserPrivileges> cup = em.createNamedQuery("CmsUserPrivileges.findAll").getResultList();
+        if (cup.isEmpty()) {
             return Response.ok().entity(cup).build();
         } else {
             throw new DataNotFoundException("There is no privileges!");
