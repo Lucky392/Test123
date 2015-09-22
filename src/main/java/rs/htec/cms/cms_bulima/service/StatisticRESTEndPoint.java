@@ -160,8 +160,9 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClub> fc;
-        String query = "SELECT f FROM FantasyClub f JOIN f.idFantasyManager u WHERE u.id = " + id;
-        fc = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f JOIN f.idFantasyManager u WHERE u.id = ");
+        query.append(id);
+        fc = em.createQuery(query.toString()).getResultList();
         if (fc.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
         } else {
@@ -246,8 +247,9 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<Bid> bids;
-        String query = "SELECT b FROM Bid b WHERE b.idFantasyClubBidder.id = " + id;
-        bids = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT b FROM Bid b WHERE b.idFantasyClubBidder.id = ");
+        query.append(id);
+        bids = em.createQuery(query.toString()).getResultList();
         if (bids.isEmpty()) {
             throw new DataNotFoundException("There is no Bids for this Club!");
         } else {
@@ -314,8 +316,9 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClubCreditHistory> creditHistory;
-        String query = "SELECT f FROM FantasyClubCreditHistory f WHERE f.idFantasyClub.id = " + id;
-        creditHistory = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClubCreditHistory f WHERE f.idFantasyClub.id = ");
+        query.append(id);
+        creditHistory = em.createQuery(query.toString()).getResultList();
         if (creditHistory.isEmpty()) {
             throw new DataNotFoundException("There is no credit history for this club!");
         } else {
@@ -400,8 +403,9 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClubValuation> fcv;
-        String query = "SELECT fcv FROM FantasyClubValuation fcv WHERE fcv.idFantasyClub.id = " + idClub + " AND fcv.idMatchday.id = " + idMatchday;
-        fcv = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT fcv FROM FantasyClubValuation fcv WHERE fcv.idFantasyClub.id = ");
+        query.append(idClub).append(" AND fcv.idMatchday.id = ").append(idMatchday);
+        fcv = em.createQuery(query.toString()).getResultList();
         if (fcv.isEmpty()) {
             throw new DataNotFoundException("There is no valuation for this club!");
         } else {
@@ -475,8 +479,9 @@ public class StatisticRESTEndPoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<PremiumHistory> history;
-        String query = "SELECT ph FROM PremiumHistory ph WHERE ph.idFantasyClub.id = " + idClub;
-        history = em.createQuery(query).getResultList();
+        StringBuilder query = new StringBuilder("SELECT ph FROM PremiumHistory ph WHERE ph.idFantasyClub.id = ");
+        query.append(idClub);
+        history = em.createQuery(query.toString()).getResultList();
         if (history.isEmpty()) {
             throw new DataNotFoundException("There is no Premium History for this Club!");
         } else {
