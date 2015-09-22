@@ -84,7 +84,7 @@ public class UserCmsRESTEndpoint {
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response logIn(@HeaderParam("authorization") String authorization, String branko) {
+    public Response logIn(@HeaderParam("authorization") String authorization) {
         String[] userPass;
         System.out.println("Blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         EntityManager em = helper.getEntityManager();
