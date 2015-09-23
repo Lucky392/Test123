@@ -19,6 +19,7 @@ import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
+import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -71,12 +72,18 @@ public class UserCmsRESTEndpoint {
      * API for method: .../rest/user/login Method that accepts HTTP Basic
      * authentication from HTTP header, checks in the database whether the user
      * exists and if so, returns custom token that in future calls should be put
-     * in the authorization parameter of the HTTP header. Example for JSON:
-     * <br/>{<br/>
-     * "token": "VE9LRU4jIzE="<br/> }
+     * in the authorization parameter of the HTTP header and returns all User privileges. Example for JSON:<br/> {<br/>
+     * "cmsUserPrivileges": [ <br/>{ <br/>"cmsRole": {<br/> "name": "admin",<br/> "id": 1 <br/>},<br/>
+     * "cmsUserPrivilegesPK": { <br/>"tableId": 7,<br/> "roleId": 1 <br/>}, <br/>"searchAction":
+     * true, <br/>"editAction": true,<br/> "addAction": true,<br/> "deleteAction": true,<br/>
+     * "cmsTables": {<br/> "tableName": "CMS_ROLE",<br/> "id": 7 <br/>} <br/>},<br/> { <br/>"cmsRole": {<br/>
+     * "name": "admin", <br/>"id": 1 <br/>},<br/> "cmsUserPrivilegesPK": { <br/>"tableId": 8,<br/>
+     * "roleId": 1 <br/>}, <br/>"searchAction": true,<br/> "editAction": true,<br/> "addAction":
+     * true,<br/> "deleteAction": true,<br/> "cmsTables": { <br/>"tableName": "STATISTICS",<br/>
+     * "id": 8 <br/>} <br/>} <br/>],<br/> "token": "VE9LRU4jIzE=" <br/>}
      *
      * @param authorization Basic HTTP authorization.
-     * @return Response 200 OK with custom authorization value in JSON body.
+     * @return Response 200 OK with custom authorization value and User privileges in JSON body.
      * @throws BasicAuthenticationException Response 401 Unauthorized if user
      * doesn't exist.
      */
@@ -86,7 +93,6 @@ public class UserCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response logIn(@HeaderParam("authorization") String authorization) {
         String[] userPass;
-        System.out.println("Blaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
         EntityManager em = helper.getEntityManager();
         try {
             userPass = tokenHelper.decodeBasicAuth(authorization);
@@ -102,6 +108,8 @@ public class UserCmsRESTEndpoint {
                 helper.mergeObject(em, user);
             }
             JsonToken jsonToken = new JsonToken(tokenHelper.encode(user.getToken()));
+            List<CmsUserPrivileges> cmsUserPrivileges = em.createNamedQuery("CmsUserPrivileges.findByRoleId").setParameter("roleId", user.getIdRole().getId()).getResultList();
+            jsonToken.setCmsUserPrivileges(cmsUserPrivileges);
             return Response.ok().entity(jsonToken).build();
         } catch (RuntimeException e) {
             throw new BasicAuthenticationException(e.getMessage());

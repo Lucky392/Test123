@@ -81,7 +81,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getQuestionss(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getQuestions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = helper.getEntityManager();
