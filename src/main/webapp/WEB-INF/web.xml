@@ -33,8 +33,8 @@
                 Origin,
                 Access-Control-Request-Method,
                 Access-Control-Request-Headers,
-                Authorization,
-                Access-Control-Allow-Origin</param-value>
+                Authorization
+            </param-value>
         </init-param> 
         <init-param>
             <param-name>cors.allowed.origins</param-name>
