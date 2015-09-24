@@ -132,7 +132,7 @@ public class PremiumItemPackageRESTEndpoint {
         if (itemPackage == null || itemPackage.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(helper.getJson(itemPackage)).build();
+        return Response.ok().entity(itemPackage).build();
     }
 
     /**
@@ -180,7 +180,7 @@ public class PremiumItemPackageRESTEndpoint {
      * exist method throws exception. Otherwise method remove that Package.
      *
      * @param token is a header parameter for checking permission
-     * @param id of News that should be deleted.
+     * @param id of Package that should be deleted.
      * @return Response 200 OK
      */
     @DELETE
