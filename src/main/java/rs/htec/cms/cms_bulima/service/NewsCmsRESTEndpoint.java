@@ -255,8 +255,7 @@ public class NewsCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
         News oldNews = em.find(News.class, news.getId());
-        if (oldNews
-                != null) {
+        if (oldNews != null) {
             if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                     && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                     && validator.checkLenght(news.getNewsType(), 255, true)) {
