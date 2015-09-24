@@ -114,6 +114,43 @@ public class PremiumItemRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/items/{id} This method return single element of premium items at index
+     * in JSON. Example for JSON response: { <br/>"imageUrl": "images/shop/Icon_Ersatzbank.png",<br/>
+     * "shopName": "Ersatzbank",<br/> "descriptionLong": "Falls ein Spieler aus
+     * deiner gepeicherten Aufstellung an einem Spieltag nicht zum Einsatz
+     * kommt, können Spieler von der Ersatzbank nachrücken. Diese Spieler müssen
+     * ebenso, wie die Spieler in der Aufstellung, vor Spieltagsbegin
+     * aufgestellt und mit der Aufstellung abgespeichert werden. ",<br/>
+     * "updateTimestamp": 1405029600000, <br/>"showInItemShop": 0,
+     * <br/>"slotNumber": 0,<br/>
+     * "directPurchasePrice": 0,<br/> "positionInPackage": null,
+     * <br/>"createDate": 1388530800000,<br/> "description": "Falls ein Spieler
+     * aus deiner gespeicherten Aufstellung an einem Spieltag nicht zum Einsatz
+     * kommt, können Spieler von der Ersatzbank nachrücken. Die Spieler können
+     * nur dann in deine Aufstellung nachrücken, wenn sie auch an dem Spieltag
+     * zum Einsatz kommen.",<br/> "name": "Ersatzbank",<br/> "id": 2<br/> }
+     * @param token is a header parameter for checking permission
+     * @param id of premium items we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        PremiumItem item = (PremiumItem) em.createNamedQuery("PremiumItem.findById").setParameter("id", id).getSingleResult();
+        if (item == null) {
+            throw new DataNotFoundException("Premium item at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(item).build();
+    }
+    
+    /**
      * API for this method is .../rest/items This method recieves JSON object,
      * and put it in the base. Example for JSON that you need to send:
      * <br/>{<br/>

@@ -93,6 +93,40 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/slider/{id} This method return single element of slider at index
+     * in JSON. Example for JSON response: <br/>{<br/> "contentUrl":
+     * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
+     * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/>
+     * "idCompetition": "null",<br/> "positionInSlider": "1",<br/>
+     * "stopShowingAt": "2015-07-22 13:22:48.0",<br/> "updateAt": "2015-02-17
+     * 15:27:38.0",<br/> "id": "1",<br/> "text":
+     * "{@code <div style=\"position: absolute; font-size: 16px; padding: 10px; line-height: 18px; top: 160px;\"><div style=\"font-family: TitilliumWeb-Bold; font-size: 18px; margin-bottom: 8px;\">}Saisonpause{@code </div>}Wir
+     * starten schon bald mit der neuen Saison
+     * 2015/2016!{@code </a></div>}",<br/>
+     * "startShowingAt": "2015-05-03 18:10:00.0",<br/> "createDate": "2015-02-17
+     * 15:59:00.0"<br/> }
+     * @param token is a header parameter for checking permission
+     * @param id of slider we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
+        SliderContent slider = (SliderContent) em.createNamedQuery("SliderContent.findById").setParameter("id", id).getSingleResult();
+        if (slider == null) {
+            throw new DataNotFoundException("Slider at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(slider).build();
+    }
+    
+    /**
      * API for this method is .../rest/slider This method recieves JSON object,
      * and put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>

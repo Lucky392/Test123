@@ -134,6 +134,37 @@ public class PremiumItemPackageRESTEndpoint {
         return Response.ok().entity(helper.getJson(itemPackage)).build();
     }
 
+     /**
+     * API for method: .../rest/itemPackage/{id} This method return single element of item package at index
+     * in JSON. Example for JSON response: {<br/>
+     * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
+     * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
+     * "idPremiumItem": "6",<br/> "id": "1",<br/>
+     * "position": "6",<br/> "title": "Bietmanager",<br/>
+     * "pricePremiumCurrency": "15",<br/>
+     * "updateTimestamp": "2014-07-11 00:00:00.0",<br/> "createDate":
+     * "2014-01-01 00:00:00.0" <br/>}
+     * @param token is a header parameter for checking permission
+     * @param id of item package we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        PremiumItemPackage itemPackage = (PremiumItemPackage) em.createNamedQuery("PremiumAction.findById").setParameter("id", id).getSingleResult();
+        if (itemPackage == null) {
+            throw new DataNotFoundException("Premium item package at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(itemPackage).build();
+    }
+    
     /**
      * API for this method is .../rest/itemPackage/{id} where id is id for Item
      * we want to include in our Premium item package. This method recieves JSON
@@ -155,7 +186,7 @@ public class PremiumItemPackageRESTEndpoint {
      * "errorCode": 400<br/> }
      *
      */
-    @PUT
+    @POST
     @Path("/{id}")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("id") long idItem) {
@@ -215,7 +246,7 @@ public class PremiumItemPackageRESTEndpoint {
      * "errorMessage": "Premium items package at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
-    @POST
+    @PUT
     @Path("/{idItem}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)

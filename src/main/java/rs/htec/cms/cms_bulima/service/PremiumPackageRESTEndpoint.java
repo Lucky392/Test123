@@ -98,6 +98,36 @@ public class PremiumPackageRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/package/{id} This method return single element of package at index
+     * in JSON. Example for JSON response: { <br/>"imageUrl": "",<br/> "updateTimestamp": null,<br/>
+     * "createDate": 1427204474000,<br/>
+     * "platform": "ALL",<br/> "price": 19.99,<br/> "isActive": 1,<br/>
+     * "premiumStatusDuration": "season",<br/> "amountPremiumCurrency": 0,<br/>
+     * "title": "Saison",<br/> "position": null,<br/> "name": "Premium-Account -
+     * Saison-Paket",<br/>
+     * "id": 8 <br/>}
+     * @param token is a header parameter for checking permission
+     * @param id of premium package we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        PremiumPackage properties = (PremiumPackage) em.createNamedQuery("PremiumPackageContent.findById").setParameter("id", id).getSingleResult();
+        if (properties == null) {
+            throw new DataNotFoundException("Premium package at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(properties).build();
+    }
+    
+    /**
      * API for this method is .../rest/package This method recieves JSON object,
      * and put it in the base. Example for JSON that you need to send:
      * <br/>{<br/>

@@ -125,6 +125,65 @@ public class PremiumPackagePropertiesRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/premium_package_properties/{id} This method return single element of package properties at index
+     * in JSON. Example for JSON response: {<br/>
+     * "forNonPayingUsers": 0,<br/>
+     * "redirectPositionTop": null,<br/>
+     * "redirectPositionLeft": null,<br/>
+     * "redirectImageUrl": "",<br/>
+     * "charityDonation": null,<br/>
+     * "charityDescription": "",<br/>
+     * "showUntil": null,<br/>
+     * "maxPurchasesPerUser": null,<br/>
+     * "idPremiumPackageUpgrade": null, <br/>
+     * "idFavoriteClub": null,<br/>
+     * "idPremiumPackageSuccessor": <br/>
+     * { "price": 19.99,<br/>
+     * "amountPremiumCurrency": 0,<br/>
+     * "imageUrl": "",<br/>
+     * "platform": "ALL", <br/>
+     * "isActive": 1, <br/>
+     * "updateTimestamp": null,<br/>
+     * "premiumStatusDuration": "season",<br/>
+     * "idPremiumPackageProperties": null,<br/>
+     * "createDate": 1427204474000, <br/>
+     * "title": "Saison", <br/>
+     * "position": null,<br/>
+     * "name": "Premium-Account - Saison-Paket",<br/>
+     * "id": 8 <br/>
+     * }, <br/>
+     * "highlightImageUrl": "",<br/>
+     * "showOnlySpecial": 0,<br/>
+     * "imageUrlSpecial": "",<br/>
+     * "forPayingUsers": 0,<br/>
+     * "showFrom": null,<br/>
+     * "updateTimestamp": null, <br/>
+     * "createDate": 1427204490000,<br/>
+     * "redirectUrl": "",<br/>
+     * "id": 1 <br/>
+     * }
+     * @param token is a header parameter for checking permission
+     * @param id of premium package properties we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        PremiumPackageProperties properties = (PremiumPackageProperties) em.createNamedQuery("PremiumPackageContent.findById").setParameter("id", id).getSingleResult();
+        if (properties == null) {
+            throw new DataNotFoundException("Premium package properties at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(properties).build();
+    }
+
+    /**
      * API for this method is .../rest/premium_package_properties This method
      * recieves JSON object, and put it in the base. Example for JSON that you
      * need to send some of this attributes not to be default values:
@@ -191,15 +250,15 @@ public class PremiumPackagePropertiesRESTEndpoint {
 
     /**
      * API for this method is .../rest/premium_package_properties This method
-     * recieves JSON object, and update database. Example for JSON that you need.
-     * Required filed is id.
-     * 
+     * recieves JSON object, and update database. Example for JSON that you
+     * need. Required filed is id.
+     *
      * { <br/>
      * "forNonPayingUsers": 0,<br/>
      * "redirectPositionTop": null,<br/>
      * "redirectPositionLeft": null,<br/>
      * "redirectImageUrl": "",<br/>
-     * "charityDonation":  null, <br/>
+     * "charityDonation": null, <br/>
      * "charityDescription": "",<br/>
      * "showUntil": null,<br/>
      * "maxPurchasesPerUser": null, <br/>
@@ -213,8 +272,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "updateTimestamp": null,<br/>
      * "createDate": 1427204490000, <br/>
      * "redirectUrl": "", <br/>
-     * "id": 1 <br/>
-     * }
+     * "id": 1 <br/> }
      *
      * @param token is a header parameter for checking permission
      * @return Response with status OK (200) "Successfully updated!"

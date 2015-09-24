@@ -85,6 +85,34 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/premium_action/{id} This method return single element of premium action at index
+     * in JSON. Example for JSON response: {<br/>
+     * "createDate": 1418727045000,<br/>
+     * "name": "Sofortverkauf",<br/>
+     * "id": 1<br/>
+     * }
+     * @param token is a header parameter for checking permission
+     * @param id of premium action we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        PremiumAction properties = (PremiumAction) em.createNamedQuery("PremiumAction.findById").setParameter("id", id).getSingleResult();
+        if (properties == null) {
+            throw new DataNotFoundException("Premium action at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(properties).build();
+    }
+    
+    /**
      * API for this method is .../rest/premium_action This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
      * <br/>

@@ -150,6 +150,43 @@ public class NewsCmsRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/news/{id} This method return single element of news at index
+     * in JSON. Example for JSON response: <br/>{<br/>
+     * "idFantasyClub": "null",<br/>
+     * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
+     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
+     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
+     * Sport1",<br/>
+     * "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu
+     * Sport1",<br/>
+     * "id": "4",<br/>
+     * "newsDate": "2015-07-20 15:32:35.0",<br/>
+     * "newsType": "transfer",<br/>
+     * "createDate": "2015-07-20 15:32:36.0",<br/>
+     * "idFantasyLeague": "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=7175
+     * ]"<br/>}
+     * @param token is a header parameter for checking permission
+     * @param id of news we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        News news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
+        if (news == null) {
+            throw new DataNotFoundException("Requested page does not exist..");
+        }
+        return Response.ok().entity(news).build();
+    }
+
+    /**
      * API for method: .../rest/news/newsType This method return list of
      * newsType in JSON. Example for JSON: <br/>[<br/> "important",<br/>
      * "Stryking",<br/> "transfer",<br/>
@@ -242,8 +279,7 @@ public class NewsCmsRESTEndpoint {
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
-     * @throws DataNotFoundException Example for
-     * exception:<br/> {<br/>
+     * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "News at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */

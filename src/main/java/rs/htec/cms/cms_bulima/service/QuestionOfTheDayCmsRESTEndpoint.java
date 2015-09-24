@@ -123,6 +123,38 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         }
         return Response.ok().entity(helper.getJson(questions)).build();
     }
+    
+    
+    /**
+     * API for method: .../rest/question/{id} This method return single element of questionOfTheDay at index
+     * in JSON. Example for JSON response: <br/>{<br/>
+     * "date": "2015-07-20 00:00:00.0",<br/>
+     * "wrongAnswer3": "Mehmet Scholl",<br/>
+     * "question": "Wer erzielte das entscheidende Tor für den FC Bayern München
+     * in der Saison 200/01, als der FC Schalke 04 für ein paar Minuten Meister
+     * war?",<br/> "id": "1",<br/> "correctAnswer": "Patrik Andersson",<br/>
+     * "wrongAnswer1": "Giovanne Elber",<br/> "wrongAnswer2": "Stefan
+     * Effenberg"<br/> }
+     * @param token is a header parameter for checking permission
+     * @param id of questionOfTheDay we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
+        QuestionOfTheDay question = (QuestionOfTheDay) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
+        if (question == null) {
+            throw new DataNotFoundException("Qyestion at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(question).build();
+    }
 
     /**
      * API for this method is .../rest/question This method recieves JSON object,

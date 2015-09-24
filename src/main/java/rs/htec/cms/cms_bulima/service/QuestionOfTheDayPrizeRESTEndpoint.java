@@ -73,6 +73,31 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
+     * API for method: .../rest/prize/{id} This method return single element of questionOfTheDayPrize at index
+     * in JSON. Example for JSON response: <br/>{<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id":
+     * "3",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> }
+     * @param token is a header parameter for checking permission
+     * @param id of questionOfTheDayPrize we are searching for
+     * @throws DataNotFoundException DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "Requested page does not exist..",<br/>
+     * "errorCode": 404<br/> }
+     * @return Response 200 OK status with JSON body
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
+        QuestionOfTheDayPrize prize = (QuestionOfTheDayPrize) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
+        if (prize == null) {
+            throw new DataNotFoundException("Prize at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(prize).build();
+    }
+    
+    /**
      * API for this method is .../rest/prize This method receives JSON object,
      * and put it in the base. Example for JSON: {<br/> "prizeMoney":
      * "10000",<br/>
