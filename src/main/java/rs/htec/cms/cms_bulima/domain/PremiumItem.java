@@ -51,6 +51,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 public class PremiumItem implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
     private List<PremiumPackageContent> premiumPackageContentList;
+
+    private List<PremiumItemPackage> premiumItemPackageList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
