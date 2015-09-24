@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,6 +49,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "PremiumItem.findByDirectPurchasePrice", query = "SELECT p FROM PremiumItem p WHERE p.directPurchasePrice = :directPurchasePrice"),
     @NamedQuery(name = "PremiumItem.findByPositionInPackage", query = "SELECT p FROM PremiumItem p WHERE p.positionInPackage = :positionInPackage")})
 public class PremiumItem implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
+    private List<PremiumPackageContent> premiumPackageContentList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -250,6 +253,16 @@ public class PremiumItem implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<PremiumPackageContent> getPremiumPackageContentList() {
+        return premiumPackageContentList;
+    }
+
+    public void setPremiumPackageContentList(List<PremiumPackageContent> premiumPackageContentList) {
+        this.premiumPackageContentList = premiumPackageContentList;
     }
     
 }

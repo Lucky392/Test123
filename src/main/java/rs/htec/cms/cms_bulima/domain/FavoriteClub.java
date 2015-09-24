@@ -48,6 +48,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FavoriteClub.findByPointUpdateAt", query = "SELECT f FROM FavoriteClub f WHERE f.pointUpdateAt = :pointUpdateAt"),
     @NamedQuery(name = "FavoriteClub.findByCreateDate", query = "SELECT f FROM FavoriteClub f WHERE f.createDate = :createDate")})
 public class FavoriteClub implements Serializable {
+    @OneToMany(mappedBy = "idFavoriteClub")
+    private List<PremiumPackageProperties> premiumPackagePropertiesList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -221,6 +223,16 @@ public class FavoriteClub implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<PremiumPackageProperties> getPremiumPackagePropertiesList() {
+        return premiumPackagePropertiesList;
+    }
+
+    public void setPremiumPackagePropertiesList(List<PremiumPackageProperties> premiumPackagePropertiesList) {
+        this.premiumPackagePropertiesList = premiumPackagePropertiesList;
     }
     
 }
