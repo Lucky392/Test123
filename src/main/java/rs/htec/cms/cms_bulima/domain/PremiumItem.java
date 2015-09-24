@@ -51,7 +51,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 public class PremiumItem implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
     private List<PremiumPackageContent> premiumPackageContentList;
-
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
     private List<PremiumItemPackage> premiumItemPackageList;
     private static final long serialVersionUID = 1L;
     @Id
@@ -265,6 +265,16 @@ public class PremiumItem implements Serializable {
 
     public void setPremiumPackageContentList(List<PremiumPackageContent> premiumPackageContentList) {
         this.premiumPackageContentList = premiumPackageContentList;
+    }
+    
+    @XmlTransient
+    @JsonIgnore
+    public List<PremiumItemPackage> getPremiumItemPackageList() {
+        return premiumItemPackageList;
+    }
+
+    public void setPremiumItemPackageList(List<PremiumItemPackage> premiumItemPackageList) {
+        this.premiumItemPackageList = premiumItemPackageList;
     }
     
 }

@@ -37,14 +37,11 @@
     <class>rs.htec.cms.cms_bulima.domain.PremiumHistory</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumItem</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumAction</class>
-<<<<<<< HEAD
     <class>rs.htec.cms.cms_bulima.domain.PremiumPackage</class>
     <class>rs.htec.cms.cms_bulima.domain.BatchjobController</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumPackageContent</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumPackageProperties</class>
-=======
     <class>rs.htec.cms.cms_bulima.domain.PremiumItemPackage</class>
->>>>>>> Lokal
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima?zeroDateTimeBehavior=convertToNull"/>
