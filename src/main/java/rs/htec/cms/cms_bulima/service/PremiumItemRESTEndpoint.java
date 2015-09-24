@@ -96,7 +96,7 @@ public class PremiumItemRESTEndpoint {
     public Response getPremiumItems(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         List<PremiumItem> items;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumItem p ");
         if (search != null) {
@@ -144,12 +144,11 @@ public class PremiumItemRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertItem(@HeaderParam("authorization") String token, PremiumItem item) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
         item.setCreateDate(new Date());
         if (validator.checkLenght(item.getName(), 255, true) && validator.checkLenght(item.getImageUrl(), 255, true)
                 && validator.checkLenght(item.getShopName(), 255, true) && validator.checkLenght(item.getDescription(), 639, true)
                 && validator.checkLenght(item.getDescriptionLong(), 639, true)) {
-
             helper.persistObject(em, item);
             return Response.status(Response.Status.CREATED).build();
         } else {
@@ -159,19 +158,19 @@ public class PremiumItemRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/items/{id} This method find news with defined
+     * API for method: .../rest/items/{id} This method find package with defined
      * id. Id is retrieved from URL. If Item with that index does not exist
      * method throws exception. Otherwise method remove that Item.
      *
      * @param token is a header parameter for checking permission
      * @param id of Premium Item that should be deleted.
-     * @return Response 200 OK
+        * @return Response 200 OK
      */
     @DELETE
     @Path("/{id}")
     public Response deleteItem(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
         PremiumItem item = em.find(PremiumItem.class, id);
         helper.removeObject(em, item, id);
         return Response.ok().build();
@@ -181,18 +180,19 @@ public class PremiumItemRESTEndpoint {
      * API for this method is .../rest/items This method recieves JSON object,
      * and update database. Example for JSON that you need to send:<br/> {<br/>
      * "updateTimestamp": 1405029600000,<br/> "imageUrl":
-     * "images/shop/Icon_Ersatzbank.png",<br/> "showInItemShop": 0,<br/> "shopName":
-     * "Ersatzbank",<br/> "descriptionLong": "Falls ein Spieler aus deiner
-     * gepeicherten Aufstellung an einem Spieltag nicht zum Einsatz kommt,
-     * können Spieler von der Ersatzbank nachrücken. Diese Spieler müssen
+     * "images/shop/Icon_Ersatzbank.png",<br/> "showInItemShop": 0,<br/>
+     * "shopName": "Ersatzbank",<br/> "descriptionLong": "Falls ein Spieler aus
+     * deiner gepeicherten Aufstellung an einem Spieltag nicht zum Einsatz
+     * kommt, können Spieler von der Ersatzbank nachrücken. Diese Spieler müssen
      * ebenso, wie die Spieler in der Aufstellung, vor Spieltagsbegin
      * aufgestellt und mit der Aufstellung abgespeichert werden. ",<br/>
-     * "slotNumber": 0,<br/> "directPurchasePrice": 0,<br/> "positionInPackage": null,<br/>
-     * "createDate": 1388530800000,<br/> "description": "Falls ein Spieler aus deiner
-     * gespeicherten Aufstellung an einem Spieltag nicht zum Einsatz kommt,
-     * können Spieler von der Ersatzbank nachrücken. Die Spieler können nur dann
-     * in deine Aufstellung nachrücken, wenn sie auch an dem Spieltag zum
-     * Einsatz kommen.",<br/> "name": "Ersatzbank",<br/> "id": 2<br/> }
+     * "slotNumber": 0,<br/> "directPurchasePrice": 0,<br/> "positionInPackage":
+     * null,<br/>
+     * "createDate": 1388530800000,<br/> "description": "Falls ein Spieler aus
+     * deiner gespeicherten Aufstellung an einem Spieltag nicht zum Einsatz
+     * kommt, können Spieler von der Ersatzbank nachrücken. Die Spieler können
+     * nur dann in deine Aufstellung nachrücken, wenn sie auch an dem Spieltag
+     * zum Einsatz kommen.",<br/> "name": "Ersatzbank",<br/> "id": 2<br/> }
      *
      * @param token is a header parameter for checking permission
      * @param item is an object that Jackson convert from JSON to object
@@ -200,8 +200,7 @@ public class PremiumItemRESTEndpoint {
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
-     * @throws DataNotFoundException Example for
-     * exception:<br/> {<br/>
+     * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "Premium item at index 2 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
@@ -210,7 +209,7 @@ public class PremiumItemRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateItem(@HeaderParam("authorization") String token, PremiumItem item) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
         PremiumItem oldItem = em.find(PremiumItem.class, item.getId());
         if (oldItem != null) {
             if (validator.checkLenght(item.getName(), 255, true) && validator.checkLenght(item.getImageUrl(), 255, true)

@@ -218,6 +218,8 @@ public class PremiumPackage implements Serializable {
         this.premiumPackageContentList = premiumPackageContentList;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public PremiumPackageProperties getIdPremiumPackageProperties() {
         return idPremiumPackageProperties;
     }
