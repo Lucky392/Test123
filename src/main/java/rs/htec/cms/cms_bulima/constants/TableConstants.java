@@ -19,4 +19,5 @@ public interface TableConstants {
     public static final long USER_PRIVILEGES = 6;
     public static final long CMS_ROLE = 7;
     public static final long STATISTICS = 8;
+    public static final long SHOP = 9;
 }

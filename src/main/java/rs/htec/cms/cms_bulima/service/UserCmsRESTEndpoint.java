@@ -62,7 +62,7 @@ public class UserCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
         List<CmsUser> users = em.createNamedQuery("CmsUser.findAll").getResultList();
-        if (users == null && users.isEmpty()) {
+        if (users == null || users.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
         return Response.ok().entity(users).build();
