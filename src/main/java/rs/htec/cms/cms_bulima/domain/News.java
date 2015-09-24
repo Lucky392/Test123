@@ -25,6 +25,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -160,7 +162,9 @@ public class News implements Serializable {
     public void setNewsMessageMobile(String newsMessageMobile) {
         this.newsMessageMobile = newsMessageMobile;
     }
-    @XmlElement
+    
+    @XmlTransient
+    @JsonIgnore
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }
@@ -168,7 +172,9 @@ public class News implements Serializable {
     public void setIdFantasyLeague(FantasyLeague idFantasyLeague) {
         this.idFantasyLeague = idFantasyLeague;
     }
-    @XmlElement
+    
+    @XmlTransient
+    @JsonIgnore
     public FantasyClub getIdFantasyClub() {
         return idFantasyClub;
     }

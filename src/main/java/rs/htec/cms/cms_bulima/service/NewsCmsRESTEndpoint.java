@@ -143,11 +143,10 @@ public class NewsCmsRESTEndpoint {
             query.append(" ORDER BY ").append(orderingColumn);
         }
         news = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        System.out.println(query);
         if (news == null || news.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(helper.getJson(news)).build();
+        return Response.ok().entity(news).build();
     }
 
     /**
@@ -243,7 +242,7 @@ public class NewsCmsRESTEndpoint {
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
-     * @throws DataNotFoundException DataNotFoundException Example for
+     * @throws DataNotFoundException Example for
      * exception:<br/> {<br/>
      * "errorMessage": "News at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
@@ -259,7 +258,6 @@ public class NewsCmsRESTEndpoint {
             if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                     && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                     && validator.checkLenght(news.getNewsType(), 255, true)) {
-
                 helper.mergeObject(em, news);
             } else {
                 throw new InputValidationException("Validation failed");
@@ -267,7 +265,6 @@ public class NewsCmsRESTEndpoint {
         } else {
             throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
         }
-
         return Response.ok("Successfully updated!").build();
     }
 }
