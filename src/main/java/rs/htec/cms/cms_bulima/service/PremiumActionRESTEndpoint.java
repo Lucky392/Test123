@@ -72,7 +72,6 @@ public class PremiumActionRESTEndpoint {
      *
      */
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
-    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPremiumActions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit) {
@@ -86,14 +85,12 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/news This method recieves JSON object,
-     * and put it in the base. Example for JSON that you need to send: {<br/>
-     * "newsHeadlineMobile": "NEUER TRANSFER",<br/> "newsHeadlineWeb": "NEUES
-     * VOM TRANSFERMARKT",<br/>
-     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
-     * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
-     * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
-     * "newsType": "transfer" <br/>}
+     * API for this method is .../rest/premium_action This method recieves JSON
+     * object, and put it in the base. Example for JSON that you need to send:
+     * <br/>
+     * {<br/>
+     * "name": "bla bla" <br/>
+     * }<br/>
      *
      * @param token is a header parameter for checking permission
      * @return Response with status CREATED (201)
@@ -102,7 +99,7 @@ public class PremiumActionRESTEndpoint {
      * "errorCode": 400<br/> }
      *
      */
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPremiumAction(@HeaderParam("authorization") String token, PremiumAction premiumActions) {
         EntityManager em = helper.getEntityManager();
@@ -117,12 +114,14 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/news/{id} This method find news with defined id.
-     * Id is retrieved from URL. If News with that index does not exist method
-     * throws exception. Otherwise method remove that News.
+     * API for method: .../rest/premium_action/{id} This method find
+     * premium_action with defined id. Id is retrieved from URL. If Premium
+     * actions with that index does not exist method throws exception. Otherwise
+     * method remove that Premium action. If Premium action is used, it can't be
+     * deleted.
      *
      * @param token is a header parameter for checking permission
-     * @param id of News that should be deleted.
+     * @param id of Premium action that should be deleted.
      * @return Response 200 OK
      */
     @DELETE
@@ -136,27 +135,24 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/news This method recieves JSON object,
-     * and update database. Example for JSON that you need to send: {<br/>
-     * "newsHeadlineMobile": "NEUER TRANSFER",<br/> "newsHeadlineWeb": "NEUES
-     * VOM TRANSFERMARKT",<br/>
-     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
-     * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
-     * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
-     * "newsType": "transfer"<br/> }
+     * API for this method is .../rest/premium_action This method recieves JSON
+     * object, and update database. Example for JSON that you need to send:<br/>
+     * {<br/>
+     * "name": "bla bla 1123",<br/>
+     * "id": 15<br/>
+     * }
      *
      * @param token is a header parameter for checking permission
-     * @param news is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
-     * "errorMessage": "News at index 54 does not exits",<br/>
+     * "errorMessage": "News at index 15 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response updatePremiumAction(@HeaderParam("authorization") String token, PremiumAction premiumAction) {
@@ -165,6 +161,7 @@ public class PremiumActionRESTEndpoint {
         PremiumAction oldPremiumAction = em.find(PremiumAction.class, premiumAction.getId());
         if (oldPremiumAction != null) {
             if (validator.checkLenght(premiumAction.getName(), 255, true)) {
+                premiumAction.setCreateDate(oldPremiumAction.getCreateDate());
                 helper.mergeObject(em, premiumAction);
             } else {
                 throw new InputValidationException("Validation failed");
