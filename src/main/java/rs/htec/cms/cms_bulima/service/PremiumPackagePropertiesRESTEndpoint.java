@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -23,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.PremiumAction;
+import rs.htec.cms.cms_bulima.domain.PremiumPackageProperties;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -33,7 +34,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author lazar
  */
-@Path("/premium_package_content")
+@Path("/premium_package_properties")
 public class PremiumPackagePropertiesRESTEndpoint {
 
     RestHelperClass helper;
@@ -45,25 +46,55 @@ public class PremiumPackagePropertiesRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/premium_action?page=VALUE&limit=VALUE This
-     * method returns JSON list. Default value for page is 1, and for limit is
-     * 10. You can put your values for page, limit. It produces APPLICATION_JSON
-     * media type. Example for JSON list for 1 page, 2 limit: <br/>
-     * [{<br/>
-     * "createDate": 1418727045000,<br/>
-     * "name": "Sofortverkauf",<br/>
-     * "id": 1<br/>
-     * },<br/>
+     * API for method:
+     * .../rest/premium_package_properties?forPayingUser=VALUE&forNonPayingUser=VALUE
+     * This method returns JSON list. Default value for forPayingUser is 0, and
+     * for forNonPayingUser is 0. You can put your values for forPayingUser,
+     * forNonPayingUser. It produces APPLICATION_JSON media type. Example for
+     * JSON list: <br/>
+     * [<br/>
      * {<br/>
-     * "createDate": 1418727045000,<br/>
-     * "name": "Question of the Day",<br/>
-     * "id": 2 <br/>
+     * "forNonPayingUsers": 0,<br/>
+     * "redirectPositionTop": null,<br/>
+     * "redirectPositionLeft": null,<br/>
+     * "redirectImageUrl": "",<br/>
+     * "charityDonation": null,<br/>
+     * "charityDescription": "",<br/>
+     * "showUntil": null,<br/>
+     * "maxPurchasesPerUser": null,<br/>
+     * "idPremiumPackageUpgrade": null, <br/>
+     * "idFavoriteClub": null,<br/>
+     * "idPremiumPackageSuccessor": <br/>
+     * { "price": 19.99,<br/>
+     * "amountPremiumCurrency": 0,<br/>
+     * "imageUrl": "",<br/>
+     * "platform": "ALL", <br/>
+     * "isActive": 1, <br/>
+     * "updateTimestamp": null,<br/>
+     * "premiumStatusDuration": "season",<br/>
+     * "idPremiumPackageProperties": null,<br/>
+     * "createDate": 1427204474000, <br/>
+     * "title": "Saison", <br/>
+     * "position": null,<br/>
+     * "name": "Premium-Account - Saison-Paket",<br/>
+     * "id": 8 <br/>
+     * }, <br/>
+     * "highlightImageUrl": "",<br/>
+     * "showOnlySpecial": 0,<br/>
+     * "imageUrlSpecial": "",<br/>
+     * "forPayingUsers": 0,<br/>
+     * "showFrom": null,<br/>
+     * "updateTimestamp": null, <br/>
+     * "createDate": 1427204490000,<br/>
+     * "redirectUrl": "",<br/>
+     * "id": 1 <br/>
      * }]<br/>
-     * You can also
      *
      * @param token is a header parameter for checking permission
-     * @param page number of page at which we search for Premium actions
-     * @param limit number of Premium actions method returns
+     * @param forPayingUser - true if you want only premium package properties
+     * for paying users
+     * @param forNonPayingUser - true if you want only premium package
+     * properties for non paying users
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -73,24 +104,48 @@ public class PremiumPackagePropertiesRESTEndpoint {
      */
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumActions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("limit") int limit) {
+    public Response getPremiumPackageProperties(@HeaderParam("authorization") String token, @DefaultValue("false") @QueryParam("forPayingUser") boolean forPayingUser,
+            @DefaultValue("false") @QueryParam("forNonPayingUser") boolean forNonPayingUser) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
-        List<PremiumAction> premiumActions = em.createNamedQuery("PremiumAction.findAll").getResultList();
-        if (premiumActions == null || premiumActions.isEmpty()) {
+        List<PremiumPackageProperties> premiumPackageProperties;
+        if (forPayingUser) {
+            premiumPackageProperties = em.createNamedQuery("PremiumPackageProperties.findByForPayingUsers").setParameter("forPayingUsers", Short.parseShort("1")).getResultList();
+        } else {
+            if (forNonPayingUser) {
+                premiumPackageProperties = em.createNamedQuery("PremiumPackageProperties.findByForNonPayingUsers").setParameter("forNonPayingUsers", Short.parseShort("1")).getResultList();
+            } else {
+                premiumPackageProperties = em.createNamedQuery("PremiumPackageProperties.findAll").getResultList();
+            }
+        }
+        if (premiumPackageProperties == null || premiumPackageProperties.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(premiumActions).build();
+        return Response.ok().entity(premiumPackageProperties).build();
     }
 
     /**
-     * API for this method is .../rest/premium_action This method recieves JSON
-     * object, and put it in the base. Example for JSON that you need to send:
+     * API for this method is .../rest/premium_package_properties This method
+     * recieves JSON object, and put it in the base. Example for JSON that you
+     * need to send some of this attributes not to be default values:
      * <br/>
      * {<br/>
-     * "name": "bla bla" <br/>
-     * }<br/>
+     * "forNonPayingUsers": 0, <br/>
+     * "redirectPositionTop": null,<br/>
+     * "redirectPositionLeft": null, <br/>
+     * "redirectImageUrl": "", "charityDonation": null, <br/>
+     * "charityDescription": "",<br/>
+     * "showUntil": null,<br/>
+     * "maxPurchasesPerUser": null,<br/>
+     * "idPremiumPackageUpgrade": null, <br/>
+     * "idFavoriteClub": null,<br/>
+     * "highlightImageUrl": "",<br/>
+     * "showOnlySpecial": 0,<br/>
+     * "imageUrlSpecial": "",<br/>
+     * "forPayingUsers": 0,<br/>
+     * "showFrom": null,<br/>
+     * "updateTimestamp": null,<br/>
+     * "redirectUrl": "", <br/> }
      *
      * @param token is a header parameter for checking permission
      * @return Response with status CREATED (201)
@@ -101,12 +156,13 @@ public class PremiumPackagePropertiesRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPremiumAction(@HeaderParam("authorization") String token, PremiumAction premiumActions) {
+    public Response insertPremiumAction(@HeaderParam("authorization") String token, PremiumPackageProperties premiumPackageProperties) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
-        premiumActions.setCreateDate(new Date());
-        if (validator.checkLenght(premiumActions.getName(), 255, true)) {
-            helper.persistObject(em, premiumActions);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
+        premiumPackageProperties.setCreateDate(new Date());
+        if (validator.checkLenght(premiumPackageProperties.getCharityDescription(), 255, true) && someAttributeIsNotNull(premiumPackageProperties)) {
+            premiumPackageProperties.setCreateDate(new Date());
+            helper.persistObject(em, premiumPackageProperties);
             return Response.status(Response.Status.CREATED).build();
         } else {
             throw new InputValidationException("Validation failed");
@@ -114,11 +170,10 @@ public class PremiumPackagePropertiesRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/premium_action/{id} This method find
-     * premium_action with defined id. Id is retrieved from URL. If Premium
-     * actions with that index does not exist method throws exception. Otherwise
-     * method remove that Premium action. If Premium action is used, it can't be
-     * deleted.
+     * API for method: .../rest/premium_package_properties/{id} This method find
+     * premium_package_properties with defined id. Id is retrieved from URL. If
+     * Premium package property with that index does not exist method throws
+     * exception. Otherwise method remove that Premium package property.
      *
      * @param token is a header parameter for checking permission
      * @param id of Premium action that should be deleted.
@@ -129,17 +184,37 @@ public class PremiumPackagePropertiesRESTEndpoint {
     public Response deletePremiumAction(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
-        PremiumAction premiumActions = em.find(PremiumAction.class, id);
-        helper.removeObject(em, premiumActions, id);
+        PremiumPackageProperties premiumPackageProperties = em.find(PremiumPackageProperties.class, id);
+        helper.removeObject(em, premiumPackageProperties, id);
         return Response.ok().build();
     }
 
     /**
-     * API for this method is .../rest/premium_action This method recieves JSON
-     * object, and update database. Example for JSON that you need to send:<br/>
-     * {<br/>
-     * "name": "bla bla 1123",<br/>
-     * "id": 15<br/> }
+     * API for this method is .../rest/premium_package_properties This method
+     * recieves JSON object, and update database. Example for JSON that you need.
+     * Required filed is id.
+     * 
+     * { <br/>
+     * "forNonPayingUsers": 0,<br/>
+     * "redirectPositionTop": null,<br/>
+     * "redirectPositionLeft": null,<br/>
+     * "redirectImageUrl": "",<br/>
+     * "charityDonation":  null, <br/>
+     * "charityDescription": "",<br/>
+     * "showUntil": null,<br/>
+     * "maxPurchasesPerUser": null, <br/>
+     * "idPremiumPackageUpgrade": null,<br/>
+     * "idFavoriteClub": null,<br/>
+     * "highlightImageUrl": "",<br/>
+     * "showOnlySpecial": 0,<br/>
+     * "imageUrlSpecial": "",<br/>
+     * "forPayingUsers": 0, <br/>
+     * "showFrom": null, <br/>
+     * "updateTimestamp": null,<br/>
+     * "createDate": 1427204490000, <br/>
+     * "redirectUrl": "", <br/>
+     * "id": 1 <br/>
+     * }
      *
      * @param token is a header parameter for checking permission
      * @return Response with status OK (200) "Successfully updated!"
@@ -154,22 +229,37 @@ public class PremiumPackagePropertiesRESTEndpoint {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updatePremiumAction(@HeaderParam("authorization") String token, PremiumAction premiumAction) {
+    public Response updatePremiumAction(@HeaderParam("authorization") String token, PremiumPackageProperties premiumPackageProperty) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
-        PremiumAction oldPremiumAction = em.find(PremiumAction.class, premiumAction.getId());
-        if (oldPremiumAction != null) {
-            if (validator.checkLenght(premiumAction.getName(), 255, true)) {
-                premiumAction.setCreateDate(oldPremiumAction.getCreateDate());
-                helper.mergeObject(em, premiumAction);
+        PremiumPackageProperties oldPremiumPackageProperty = em.find(PremiumPackageProperties.class, premiumPackageProperty.getId());
+        if (oldPremiumPackageProperty != null) {
+            if (validator.checkLenght(premiumPackageProperty.getCharityDescription(), 255, true) && someAttributeIsNotNull(premiumPackageProperty)
+                    && oldPremiumPackageProperty.getId() != 0) {
+                premiumPackageProperty.setCreateDate(oldPremiumPackageProperty.getCreateDate());
+                helper.mergeObject(em, premiumPackageProperty);
             } else {
                 throw new InputValidationException("Validation failed");
             }
         } else {
-            throw new DataNotFoundException("Premium action at index" + premiumAction.getId() + " does not exits");
+            throw new DataNotFoundException("Premium action at index" + premiumPackageProperty.getId() + " does not exits");
         }
 
         return Response.ok("Successfully updated!").build();
+    }
+
+    private boolean someAttributeIsNotNull(PremiumPackageProperties premiumPackageProperties) {
+        return premiumPackageProperties.getCharityDescription() != null
+                || premiumPackageProperties.getCharityDonation() != BigDecimal.valueOf(0)
+                || premiumPackageProperties.getForNonPayingUsers() != 0 || premiumPackageProperties.getForPayingUsers() != Short.parseShort("0")
+                || premiumPackageProperties.getHighlightImageUrl() != null || premiumPackageProperties.getIdFavoriteClub() != null
+                || premiumPackageProperties.getIdPremiumPackageSuccessor() != null || premiumPackageProperties.getIdPremiumPackageUpgrade() != null
+                || premiumPackageProperties.getImageUrlSpecial() != null || premiumPackageProperties.getMaxPurchasesPerUser() != 0
+                || premiumPackageProperties.getPremiumPackageList() != null || premiumPackageProperties.getRedirectImageUrl() != null
+                || premiumPackageProperties.getRedirectPositionLeft() != 0 || premiumPackageProperties.getRedirectPositionTop() != 0
+                || premiumPackageProperties.getRedirectUrl() != null || premiumPackageProperties.getUpdateTimestamp() != null
+                || premiumPackageProperties.getShowUntil() != null || premiumPackageProperties.getShowOnlySpecial() != 0
+                || premiumPackageProperties.getShowFrom() != null;
     }
 
 }
