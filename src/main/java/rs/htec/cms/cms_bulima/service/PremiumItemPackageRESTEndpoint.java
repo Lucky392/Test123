@@ -83,8 +83,7 @@ public class PremiumItemPackageRESTEndpoint {
      * @param limit number of News method returns
      * @param orderingColumn column name for ordering, if you put "-" before
      * column name, that mean DESC ordering.
-     * @param search word for searching newsType, newsHeadlineWeb,
-     * newsHeadlineMobile
+     * @param search word for searching name and title
      * @param minDate is a start date for filtering time in millis
      * @param maxDate is a end date for filtering time in millis
      * @return Response 200 OK with JSON body
@@ -102,7 +101,7 @@ public class PremiumItemPackageRESTEndpoint {
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
 
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         List<PremiumItemPackage> itemPackage;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumItemPackage p ");
 
@@ -132,7 +131,7 @@ public class PremiumItemPackageRESTEndpoint {
         if (itemPackage == null || itemPackage.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(itemPackage).build();
+        return Response.ok().entity(helper.getJson(itemPackage)).build();
     }
 
     /**
@@ -161,7 +160,7 @@ public class PremiumItemPackageRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("id") long idItem) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
         itemPackage.setCreateDate(new Date());
         PremiumItem item = em.find(PremiumItem.class, idItem);
         itemPackage.setIdPremiumItem(item);
@@ -175,7 +174,7 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/itemPackage/{id} This method find news with
+     * API for method: .../rest/itemPackage/{id} This method find package with
      * defined id. Id is retrieved from URL. If Package with that index does not
      * exist method throws exception. Otherwise method remove that Package.
      *
@@ -187,14 +186,14 @@ public class PremiumItemPackageRESTEndpoint {
     @Path("/{id}")
     public Response deleteItemPackage(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
         PremiumItemPackage itemPackage = em.find(PremiumItemPackage.class, id);
         helper.removeObject(em, itemPackage, id);
         return Response.ok().build();
     }
 
     /**
-     * API for this method is .../rest/itemPackage/{id} where id is id for Item
+     * API for this method is .../rest/itemPackage/{idItem} where id is id for Item
      * we want to include in our Premium item package. This method recieves JSON
      * object, and update database. Example for JSON that you need to send:
      * {<br/>
@@ -202,11 +201,11 @@ public class PremiumItemPackageRESTEndpoint {
      * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
      * "idPremiumItem": "6",<br/>
      * "position": "6",<br/> "title": "Bietmanager",<br/>
-     * "pricePremiumCurrency": "15",<br/> "createDate": "2014-01-01 00:00:00.0"
-     * <br/>}
+     * "pricePremiumCurrency": "15",<br/>}
      *
      * @param token is a header parameter for checking permission
      * @param itemPackage is an object that Jackson convert from JSON to object
+     * @param idItem id of item that we add to item package
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -217,22 +216,22 @@ public class PremiumItemPackageRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @POST
-    @Path("/{id}")
+    @Path("/{idItem}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("id") long id) {
+    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idItem") long idItem) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
-        itemPackage.setUpdateTimestamp(new Date());
-        //itemPackage.setCreateDate(new Date());
-        PremiumItem item = em.find(PremiumItem.class, id);
-        itemPackage.setIdPremiumItem(item);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
 
         PremiumItemPackage oldPackage = em.find(PremiumItemPackage.class, itemPackage.getId());
         if (oldPackage != null) {
             if (validator.checkLenght(itemPackage.getName(), 255, true) && validator.checkLenght(itemPackage.getTitle(), 255, true)
                     && validator.checkLenght(itemPackage.getHighlightUrl(), 255, true) && validator.checkLenght(itemPackage.getAdditionalInfo(), 255, true)) {
 
+                itemPackage.setUpdateTimestamp(new Date());
+                itemPackage.setCreateDate(oldPackage.getCreateDate());
+                PremiumItem item = em.find(PremiumItem.class, idItem);
+                itemPackage.setIdPremiumItem(item);
                 helper.mergeObject(em, itemPackage);
             } else {
                 throw new InputValidationException("Validation failed");

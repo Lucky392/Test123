@@ -88,7 +88,7 @@ public class PremiumPackageContentRESTEndpoint {
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
 
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         List<PremiumPackageContent> packageContent;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumPackageContent p ");
 
@@ -114,16 +114,17 @@ public class PremiumPackageContentRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/packageContent/{idItem}/{idPackage}
-     * This method recieves JSONobject, and put it in the base.
-     * Example for JSON that you need to send:
-     * {<br/>
-     * "createDate": 1427204482000,<br/> "updateTimestamp": null,<br/> "amount": "5"<br/> }
+     * API for this method is .../rest/packageContent/{idItem}/{idPackage} This
+     * method recieves JSONobject, and put it in the base. Example for JSON that
+     * you need to send: {<br/>
+     * "createDate": 1427204482000,<br/> "updateTimestamp": null,<br/> "amount":
+     * "5"<br/> }
      *
      * @param token is a header parameter for checking permission
-     * @param packageContent object that we want to insert in database 
+     * @param packageContent object that we want to insert in database
      * @param idItem id of premium item we add to packageContent object
-     * @param idPackage id of premium item package we add to packageContent object
+     * @param idPackage id of premium item package we add to packageContent
+     * object
      * @return Response with status CREATED (201)
      *
      */
@@ -133,7 +134,7 @@ public class PremiumPackageContentRESTEndpoint {
     public Response insertPackageContent(@HeaderParam("authorization") String token, PremiumPackageContent packageContent,
             @PathParam("idItem") long idItem, @PathParam("idPackage") long idPackage) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
         packageContent.setCreateDate(new Date());
         PremiumItem item = em.find(PremiumItem.class, idItem);
         packageContent.setIdPremiumItem(item);
@@ -144,11 +145,11 @@ public class PremiumPackageContentRESTEndpoint {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    
     /**
-     * API for method: .../rest/packageContent/{id} This method find package content with
-     * defined id and delete it. Id is retrieved from URL. If package content with that index does not
-     * exist method throws exception. Otherwise method remove that package content.
+     * API for method: .../rest/packageContent/{id} This method find package
+     * content with defined id and delete it. Id is retrieved from URL. If
+     * package content with that index does not exist method throws exception.
+     * Otherwise method remove that package content.
      *
      * @param token is a header parameter for checking permission
      * @param id of Package Content that should be deleted.
@@ -158,28 +159,23 @@ public class PremiumPackageContentRESTEndpoint {
     @Path("/{id}")
     public Response deleteItemPackageContent(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
         PremiumPackageContent packageContent = em.find(PremiumPackageContent.class, id);
         helper.removeObject(em, packageContent, id);
         return Response.ok().build();
     }
 
-    
     /**
-     * API for this method is .../rest/packageContent/{idItem}/{idPackage} 
-     * This method recieves JSON object, and update database.
-     * Example for JSON that you need to send:
-     * {<br/>
-     * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
-     * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
-     * "idPremiumItem": "6",<br/>
-     * "position": "6",<br/> "title": "Bietmanager",<br/>
-     * "pricePremiumCurrency": "15",<br/> "createDate": "2014-01-01 00:00:00.0"
-     * <br/>}
+     * API for this method is .../rest/packageContent/{idItem}/{idPackage} This
+     * method recieves JSON object, and update database. Example for JSON that
+     * you need to send: {<br/>
+     * "amount": "10",<br/> "id":"100",<br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param packageContent
      * @param idItem id of premium item we add to packageContent object
-     * @param idPackage id of premium item package we add to packageContent object
+     * @param idPackage id of premium item package we add to packageContent
+     * object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -193,16 +189,16 @@ public class PremiumPackageContentRESTEndpoint {
     public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumPackageContent packageContent,
             @PathParam("idItem") long idItem, @PathParam("idPackage") long idPackage) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
-        packageContent.setUpdateTimestamp(new Date());
-        //itemPackage.setCreateDate(new Date());
-        PremiumItem item = em.find(PremiumItem.class, idItem);
-        packageContent.setIdPremiumItem(item);
-        PremiumPackage premiumPackage = em.find(PremiumPackage.class, idPackage);
-        packageContent.setIdPremiumPackage(premiumPackage);
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
 
         PremiumPackageContent oldPackageContent = em.find(PremiumPackageContent.class, packageContent.getId());
         if (oldPackageContent != null) {
+            packageContent.setUpdateTimestamp(new Date());
+            packageContent.setCreateDate(oldPackageContent.getCreateDate());
+            PremiumItem item = em.find(PremiumItem.class, idItem);
+            packageContent.setIdPremiumItem(item);
+            PremiumPackage premiumPackage = em.find(PremiumPackage.class, idPackage);
+            packageContent.setIdPremiumPackage(premiumPackage);
             helper.mergeObject(em, packageContent);
         } else {
             throw new DataNotFoundException("Premium items package content at index " + packageContent.getId() + " does not exits");
