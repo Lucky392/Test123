@@ -129,12 +129,12 @@ public class NewsCmsRESTEndpoint {
         if (search != null) {
             search = "%" + search + "%";
             query.append(minDate != 0 || newsType != null ? " AND" : "WHERE")
-                    .append(" n.newsHeadlineWeb LIKE '")
+                    .append(" (n.newsHeadlineWeb LIKE '")
                     .append(search)
                     .append("' OR n.newsHeadlineMobile LIKE '")
                     .append(search).append("' OR n.newsMessageWeb LIKE '")
                     .append(search).append("' OR n.newsMessageMobile LIKE '")
-                    .append(search).append("'");
+                    .append(search).append("')");
         }
 
         if (orderingColumn != null) {

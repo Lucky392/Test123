@@ -101,13 +101,13 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         if (search != null) {
             search = "%" + search + "%";
             query.append(minDate != 0 ? " AND" : "WHERE")
-                    .append(" q.question LIKE '")
+                    .append(" (q.question LIKE '")
                     .append(search)
                     .append("' OR q.correctAnswer LIKE '")
                     .append(search).append("' OR q.wrongAnswer1 LIKE '")
                     .append(search).append("' OR n.wrongAnswer2 LIKE '")
                     .append(search).append("' OR n.wrongAnswer3 LIKE '")
-                    .append(search).append("'");
+                    .append(search).append("')");
         }
 
         if (orderingColumn != null) {
