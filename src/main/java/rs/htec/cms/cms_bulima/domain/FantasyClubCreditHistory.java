@@ -23,6 +23,8 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -125,6 +127,8 @@ public class FantasyClubCreditHistory implements Serializable {
         this.updatedCredit = updatedCredit;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Auction getIdAuction() {
         return idAuction;
     }
@@ -133,6 +137,8 @@ public class FantasyClubCreditHistory implements Serializable {
         this.idAuction = idAuction;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyClub getIdFantasyClub() {
         return idFantasyClub;
     }

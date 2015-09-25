@@ -66,7 +66,7 @@ public class CreditHistoryRESTEndpoint {
         if (creditHistory.isEmpty()) {
             throw new DataNotFoundException("There is no credit history for this club!");
         } else {
-            return Response.ok().entity(helper.getJson(creditHistory)).build();
+            return Response.ok().entity(creditHistory).build();
         }
     }
 }

@@ -22,6 +22,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -141,6 +143,8 @@ public class Bid implements Serializable {
         this.createDate = createDate;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Auction getIdAuction() {
         return idAuction;
     }
@@ -149,6 +153,8 @@ public class Bid implements Serializable {
         this.idAuction = idAuction;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyClub getIdFantasyClubBidder() {
         return idFantasyClubBidder;
     }

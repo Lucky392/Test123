@@ -145,7 +145,7 @@ public class NewsCmsRESTEndpoint {
         }
         news = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (news == null || news.isEmpty()) {
-            throw new DataNotFoundException("Requested page does not exist..");
+            throw new DataNotFoundException("There is no news for this search!");
         }
         return Response.ok().entity(news).build();
     }

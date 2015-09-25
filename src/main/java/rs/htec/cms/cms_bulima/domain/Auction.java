@@ -163,6 +163,8 @@ public class Auction implements Serializable {
         this.createDate = createDate;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }
@@ -171,6 +173,8 @@ public class Auction implements Serializable {
         this.idFantasyLeague = idFantasyLeague;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyClub getIdFantasyClubSeller() {
         return idFantasyClubSeller;
     }
@@ -179,6 +183,8 @@ public class Auction implements Serializable {
         this.idFantasyClubSeller = idFantasyClubSeller;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyLeaguePlayer getIdFantasyLeaguePlayer() {
         return idFantasyLeaguePlayer;
     }

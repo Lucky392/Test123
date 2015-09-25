@@ -77,7 +77,7 @@ public class AuctionsRESTEndpoint {
         if (auctions.isEmpty()) {
             throw new DataNotFoundException("There is no Auction for this Club!");
         } else {
-            return Response.ok().entity(helper.getJson(auctions)).build();
+            return Response.ok().entity(auctions).build();
         }
     }
 

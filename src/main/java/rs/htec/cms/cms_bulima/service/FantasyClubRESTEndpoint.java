@@ -76,7 +76,7 @@ public class FantasyClubRESTEndpoint {
         if (fc.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
         } else {
-            return Response.ok().entity(helper.getJson(fc)).build();
+            return Response.ok().entity(fc).build();
         }
     }
 }

@@ -162,6 +162,8 @@ public class FantasyManager implements Serializable {
         this.profilePhotoUrl = profilePhotoUrl;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FavoriteClub getIdFavClub() {
         return idFavClub;
     }
@@ -170,6 +172,8 @@ public class FantasyManager implements Serializable {
         this.idFavClub = idFavClub;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public User getIdUser() {
         return idUser;
     }

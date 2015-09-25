@@ -312,6 +312,8 @@ public class FantasyClub implements Serializable {
         this.isLineUpChangedByCoTrainer = isLineUpChangedByCoTrainer;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Formation getIdActiveFormation() {
         return idActiveFormation;
     }
@@ -320,6 +322,8 @@ public class FantasyClub implements Serializable {
         this.idActiveFormation = idActiveFormation;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyClubLogo getIdFantasyClubLogo() {
         return idFantasyClubLogo;
     }
@@ -328,6 +332,8 @@ public class FantasyClub implements Serializable {
         this.idFantasyClubLogo = idFantasyClubLogo;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Emblem getIdEmblem() {
         return idEmblem;
     }
@@ -336,6 +342,8 @@ public class FantasyClub implements Serializable {
         this.idEmblem = idEmblem;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyPlayer getIdCaptain() {
         return idCaptain;
     }
@@ -344,6 +352,8 @@ public class FantasyClub implements Serializable {
         this.idCaptain = idCaptain;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyManager getIdFantasyManager() {
         return idFantasyManager;
     }
@@ -352,6 +362,8 @@ public class FantasyClub implements Serializable {
         this.idFantasyManager = idFantasyManager;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }

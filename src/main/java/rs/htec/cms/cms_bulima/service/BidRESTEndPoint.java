@@ -71,7 +71,7 @@ public class BidRESTEndPoint {
         if (bids.isEmpty()) {
             throw new DataNotFoundException("There is no Bids for this Club!");
         } else {
-            return Response.ok().entity(helper.getJson(bids)).build();
+            return Response.ok().entity(bids).build();
         }
     }
 
@@ -106,7 +106,7 @@ public class BidRESTEndPoint {
         if (bids.isEmpty()) {
             throw new DataNotFoundException("There is no Bids for this Auction!");
         } else {
-            return Response.ok().entity(helper.getJson(bids)).build();
+            return Response.ok().entity(bids).build();
         }
     }
 }

@@ -72,7 +72,7 @@ public class FantasyManagerRESTEndpoint {
         if (fm.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Managers for this user!");
         } else {
-            return Response.ok().entity(helper.getJson(fm)).build();
+            return Response.ok().entity(fm).build();
         }
     }
 

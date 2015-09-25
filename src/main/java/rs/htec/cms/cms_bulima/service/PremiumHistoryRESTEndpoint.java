@@ -70,7 +70,7 @@ public class PremiumHistoryRESTEndpoint {
         if (history.isEmpty()) {
             throw new DataNotFoundException("There is no Premium History for this user!");
         } else {
-            return Response.ok().entity(helper.getJson(history)).build();
+            return Response.ok().entity(history).build();
         }
     }
 
@@ -111,7 +111,7 @@ public class PremiumHistoryRESTEndpoint {
         if (history.isEmpty()) {
             throw new DataNotFoundException("There is no Premium History for this Club!");
         } else {
-            return Response.ok().entity(helper.getJson(history)).build();
+            return Response.ok().entity(history).build();
         }
     }
 
