@@ -24,6 +24,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -179,5 +180,22 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         } else {
             throw new DataNotFoundException("Prize at index" + prize.getId() + " does not exits");
         }
+    }
+    
+    /**
+     * API for this method: .../rest/prize/count
+     * This method return number of all prizes in database.
+     * @param token is a header parameter for checking permission
+     * @return Response 200 OK with JSON body
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/count")
+    public Response getCountNews(@HeaderParam("authorization") String token){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        String query = "Select COUNT(ip) From QuestionOfTheDayPrize ip";
+        CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
+        return Response.ok().entity(count).build();
     }
 }

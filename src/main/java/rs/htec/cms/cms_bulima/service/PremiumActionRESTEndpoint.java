@@ -26,6 +26,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.PremiumAction;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -203,4 +204,20 @@ public class PremiumActionRESTEndpoint {
         return Response.ok("Successfully updated!").build();
     }
 
+    /**
+     * API for this method: .../rest/premium_action/count
+     * This method return number of all actions in database.
+     * @param token is a header parameter for checking permission
+     * @return Response 200 OK with JSON body
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/count")
+    public Response getCountNews(@HeaderParam("authorization") String token){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        String query = "Select COUNT(p) From PremiumAction p";
+        CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
+        return Response.ok().entity(count).build();
+    }
 }

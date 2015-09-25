@@ -28,6 +28,7 @@ import rs.htec.cms.cms_bulima.domain.PremiumItem;
 import rs.htec.cms.cms_bulima.domain.PremiumItemPackage;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -276,5 +277,22 @@ public class PremiumItemPackageRESTEndpoint {
         }
 
         return Response.ok("Successfully updated!").build();
+    }
+    
+    /**
+     * API for this method: .../rest/itemPackage/count
+     * This method return number of all item packages in database.
+     * @param token is a header parameter for checking permission
+     * @return Response 200 OK with JSON body
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/count")
+    public Response getCountNews(@HeaderParam("authorization") String token){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        String query = "Select COUNT(ip) From PremiumItemPackage ip";
+        CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
+        return Response.ok().entity(count).build();
     }
 }

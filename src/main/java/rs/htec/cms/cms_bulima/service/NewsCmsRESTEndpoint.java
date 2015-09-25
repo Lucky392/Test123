@@ -27,6 +27,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -305,5 +306,22 @@ public class NewsCmsRESTEndpoint {
             throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
         }
         return Response.ok("Successfully updated!").build();
+    }
+    
+    /**
+     * API for this method: .../rest/news/count
+     * This method return number of all news in database.
+     * @param token is a header parameter for checking permission
+     * @return Response 200 OK with JSON body
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/count")
+    public Response getCountNews(@HeaderParam("authorization") String token){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        String query = "Select COUNT(n) From News n";
+        CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
+        return Response.ok().entity(count).build();
     }
 }
