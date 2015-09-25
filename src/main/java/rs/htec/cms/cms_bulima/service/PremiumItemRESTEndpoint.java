@@ -143,8 +143,10 @@ public class PremiumItemRESTEndpoint {
     public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
-        PremiumItem item = (PremiumItem) em.createNamedQuery("PremiumItem.findById").setParameter("id", id).getSingleResult();
-        if (item == null) {
+        PremiumItem item = null;
+        try {
+            item = (PremiumItem) em.createNamedQuery("PremiumItem.findById").setParameter("id", id).getSingleResult();
+        } catch (Exception e) {
             throw new DataNotFoundException("Premium item at index " + id + " does not exist..");
         }
         return Response.ok().entity(item).build();

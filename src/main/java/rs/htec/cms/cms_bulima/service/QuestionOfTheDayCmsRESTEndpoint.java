@@ -146,12 +146,14 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getQuestionById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
-        QuestionOfTheDay question = (QuestionOfTheDay) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
-        if (question == null) {
-            throw new DataNotFoundException("Qyestion at index " + id + " does not exist..");
+        QuestionOfTheDay question = null;
+        try {
+            question = (QuestionOfTheDay) em.createNamedQuery("QuestionOfTheDay.findById").setParameter("id", id).getSingleResult();
+        } catch (Exception e) {
+            throw new DataNotFoundException("Question of the day at index " + id + " does not exist..");
         }
         return Response.ok().entity(question).build();
     }

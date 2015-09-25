@@ -117,14 +117,16 @@ public class PremiumPackageRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPackageById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
-        PremiumPackage properties = (PremiumPackage) em.createNamedQuery("PremiumPackageContent.findById").setParameter("id", id).getSingleResult();
-        if (properties == null) {
+        PremiumPackage premiumPackage = null;
+        try {
+            premiumPackage = (PremiumPackage) em.createNamedQuery("PremiumPackage.findById").setParameter("id", id).getSingleResult();   
+        } catch (Exception e) {
             throw new DataNotFoundException("Premium package at index " + id + " does not exist..");
         }
-        return Response.ok().entity(properties).build();
+        return Response.ok().entity(premiumPackage).build();
     }
     
     /**

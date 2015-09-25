@@ -173,11 +173,13 @@ public class PremiumPackagePropertiesRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPackagePropertiesById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
-        PremiumPackageProperties properties = (PremiumPackageProperties) em.createNamedQuery("PremiumPackageContent.findById").setParameter("id", id).getSingleResult();
-        if (properties == null) {
+        PremiumPackageProperties properties = null;
+        try {
+            properties = (PremiumPackageProperties) em.createNamedQuery("PremiumPackageProperties.findById").setParameter("id", id).getSingleResult();
+        } catch (Exception e) {
             throw new DataNotFoundException("Premium package properties at index " + id + " does not exist..");
         }
         return Response.ok().entity(properties).build();

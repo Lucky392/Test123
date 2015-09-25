@@ -179,10 +179,13 @@ public class NewsCmsRESTEndpoint {
     public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
-        News news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
-        if (news == null) {
-            throw new DataNotFoundException("Requested page does not exist..");
+        News news = null;
+        try {
+            news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();   
+        } catch (Exception e) {
+            throw new DataNotFoundException("News at index " + id + " does not exist..");
         }
+        
         return Response.ok().entity(news).build();
     }
 

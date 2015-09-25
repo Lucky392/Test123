@@ -87,12 +87,14 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPrizeById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
-        QuestionOfTheDayPrize prize = (QuestionOfTheDayPrize) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
-        if (prize == null) {
-            throw new DataNotFoundException("Prize at index " + id + " does not exist..");
+        QuestionOfTheDayPrize prize = null;
+        try {
+            prize = (QuestionOfTheDayPrize) em.createNamedQuery("QuestionOfTheDayPrize.findById").setParameter("id", id).getSingleResult();
+        } catch (Exception e) {
+            throw new DataNotFoundException("Question of the day prize at index " + id + " does not exist..");
         }
         return Response.ok().entity(prize).build();
     }

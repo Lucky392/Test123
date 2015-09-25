@@ -85,12 +85,13 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/premium_action/{id} This method return single element of premium action at index
-     * in JSON. Example for JSON response: {<br/>
+     * API for method: .../rest/premium_action/{id} This method return single
+     * element of premium action at index in JSON. Example for JSON response:
+     * {<br/>
      * "createDate": 1418727045000,<br/>
      * "name": "Sofortverkauf",<br/>
-     * "id": 1<br/>
-     * }
+     * "id": 1<br/> }
+     *
      * @param token is a header parameter for checking permission
      * @param id of premium action we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -102,16 +103,18 @@ public class PremiumActionRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getActionById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
-        PremiumAction properties = (PremiumAction) em.createNamedQuery("PremiumAction.findById").setParameter("id", id).getSingleResult();
-        if (properties == null) {
+        PremiumAction action = null;
+        try {
+            action = (PremiumAction) em.createNamedQuery("PremiumAction.findById").setParameter("id", id).getSingleResult();
+        } catch (Exception e) {
             throw new DataNotFoundException("Premium action at index " + id + " does not exist..");
         }
-        return Response.ok().entity(properties).build();
+        return Response.ok().entity(action).build();
     }
-    
+
     /**
      * API for this method is .../rest/premium_action This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
@@ -167,8 +170,7 @@ public class PremiumActionRESTEndpoint {
      * object, and update database. Example for JSON that you need to send:<br/>
      * {<br/>
      * "name": "bla bla 1123",<br/>
-     * "id": 15<br/>
-     * }
+     * "id": 15<br/> }
      *
      * @param token is a header parameter for checking permission
      * @return Response with status OK (200) "Successfully updated!"

@@ -116,12 +116,14 @@ public class SliderContentCmsRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getSliderById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
-        SliderContent slider = (SliderContent) em.createNamedQuery("SliderContent.findById").setParameter("id", id).getSingleResult();
-        if (slider == null) {
-            throw new DataNotFoundException("Slider at index " + id + " does not exist..");
+        SliderContent slider = null;
+        try {
+            slider = (SliderContent) em.createNamedQuery("SliderContent.findById").setParameter("id", id).getSingleResult();
+        } catch (Exception e) {
+            throw new DataNotFoundException("Slider content at index " + id + " does not exist..");
         }
         return Response.ok().entity(slider).build();
     }
