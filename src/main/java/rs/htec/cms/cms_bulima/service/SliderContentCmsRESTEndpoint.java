@@ -87,9 +87,9 @@ public class SliderContentCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
         List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (slider.isEmpty()) {
-            return Response.ok().entity(helper.getJson(slider)).build();
-        } else {
             throw new DataNotFoundException("There is no sliders!");
+        } else {
+            return Response.ok().entity(slider).build();
         }
     }
 

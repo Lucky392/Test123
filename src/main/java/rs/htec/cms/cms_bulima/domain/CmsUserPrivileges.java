@@ -15,6 +15,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -102,6 +104,8 @@ public class CmsUserPrivileges implements Serializable {
         this.deleteAction = deleteAction;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public CmsRole getCmsRole() {
         return cmsRole;
     }
@@ -110,6 +114,8 @@ public class CmsUserPrivileges implements Serializable {
         this.cmsRole = cmsRole;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public CmsTables getCmsTables() {
         return cmsTables;
     }

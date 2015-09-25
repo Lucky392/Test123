@@ -210,6 +210,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "redirectUrl": "", <br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param premiumPackageProperties
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -278,6 +279,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "id": 1 <br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param premiumPackageProperty
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>

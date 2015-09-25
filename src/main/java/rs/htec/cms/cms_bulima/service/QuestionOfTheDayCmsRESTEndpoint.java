@@ -122,7 +122,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         if (questions == null || questions.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(helper.getJson(questions)).build();
+        return Response.ok().entity(questions).build();
     }
     
     

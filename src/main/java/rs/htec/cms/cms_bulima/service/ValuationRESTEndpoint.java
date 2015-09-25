@@ -81,7 +81,7 @@ public class ValuationRESTEndpoint {
         if (valuation.isEmpty()) {
             throw new DataNotFoundException("There is no valuation for clubs in this league!");
         } else {
-            return Response.ok().entity(helper.getJson(valuation)).build();
+            return Response.ok().entity(valuation).build();
         }
     }
 
@@ -120,7 +120,7 @@ public class ValuationRESTEndpoint {
         if (fcv.isEmpty()) {
             throw new DataNotFoundException("There is no valuation for this club!");
         } else {
-            return Response.ok().entity(helper.getJson(fcv)).build();
+            return Response.ok().entity(fcv).build();
         }
     }
 

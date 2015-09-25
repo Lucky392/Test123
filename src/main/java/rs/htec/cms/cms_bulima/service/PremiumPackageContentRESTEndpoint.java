@@ -111,7 +111,7 @@ public class PremiumPackageContentRESTEndpoint {
         if (packageContent == null || packageContent.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(helper.getJson(packageContent)).build();
+        return Response.ok().entity(packageContent).build();
     }
 
     /**

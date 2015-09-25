@@ -132,7 +132,7 @@ public class PremiumItemPackageRESTEndpoint {
         if (itemPackage == null || itemPackage.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(helper.getJson(itemPackage)).build();
+        return Response.ok().entity(itemPackage).build();
     }
 
     /**

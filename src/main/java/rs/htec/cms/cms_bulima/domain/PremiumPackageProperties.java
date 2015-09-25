@@ -276,6 +276,8 @@ public class PremiumPackageProperties implements Serializable {
         this.premiumPackageList = premiumPackageList;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public PremiumPackage getIdPremiumPackageUpgrade() {
         return idPremiumPackageUpgrade;
     }
@@ -284,6 +286,8 @@ public class PremiumPackageProperties implements Serializable {
         this.idPremiumPackageUpgrade = idPremiumPackageUpgrade;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FavoriteClub getIdFavoriteClub() {
         return idFavoriteClub;
     }
@@ -292,6 +296,8 @@ public class PremiumPackageProperties implements Serializable {
         this.idFavoriteClub = idFavoriteClub;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public PremiumPackage getIdPremiumPackageSuccessor() {
         return idPremiumPackageSuccessor;
     }

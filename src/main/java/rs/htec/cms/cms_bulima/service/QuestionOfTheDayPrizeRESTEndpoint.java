@@ -70,7 +70,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         if (prize.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(helper.getJson(prize)).build();
+        return Response.ok().entity(prize).build();
     }
 
     /**
