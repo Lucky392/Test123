@@ -58,6 +58,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyClub.findByAmountSubstituteBenchSlots", query = "SELECT f FROM FantasyClub f WHERE f.amountSubstituteBenchSlots = :amountSubstituteBenchSlots"),
     @NamedQuery(name = "FantasyClub.findByIsLineUpChangedByCoTrainer", query = "SELECT f FROM FantasyClub f WHERE f.isLineUpChangedByCoTrainer = :isLineUpChangedByCoTrainer")})
 public class FantasyClub implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFantasyClub")
+    private List<FantasyClubLineUp> fantasyClubLineUpList;
     @OneToMany(mappedBy = "idFantasyClub")
     private List<PremiumHistory> premiumHistoryList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFantasyClub")
@@ -465,6 +467,16 @@ public class FantasyClub implements Serializable {
 
     public void setPremiumHistoryList(List<PremiumHistory> premiumHistoryList) {
         this.premiumHistoryList = premiumHistoryList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubLineUp> getFantasyClubLineUpList() {
+        return fantasyClubLineUpList;
+    }
+
+    public void setFantasyClubLineUpList(List<FantasyClubLineUp> fantasyClubLineUpList) {
+        this.fantasyClubLineUpList = fantasyClubLineUpList;
     }
     
 }

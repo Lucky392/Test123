@@ -43,6 +43,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyLeaguePlayer.findByIsInAuction", query = "SELECT f FROM FantasyLeaguePlayer f WHERE f.isInAuction = :isInAuction"),
     @NamedQuery(name = "FantasyLeaguePlayer.findByCreateDate", query = "SELECT f FROM FantasyLeaguePlayer f WHERE f.createDate = :createDate")})
 public class FantasyLeaguePlayer implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idLeaguePlayer")
+    private List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayerList;
     @OneToMany(mappedBy = "idFantasyLeaguePlayer")
     private List<Auction> auctionList;
     private static final long serialVersionUID = 1L;
@@ -119,6 +121,8 @@ public class FantasyLeaguePlayer implements Serializable {
         this.createDate = createDate;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyPlayer getFantasyPlayer() {
         return fantasyPlayer;
     }
@@ -127,6 +131,8 @@ public class FantasyLeaguePlayer implements Serializable {
         this.fantasyPlayer = fantasyPlayer;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }
@@ -135,6 +141,8 @@ public class FantasyLeaguePlayer implements Serializable {
         this.idFantasyLeague = idFantasyLeague;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public Player getIdPlayer() {
         return idPlayer;
     }
@@ -176,6 +184,16 @@ public class FantasyLeaguePlayer implements Serializable {
 
     public void setAuctionList(List<Auction> auctionList) {
         this.auctionList = auctionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubLineUpPlayer> getFantasyClubLineUpPlayerList() {
+        return fantasyClubLineUpPlayerList;
+    }
+
+    public void setFantasyClubLineUpPlayerList(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayerList) {
+        this.fantasyClubLineUpPlayerList = fantasyClubLineUpPlayerList;
     }
     
 }

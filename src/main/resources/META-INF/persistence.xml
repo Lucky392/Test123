@@ -42,6 +42,8 @@
     <class>rs.htec.cms.cms_bulima.domain.PremiumPackageContent</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumPackageProperties</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumItemPackage</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLineUp</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima?zeroDateTimeBehavior=convertToNull"/>

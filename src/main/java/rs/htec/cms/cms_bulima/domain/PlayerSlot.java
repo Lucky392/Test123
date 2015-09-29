@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -40,6 +41,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "PlayerSlot.findByName", query = "SELECT p FROM PlayerSlot p WHERE p.name = :name"),
     @NamedQuery(name = "PlayerSlot.findByCreateDate", query = "SELECT p FROM PlayerSlot p WHERE p.createDate = :createDate")})
 public class PlayerSlot implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlayerSlot")
+    private List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayerList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -139,6 +142,16 @@ public class PlayerSlot implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubLineUpPlayer> getFantasyClubLineUpPlayerList() {
+        return fantasyClubLineUpPlayerList;
+    }
+
+    public void setFantasyClubLineUpPlayerList(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayerList) {
+        this.fantasyClubLineUpPlayerList = fantasyClubLineUpPlayerList;
     }
     
 }

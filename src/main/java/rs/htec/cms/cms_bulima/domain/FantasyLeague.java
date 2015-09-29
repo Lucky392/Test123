@@ -62,6 +62,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyLeague.findByUpdatedForSeason", query = "SELECT f FROM FantasyLeague f WHERE f.updatedForSeason = :updatedForSeason")})
 public class FantasyLeague implements Serializable {
     @OneToMany(mappedBy = "idFantasyLeague")
+    private List<FantasyClubLineUp> fantasyClubLineUpList;
+    @OneToMany(mappedBy = "idFantasyLeague")
     private List<Auction> auctionList;
     private static final long serialVersionUID = 1L;
     @Id
@@ -418,6 +420,16 @@ public class FantasyLeague implements Serializable {
 
     public void setAuctionList(List<Auction> auctionList) {
         this.auctionList = auctionList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyClubLineUp> getFantasyClubLineUpList() {
+        return fantasyClubLineUpList;
+    }
+
+    public void setFantasyClubLineUpList(List<FantasyClubLineUp> fantasyClubLineUpList) {
+        this.fantasyClubLineUpList = fantasyClubLineUpList;
     }
     
 }
