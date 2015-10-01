@@ -235,11 +235,10 @@ public class NewsCmsRESTEndpoint {
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
-        news.setCreateDate(new Date());
         if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                 && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                 && validator.checkLenght(news.getNewsType(), 255, true)) {
-
+            news.setCreateDate(new Date());
             helper.persistObject(em, news);
             return Response.status(Response.Status.CREATED).build();
         } else {
@@ -298,6 +297,7 @@ public class NewsCmsRESTEndpoint {
             if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                     && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                     && validator.checkLenght(news.getNewsType(), 255, true)) {
+                news.setCreateDate(oldNews.getCreateDate());
                 helper.mergeObject(em, news);
             } else {
                 throw new InputValidationException("Validation failed");

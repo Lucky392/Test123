@@ -50,6 +50,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "PremiumItem.findByPositionInPackage", query = "SELECT p FROM PremiumItem p WHERE p.positionInPackage = :positionInPackage")})
 public class PremiumItem implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
+    private List<UserPremiumItem> userPremiumItemList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
     private List<PremiumPackageContent> premiumPackageContentList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPremiumItem")
     private List<PremiumItemPackage> premiumItemPackageList;
@@ -275,6 +277,16 @@ public class PremiumItem implements Serializable {
 
     public void setPremiumItemPackageList(List<PremiumItemPackage> premiumItemPackageList) {
         this.premiumItemPackageList = premiumItemPackageList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<UserPremiumItem> getUserPremiumItemList() {
+        return userPremiumItemList;
+    }
+
+    public void setUserPremiumItemList(List<UserPremiumItem> userPremiumItemList) {
+        this.userPremiumItemList = userPremiumItemList;
     }
     
 }

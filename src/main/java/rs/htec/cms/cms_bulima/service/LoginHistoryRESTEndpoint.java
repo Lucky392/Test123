@@ -6,9 +6,7 @@
 package rs.htec.cms.cms_bulima.service;
 
 import java.sql.Date;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -22,7 +20,6 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.Dashboard;
-import rs.htec.cms.cms_bulima.helper.DashboardElement;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
@@ -129,7 +126,27 @@ public class LoginHistoryRESTEndpoint {
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
         return cw.getCount();
     }
-
+    
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Path("/payingUser/{day}")
+//    public Response getRevenue(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+//
+//        StringBuilder query = new StringBuilder("SELECT count(u) FROM LoginHistory l JOIN l.idUser u WHERE u.payingUser = 1 AND ");
+//
+//        appendPlatformToQuery(query, platform);
+//        query.append(" l.loginDate BETWEEN '");
+//        appendDateToQuery(query, day);
+////        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
+////        java.util.Date d = new java.util.Date();
+////        Date d1 = new Date(d.getTime());
+//
+//        CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+//        return Response.ok().entity(cw).build();
+//    }
+    
     private void appendDateToQuery(StringBuilder query, String day) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -177,16 +194,7 @@ public class LoginHistoryRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
 
         Dashboard dashboard = new Dashboard();
-        dashboard.instantiateFullDashboard();
-//        List<DashboardElement> elements = new ArrayList<>();
-//        DashboardElement element = new DashboardElement("ios");
-//        DashboardElement element2 = new DashboardElement("android");
-//        String[] time = {"today", "yesterday"};
-//        element.instantiateElement(time);
-//        element2.instantiateElement(time);
-//        elements.add(element);
-//        elements.add(element2);
-        
+        dashboard.instantiateFullDashboard();  
         
         return Response.ok().entity(dashboard).build();
     }
