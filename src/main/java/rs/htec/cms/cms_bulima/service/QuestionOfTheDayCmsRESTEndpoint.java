@@ -232,7 +232,6 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question
     ) {
         EntityManager em = helper.getEntityManager();
@@ -249,7 +248,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         } else {
             throw new DataNotFoundException("Question at index" + question.getId() + " does not exits");
         }
-        return Response.ok("Successfully updated!").build();
+        return Response.ok().build();
 
     }
     

@@ -127,25 +127,22 @@ public class LoginHistoryRESTEndpoint {
         return cw.getCount();
     }
     
-//    @GET
-//    @Produces(MediaType.APPLICATION_JSON)
-//    @Path("/payingUser/{day}")
-//    public Response getRevenue(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
-//        EntityManager em = helper.getEntityManager();
-//        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-//
-//        StringBuilder query = new StringBuilder("SELECT count(u) FROM LoginHistory l JOIN l.idUser u WHERE u.payingUser = 1 AND ");
-//
-//        appendPlatformToQuery(query, platform);
-//        query.append(" l.loginDate BETWEEN '");
-//        appendDateToQuery(query, day);
-////        SimpleDateFormat sdf = new SimpleDateFormat("yyy-MM-dd HH:mm:ss");
-////        java.util.Date d = new java.util.Date();
-////        Date d1 = new Date(d.getTime());
-//
-//        CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
-//        return Response.ok().entity(cw).build();
-//    }
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/revenue/{day}")
+    public Response getRevenue(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
+        // Treba promeniti upit, verovatno ne vadi dobar obracun
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        StringBuilder query = new StringBuilder("SELECT SUM(p.directPurchasePrice) FROM UserPremiumItem upi JOIN upi.idUser JOIN upi.idPremiumItem p WHERE ");
+
+        appendPlatformToQuery(query, platform);
+        query.append(" upi.updateTimestamp BETWEEN '");
+        appendDateToQuery(query, day);
+        
+        CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+        return Response.ok().entity(cw).build();
+    }
     
     private void appendDateToQuery(StringBuilder query, String day) {
         Calendar calendar = Calendar.getInstance();

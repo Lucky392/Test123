@@ -288,7 +288,6 @@ public class NewsCmsRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
@@ -305,7 +304,7 @@ public class NewsCmsRESTEndpoint {
         } else {
             throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
         }
-        return Response.ok("Successfully updated!").build();
+        return Response.ok().build();
     }
     
     /**

@@ -164,7 +164,6 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updatePrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
@@ -173,7 +172,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
             if (validator.checkLenght(prize.getName(), 255, true)) {
                 prize.setCreateDate(new Date());
                 helper.mergeObject(em, prize);
-                return Response.ok("Successfully updated!").build();
+                return Response.ok().build();
             } else {
                 throw new InputValidationException("Validation failed");
             }
