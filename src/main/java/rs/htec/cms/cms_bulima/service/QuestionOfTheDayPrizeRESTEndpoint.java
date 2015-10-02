@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -17,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -44,7 +46,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/prize/{page}/{limit} This method returns JSON
+     * API for method: .../rest/prize?page=VALUE&limit=VALUE This method returns JSON
      * list of questions at defined page with defined limit. It produces
      * APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit:
      * <br/>[ {<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id":
@@ -61,9 +63,9 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @GET
-    @Path("/{page}/{limit}")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPrize(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+    public Response getPrize(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page, @DefaultValue("10")@QueryParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
         List<QuestionOfTheDayPrize> prize = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();

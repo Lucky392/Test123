@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import java.sql.Date;
 import java.util.Calendar;
 import javax.persistence.EntityManager;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -126,7 +127,7 @@ public class LoginHistoryRESTEndpoint {
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
         return cw.getCount();
     }
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/revenue/{day}")
@@ -134,7 +135,7 @@ public class LoginHistoryRESTEndpoint {
         // Treba promeniti upit, verovatno ne vadi dobar obracun
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        StringBuilder query = new StringBuilder("SELECT SUM(p.directPurchasePrice) FROM UserPremiumItem upi JOIN upi.idUser JOIN upi.idPremiumItem p WHERE ");
+        StringBuilder query = new StringBuilder("SELECT SUM(p.directPurchasePrice) FROM UserPremiumItem upi, LoginHistory l JOIN upi.idPremiumItem p WHERE l.idUser=upi.idUser AND ");
 
         appendPlatformToQuery(query, platform);
         query.append(" upi.updateTimestamp BETWEEN '");
@@ -143,7 +144,20 @@ public class LoginHistoryRESTEndpoint {
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
         return Response.ok().entity(cw).build();
     }
-    
+
+    public long getRevenues(String platform, String day) {
+        // Treba promeniti upit, verovatno ne vadi dobar obracun
+        EntityManager em = helper.getEntityManager();
+        //StringBuilder query = new StringBuilder("SELECT SUM(p.directPurchasePrice) FROM UserPremiumItem upi JOIN upi.idUser JOIN upi.idPremiumItem p WHERE ");
+        StringBuilder query = new StringBuilder("SELECT SUM(p.directPurchasePrice) FROM UserPremiumItem upi, LoginHistory l JOIN upi.idPremiumItem p WHERE l.idUser=upi.idUser AND ");
+
+        appendPlatformToQuery(query, platform);
+        query.append(" upi.updateTimestamp BETWEEN '");
+        appendDateToQuery(query, day);
+        CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+        return cw.getCount();
+    }
+
     private void appendDateToQuery(StringBuilder query, String day) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
@@ -186,13 +200,19 @@ public class LoginHistoryRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/dashboard")
-    public Response getDashboard(@HeaderParam("authorization") String token, @QueryParam("platform") String platform) {
+    public Response getDashboard(@HeaderParam("authorization") String token, @DefaultValue("all") @QueryParam("platform") String platform) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
 
         Dashboard dashboard = new Dashboard();
-        dashboard.instantiateFullDashboard();  
-        
+        if ("all".equals(platform)) {
+            dashboard.instantiateFullDashboard();
+        } else {
+            if ("total".equals(platform)) {
+                platform = null;
+            }
+            dashboard.instantiateDashboard(platform);
+        }
         return Response.ok().entity(dashboard).build();
     }
 }

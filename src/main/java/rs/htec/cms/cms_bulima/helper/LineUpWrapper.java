@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.helper;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
@@ -46,10 +47,20 @@ public class LineUpWrapper {
         return lineUp.size();
     }
 
-    public boolean areEqual(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) { // drugi list treba da bude lineUpHistory
+    public boolean areEqual(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
         return lineUp == lineUpHistory;
     }
 
+    public List<FantasyClubLineUpPlayer> returnDifference(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
+        List<FantasyClubLineUpPlayer> difference = new ArrayList<>();
+        for (int i = 0; i < lineUpHistory.size(); i++) {
+            if (!lineUpHistory.get(i).equals(lineUp.get(i))) {
+                difference.add(lineUp.get(i));
+            }
+        }
+        return difference;
+    }
+    
     public List<LineUpPlayer> toLineUpPlayer(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayer) {
         List<LineUpPlayer> lineUpPlayer = null;
         for (FantasyClubLineUpPlayer fantasyPlayer : fantasyClubLineUpPlayer) {

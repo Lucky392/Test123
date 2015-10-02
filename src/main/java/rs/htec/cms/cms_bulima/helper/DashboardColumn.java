@@ -21,14 +21,14 @@ public class DashboardColumn {
     private long dailyActiveUser;
     private long registrations;
     private long payingUser;
-    //private String revenue;
+    private long revenue;
     LoginHistoryRESTEndpoint login = new LoginHistoryRESTEndpoint();
 
     public DashboardColumn(String platform, String time) {
         this.platform = platform;
         this.time = time;
     }
-    
+
     @XmlTransient
     @JsonIgnore
     public String getPlatform() {
@@ -71,10 +71,18 @@ public class DashboardColumn {
         this.payingUser = payingUser;
     }
 
+    public long getRevenue() {
+        return revenue;
+    }
+
+    public void setRevenue(long revenue) {
+        this.revenue = revenue;
+    }
+
     public void instantiateColumn() {
         this.setDailyActiveUser(login.getActiveUser(platform, time));
         this.setRegistrations(login.getRegistrations(platform, time));
         this.setPayingUser(login.getPayingUsers(platform, time));
+        this.setRevenue(login.getRevenues(platform, time));
     }
-
 }

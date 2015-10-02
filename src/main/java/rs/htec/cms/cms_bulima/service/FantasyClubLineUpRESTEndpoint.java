@@ -12,6 +12,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -49,6 +50,23 @@ public class FantasyClubLineUpRESTEndpoint {
 
         List<FantasyClubLineUpPlayer> lineUpPlayer = lineUpWrapper.getLineUpList(idFantasyClub, idMatchday);
         return Response.ok().entity(helper.getJson(lineUpPlayer)).build();
+    }
+    
+    @GET
+    @Path("/difference/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getDifference(@HeaderParam("authorization") String token, @QueryParam("idFantasyClub1") long idFantasyClub1,
+            @QueryParam("idFantasyClub2") long idFantasyClub2, @QueryParam("idMatchday") long idMatchday) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        LineUpWrapper lineUpWrapper = new LineUpWrapper();
+
+        List<FantasyClubLineUpPlayer> lineUpPlayer1 = lineUpWrapper.getLineUpList(idFantasyClub1, idMatchday);
+        List<FantasyClubLineUpPlayer> lineUpPlayer2 = lineUpWrapper.getLineUpList(idFantasyClub2, idMatchday);
+        
+        List<FantasyClubLineUpPlayer> difference = lineUpWrapper.returnDifference(lineUpPlayer1, lineUpPlayer2);
+        
+        return Response.ok().entity(helper.getJson(difference)).build();
     }
     
     @GET

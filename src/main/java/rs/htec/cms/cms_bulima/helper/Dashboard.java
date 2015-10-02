@@ -18,7 +18,8 @@ public class Dashboard {
 
     private List<DashboardElement> elements;
     private String[] time;
-
+    private String[] platforms = {null, "web", "android", "ios"};
+    
     public Dashboard() {
         time = new String[]{"today", "yesterday"};
         elements = new ArrayList<>();
@@ -49,7 +50,6 @@ public class Dashboard {
     }
 
     public void instantiateFullDashboard() {
-        String[] platforms = {null, "web", "android", "ios"};
         for (String platform : platforms) {
             DashboardElement element = new DashboardElement(platform);
             element.instantiateElement(time);

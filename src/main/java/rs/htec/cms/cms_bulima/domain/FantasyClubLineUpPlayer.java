@@ -37,7 +37,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyClubLineUpPlayer.findById", query = "SELECT f FROM FantasyClubLineUpPlayer f WHERE f.id = :id"),
     @NamedQuery(name = "FantasyClubLineUpPlayer.findByIsCaptain", query = "SELECT f FROM FantasyClubLineUpPlayer f WHERE f.isCaptain = :isCaptain"),
     @NamedQuery(name = "FantasyClubLineUpPlayer.findByCreateDate", query = "SELECT f FROM FantasyClubLineUpPlayer f WHERE f.createDate = :createDate"),
-    @NamedQuery(name = "FantasyClubLineUpPlayer.findByLineUpId", query = "SELECT f FROM FantasyClubLineUpPlayer f WHERE f.idLineUp.id = :idLineUp")})
+    @NamedQuery(name = "FantasyClubLineUpPlayer.findByLineUpId", query = "SELECT f FROM FantasyClubLineUpPlayer f WHERE f.idLineUp.id = :idLineUp ORDER BY f.idPlayerSlot.id")})
 public class FantasyClubLineUpPlayer implements Serializable {
 
     private static final long serialVersionUID = 1L;
