@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -105,7 +106,7 @@ public class NewsCmsRESTEndpoint {
      */
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
     @Path("/")
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getNews(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("newsType") String newsType) {
@@ -147,12 +148,14 @@ public class NewsCmsRESTEndpoint {
         if (news == null || news.isEmpty()) {
             throw new DataNotFoundException("There is no news for this search!");
         }
-        return Response.ok().entity(news).build();
+        GenericEntity<List<News>> newsEntity = new GenericEntity<List<News>>(news) {
+        };
+        return Response.ok().entity(newsEntity).build();
     }
 
     /**
-     * API for method: .../rest/news/{id} This method return single element of news at index
-     * in JSON. Example for JSON response: <br/>{<br/>
+     * API for method: .../rest/news/{id} This method return single element of
+     * news at index in JSON. Example for JSON response: <br/>{<br/>
      * "idFantasyClub": "null",<br/>
      * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
      * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
@@ -166,6 +169,7 @@ public class NewsCmsRESTEndpoint {
      * "createDate": "2015-07-20 15:32:36.0",<br/>
      * "idFantasyLeague": "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=7175
      * ]"<br/>}
+     *
      * @param token is a header parameter for checking permission
      * @param id of news we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -182,11 +186,11 @@ public class NewsCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         News news = null;
         try {
-            news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();   
+            news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
             throw new DataNotFoundException("News at index " + id + " does not exist..");
         }
-        
+
         return Response.ok().entity(news).build();
     }
 
@@ -302,21 +306,22 @@ public class NewsCmsRESTEndpoint {
                 throw new InputValidationException("Validation failed");
             }
         } else {
-            throw new DataNotFoundException("News at index" + news.getId() + " does not exits");
+            throw new DataNotFoundException("News at index " + news.getId() + " does not exits");
         }
         return Response.ok().build();
     }
-    
+
     /**
-     * API for this method: .../rest/news/count
-     * This method return number of all news in database.
+     * API for this method: .../rest/news/count This method return number of all
+     * news in database.
+     *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountNews(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         String query = "Select COUNT(n) From News n";

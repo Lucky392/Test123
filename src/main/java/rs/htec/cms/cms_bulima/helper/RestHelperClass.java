@@ -60,6 +60,27 @@ public class RestHelperClass {
         return jsonList.toJSONString();
     }
 
+    public JSONArray getJsonArray(List list) {
+        JSONArray jsonList = new JSONArray();
+        for (Object o : list) {
+            JSONObject obj1 = new JSONObject();
+            for (Field field : o.getClass().getDeclaredFields()) {
+                if (!field.getName().equals("serialVersionUID")) {
+                    field.setAccessible(true);
+                    String s = "";
+                    try {
+                        s = field.get(o) + "";
+                    } catch (IllegalArgumentException | IllegalAccessException ex) {
+                        Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    obj1.put(field.getName(), s);
+                }
+            }
+            jsonList.add(obj1);
+        }
+        return jsonList;
+    }
+    
     public EntityManager getEntityManager() {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
         EntityManager ecm = emf.createEntityManager();
