@@ -22,9 +22,11 @@ import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.domain.Formation;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.LineUpDifference;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
 
 /**
  *
@@ -53,7 +55,7 @@ public class FantasyClubLineUpRESTEndpoint {
         List<FantasyClubLineUpPlayer> lineUpPlayer = lineUp.getLineUpList(idFantasyClub, idMatchday);
         return Response.ok().entity(helper.getJson(lineUpPlayer)).build();
     }
-    
+
     @GET
     @Path("points/{idFantasyClub}/{idMatchday}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -63,8 +65,22 @@ public class FantasyClubLineUpRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         LineUpDifference lineUp = new LineUpDifference();
         long points = lineUp.getBlmPoints(idFantasyClub, idMatchday);
-        
+
         return Response.ok().entity(points).build();
+    }
+
+    @GET
+    @Path("formation/{idFantasyClub}/{idMatchday}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFormation(@HeaderParam("authorization") String token, @PathParam("idFantasyClub") long idFantasyClub,
+            @PathParam("idMatchday") long idMatchday) {
+//        EntityManager em = helper.getEntityManager();
+        EntityManager em = EMF.createEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        LineUpDifference lineUp = new LineUpDifference();
+        String f1 = lineUp.getFormation(idFantasyClub, idMatchday);
+
+        return Response.ok().entity(f1).build();
     }
 
     @GET
@@ -74,22 +90,24 @@ public class FantasyClubLineUpRESTEndpoint {
             @QueryParam("idFantasyClub2") long idFantasyClub2, @QueryParam("idMatchday1") long idMatchday1, @QueryParam("idMatchday2") long idMatchday2) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        
+
         LineUpDifference difference = new LineUpDifference();
-        Formation f1 = difference.getFormation(idFantasyClub1, idMatchday1);
-        Formation f2 = difference.getFormation(idFantasyClub2, idMatchday2);
-        Formation fDiff = difference.returnDifferenceForFormation(f1, f2);
+
+        String f1 = difference.getFormation(idFantasyClub1, idMatchday1);
+        String f2 = difference.getFormation(idFantasyClub2, idMatchday2);
+        String fDiff = difference.returnDifferenceForFormation(f1, f2);
         difference.setFormationDifference(fDiff);
         List<FantasyClubLineUpPlayer> lineUpPlayer1 = difference.getLineUpList(idFantasyClub1, idMatchday1);
         List<FantasyClubLineUpPlayer> lineUpPlayer2 = difference.getLineUpList(idFantasyClub2, idMatchday2);
 
-        List<FantasyClubLineUpPlayer> lineUpDifference = difference.returnDifference(lineUpPlayer1, lineUpPlayer2);
+        List<LineUpPlayerPOJO> lineUpDifference = difference.returnDifferencePOJO(lineUpPlayer1, lineUpPlayer2);
+
         long points1 = difference.getBlmPoints(idFantasyClub1, idMatchday1);
         long points2 = difference.getBlmPoints(idFantasyClub2, idMatchday2);
-        
-        difference.setBulimaPointDifference(points2-points1);
-        
-        difference.setLineUpDifference(helper.getJsonArray(lineUpDifference));
+
+        difference.setBulimaPointDifference(points2 - points1);
+
+        difference.setLineUpDifference(lineUpDifference);
         return Response.ok().entity(difference).build();
     }
 

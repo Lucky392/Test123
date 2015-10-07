@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package rs.htec.cms.cms_bulima.helper;
+package rs.htec.cms.cms_bulima.pojo;
 
 import java.util.Date;
 
@@ -11,30 +11,20 @@ import java.util.Date;
  *
  * @author stefan
  */
-public class LineUpPlayer {
+public class LineUpPlayerPOJO {
 
-    private Long id;
+    private String playerFullName;
     private Short isCaptain;
-    private Date createDate;
     private Long idPlayerSlot;
-
-    public LineUpPlayer(Long id, Short isCaptain, Date createDate, Long idPlayerSlot, Long idLeaguePlayer, Long idLineUp) {
-        this.id = id;
-        this.isCaptain = isCaptain;
-        this.createDate = createDate;
-        this.idPlayerSlot = idPlayerSlot;
-        this.idLeaguePlayer = idLeaguePlayer;
-        this.idLineUp = idLineUp;
-    }
     private Long idLeaguePlayer;
     private Long idLineUp;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public LineUpPlayerPOJO(String playerFullName, Short isCaptain, Long idPlayerSlot, Long idLeaguePlayer, Long idLineUp) {
+        this.playerFullName = playerFullName;
+        this.isCaptain = isCaptain;
+        this.idPlayerSlot = idPlayerSlot;
+        this.idLeaguePlayer = idLeaguePlayer;
+        this.idLineUp = idLineUp;
     }
 
     public Short getIsCaptain() {
@@ -43,14 +33,6 @@ public class LineUpPlayer {
 
     public void setIsCaptain(Short isCaptain) {
         this.isCaptain = isCaptain;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
     }
 
     public Long getIdPlayerSlot() {
@@ -77,4 +59,11 @@ public class LineUpPlayer {
         this.idLineUp = idLineUp;
     }
 
+    public String getPlayerFullName() {
+        return playerFullName;
+    }
+
+    public void setPlayerFullName(String playerFullName) {
+        this.playerFullName = playerFullName;
+    }
 }

@@ -82,9 +82,10 @@ public class RestHelperClass {
     }
     
     public EntityManager getEntityManager() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
-        EntityManager ecm = emf.createEntityManager();
-        return ecm;
+//        EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
+//        EntityManager ecm = emf.createEntityManager();
+//        return ecm;
+        return EMF.createEntityManager();
     }
 
     public void checkUserAndPrivileges(EntityManager em, long tableId, MethodConstants method, String token) {
