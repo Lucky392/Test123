@@ -5,25 +5,23 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
-import java.util.Date;
-
 /**
  *
  * @author stefan
  */
 public class LineUpPlayerPOJO {
 
+    private Long id;
     private String playerFullName;
     private Short isCaptain;
     private Long idPlayerSlot;
-    private Long idLeaguePlayer;
     private Long idLineUp;
 
-    public LineUpPlayerPOJO(String playerFullName, Short isCaptain, Long idPlayerSlot, Long idLeaguePlayer, Long idLineUp) {
+    public LineUpPlayerPOJO(long id, Short isCaptain, Long idPlayerSlot, String playerFullName, Long idLineUp) {
         this.playerFullName = playerFullName;
         this.isCaptain = isCaptain;
         this.idPlayerSlot = idPlayerSlot;
-        this.idLeaguePlayer = idLeaguePlayer;
+        this.id = id;
         this.idLineUp = idLineUp;
     }
 
@@ -43,12 +41,12 @@ public class LineUpPlayerPOJO {
         this.idPlayerSlot = idPlayerSlot;
     }
 
-    public Long getIdLeaguePlayer() {
-        return idLeaguePlayer;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdLeaguePlayer(Long idLeaguePlayer) {
-        this.idLeaguePlayer = idLeaguePlayer;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getIdLineUp() {

@@ -127,14 +127,14 @@ public class LineUpDifference {
                 if (lineUpHistoryPlayer.getIdPlayerSlot().equals(lineUpPlayer.getIdPlayerSlot())) {
                     find = true;
                     if (!lineUpHistoryPlayer.getIdLeaguePlayer().equals(lineUpPlayer.getIdLeaguePlayer()) || !lineUpHistoryPlayer.getIsCaptain().equals(lineUpPlayer.getIsCaptain())) {
-                        LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLineUp().getId());
+                        LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId());
                         difference.add(player);
                     }
                     break;
                 }
             }
             if (!find) {
-                LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLineUp().getId());
+                LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId());
                 difference.add(player);
             }
         }
@@ -144,7 +144,7 @@ public class LineUpDifference {
     public List<LineUpPlayerPOJO> toLineUpPlayerPOJO(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayer) {
         List<LineUpPlayerPOJO> lineUpPlayer = null;
         for (FantasyClubLineUpPlayer lineUpHistoryPlayer : fantasyClubLineUpPlayer) {
-            LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLineUp().getId());
+            LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId());
             lineUpPlayer.add(player);
         }
         return lineUpPlayer;
