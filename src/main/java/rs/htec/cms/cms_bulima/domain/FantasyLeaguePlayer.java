@@ -173,7 +173,7 @@ public class FantasyLeaguePlayer implements Serializable {
 
     @Override
     public String toString() {
-        return id + "";
+        return idPlayer.getFullname() + "";
     }
 
     @XmlTransient

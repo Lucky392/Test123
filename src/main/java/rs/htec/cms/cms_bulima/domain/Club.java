@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,6 +49,10 @@ public class Club implements Serializable {
     @Lob
     @Column(name = "logo")
     private byte[] logo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idGuestClub")
+    private List<Match> matchList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idHomeClub")
+    private List<Match> matchList1;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -185,6 +190,27 @@ public class Club implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Match> getMatchList() {
+        return matchList;
+    }
+
+    public void setMatchList(List<Match> matchList) {
+        this.matchList = matchList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Match> getMatchList1() {
+        return matchList1;
+    }
+
+    public void setMatchList1(List<Match> matchList1) {
+        this.matchList1 = matchList1;
     }
 
     public byte[] getLogo() {

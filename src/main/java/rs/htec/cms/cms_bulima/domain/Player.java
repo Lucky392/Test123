@@ -73,6 +73,8 @@ public class Player implements Serializable {
     @Lob
     @Column(name = "photo")
     private byte[] photo;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlayer")
+    private List<MatchPlayer> matchPlayerList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -501,6 +503,17 @@ public class Player implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+
+    @XmlTransient
+    @JsonIgnore
+    public List<MatchPlayer> getMatchPlayerList() {
+        return matchPlayerList;
+    }
+
+    public void setMatchPlayerList(List<MatchPlayer> matchPlayerList) {
+        this.matchPlayerList = matchPlayerList;
     }
 
     public byte[] getPhoto() {
