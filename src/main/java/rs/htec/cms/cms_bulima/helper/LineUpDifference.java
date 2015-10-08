@@ -11,10 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
-import org.json.simple.JSONArray;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
-import rs.htec.cms.cms_bulima.domain.Formation;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
 
@@ -122,29 +120,57 @@ public class LineUpDifference {
     public List<LineUpPlayerPOJO> returnDifferencePOJO(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
         List<LineUpPlayerPOJO> difference = new ArrayList<>();
         for (FantasyClubLineUpPlayer lineUpHistoryPlayer : lineUpHistory) {
-            boolean find = false;
+            boolean found = false;
             for (FantasyClubLineUpPlayer lineUpPlayer : lineUp) {
                 if (lineUpHistoryPlayer.getIdPlayerSlot().equals(lineUpPlayer.getIdPlayerSlot())) {
-                    find = true;
+                    found = true;
                     if (!lineUpHistoryPlayer.getIdLeaguePlayer().equals(lineUpPlayer.getIdLeaguePlayer()) || !lineUpHistoryPlayer.getIsCaptain().equals(lineUpPlayer.getIsCaptain())) {
-                        LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId());
+                        String position = getPositionNameForPlayer(lineUpHistoryPlayer);
+                        LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), position);
                         difference.add(player);
                     }
                     break;
                 }
             }
-            if (!find) {
-                LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId());
+            if (!found) {
+                String position = getPositionNameForPlayer(lineUpHistoryPlayer);
+                LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), position);
                 difference.add(player);
             }
         }
         return difference;
     }
 
+    private String getPositionNameForPlayer(FantasyClubLineUpPlayer player) {
+        if (player == null) {
+            return null;
+        }
+        String form = player.getIdLineUp().getIdFormation().getName();
+        String[] formation = form.split("-");
+        long playerPosition = player.getIdPlayerSlot().getId();
+        long position = 1;
+        if (playerPosition == position) {
+            return "TW";
+        }
+        position += Long.valueOf(formation[0]);
+        if (playerPosition <= position){
+            return "AB";
+        }
+        position += Long.valueOf(formation[1]);
+        if (playerPosition <= position){
+            return "MF";
+        }
+        position += Long.valueOf(formation[2]);
+        if (playerPosition <= position){
+            return "ST";
+        }
+        return "SUB";
+    }
+
     public List<LineUpPlayerPOJO> toLineUpPlayerPOJO(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayer) {
         List<LineUpPlayerPOJO> lineUpPlayer = null;
         for (FantasyClubLineUpPlayer lineUpHistoryPlayer : fantasyClubLineUpPlayer) {
-            LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId());
+            LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), getPositionNameForPlayer(lineUpHistoryPlayer));
             lineUpPlayer.add(player);
         }
         return lineUpPlayer;

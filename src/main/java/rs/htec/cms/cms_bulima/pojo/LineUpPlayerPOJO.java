@@ -12,17 +12,21 @@ package rs.htec.cms.cms_bulima.pojo;
 public class LineUpPlayerPOJO {
 
     private Long id;
-    private String playerFullName;
     private Short isCaptain;
     private Long idPlayerSlot;
+    private Long leaguePlayerId;
+    private String playerFullName;
     private Long idLineUp;
+    private String position;
 
-    public LineUpPlayerPOJO(long id, Short isCaptain, Long idPlayerSlot, String playerFullName, Long idLineUp) {
+    public LineUpPlayerPOJO(Long id, Short isCaptain, Long idPlayerSlot, Long leaguePlayerId, String playerFullName, Long idLineUp, String position) {
         this.playerFullName = playerFullName;
         this.isCaptain = isCaptain;
         this.idPlayerSlot = idPlayerSlot;
         this.id = id;
         this.idLineUp = idLineUp;
+        this.position = position;
+        this.leaguePlayerId = leaguePlayerId;
     }
 
     public Short getIsCaptain() {
@@ -63,5 +67,21 @@ public class LineUpPlayerPOJO {
 
     public void setPlayerFullName(String playerFullName) {
         this.playerFullName = playerFullName;
+    }
+
+    public String getPosition() {
+        return position;
+    }
+
+    public void setPosition(String position) {
+        this.position = position;
+    }
+
+    public Long getLeaguePlayerId() {
+        return leaguePlayerId;
+    }
+
+    public void setLeaguePlayerId(Long playerId) {
+        this.leaguePlayerId = playerId;
     }
 }

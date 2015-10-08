@@ -105,8 +105,6 @@ public class CmsUser implements Serializable {
         this.token = token;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public CmsRole getIdRole() {
         return idRole;
     }

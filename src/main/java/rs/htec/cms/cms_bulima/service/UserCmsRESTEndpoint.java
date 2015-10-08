@@ -72,18 +72,25 @@ public class UserCmsRESTEndpoint {
      * API for method: .../rest/user/login Method that accepts HTTP Basic
      * authentication from HTTP header, checks in the database whether the user
      * exists and if so, returns custom token that in future calls should be put
-     * in the authorization parameter of the HTTP header and returns all User privileges. Example for JSON:<br/> {<br/>
-     * "cmsUserPrivileges": [ <br/>{ <br/>"cmsRole": {<br/> "name": "admin",<br/> "id": 1 <br/>},<br/>
-     * "cmsUserPrivilegesPK": { <br/>"tableId": 7,<br/> "roleId": 1 <br/>}, <br/>"searchAction":
-     * true, <br/>"editAction": true,<br/> "addAction": true,<br/> "deleteAction": true,<br/>
-     * "cmsTables": {<br/> "tableName": "CMS_ROLE",<br/> "id": 7 <br/>} <br/>},<br/> { <br/>"cmsRole": {<br/>
-     * "name": "admin", <br/>"id": 1 <br/>},<br/> "cmsUserPrivilegesPK": { <br/>"tableId": 8,<br/>
-     * "roleId": 1 <br/>}, <br/>"searchAction": true,<br/> "editAction": true,<br/> "addAction":
-     * true,<br/> "deleteAction": true,<br/> "cmsTables": { <br/>"tableName": "STATISTICS",<br/>
+     * in the authorization parameter of the HTTP header and returns all User
+     * privileges. Example for JSON:<br/> {<br/>
+     * "cmsUserPrivileges": [ <br/>{ <br/>"cmsRole": {<br/> "name":
+     * "admin",<br/> "id": 1 <br/>},<br/>
+     * "cmsUserPrivilegesPK": { <br/>"tableId": 7,<br/> "roleId": 1 <br/>},
+     * <br/>"searchAction": true, <br/>"editAction": true,<br/> "addAction":
+     * true,<br/> "deleteAction": true,<br/>
+     * "cmsTables": {<br/> "tableName": "CMS_ROLE",<br/> "id": 7 <br/>}
+     * <br/>},<br/> { <br/>"cmsRole": {<br/>
+     * "name": "admin", <br/>"id": 1 <br/>},<br/> "cmsUserPrivilegesPK": {
+     * <br/>"tableId": 8,<br/>
+     * "roleId": 1 <br/>}, <br/>"searchAction": true,<br/> "editAction":
+     * true,<br/> "addAction": true,<br/> "deleteAction": true,<br/>
+     * "cmsTables": { <br/>"tableName": "STATISTICS",<br/>
      * "id": 8 <br/>} <br/>} <br/>],<br/> "token": "VE9LRU4jIzE=" <br/>}
      *
      * @param authorization Basic HTTP authorization.
-     * @return Response 200 OK with custom authorization value and User privileges in JSON body.
+     * @return Response 200 OK with custom authorization value and User
+     * privileges in JSON body.
      * @throws BasicAuthenticationException Response 401 Unauthorized if user
      * doesn't exist.
      */
@@ -145,7 +152,7 @@ public class UserCmsRESTEndpoint {
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
      */
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUser(@HeaderParam("authorization") String token, CmsUser user) {
         EntityManager em = helper.getEntityManager();
@@ -153,6 +160,24 @@ public class UserCmsRESTEndpoint {
         if (validator.checkLenght(user.getUserName(), 255, true) && validator.checkLenght(user.getPassword(), 255, true)) {
             helper.persistObject(em, user);
             return Response.status(Response.Status.CREATED).build();
+        } else {
+            throw new InputValidationException("Validation failed");
+        }
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateUser(@HeaderParam("authorization") String token, CmsUser user) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.EDIT, token);
+        if (validator.checkLenght(user.getUserName(), 255, true) && validator.checkLenght(user.getPassword(), 255, true)) {
+            CmsUser oldUser = em.find(CmsUser.class, user.getId());
+            if (oldUser != null) {
+                helper.mergeObject(em, user);
+            } else {
+                throw new DataNotFoundException("User at index " + user.getId() + " does not exits");
+            }
+            return Response.ok().build();
         } else {
             throw new InputValidationException("Validation failed");
         }
