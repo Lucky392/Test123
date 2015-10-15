@@ -30,6 +30,7 @@ import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.EMF;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -150,9 +151,14 @@ public class NewsCmsRESTEndpoint {
         if (news == null || news.isEmpty()) {
             throw new DataNotFoundException("There is no news for this search!");
         }
-        GenericEntity<List<News>> newsEntity = new GenericEntity<List<News>>(news) {
-        };
-        return Response.ok().entity(newsEntity).build();
+//        GenericEntity<List<News>> newsEntity = new GenericEntity<List<News>>(news) {
+//        };
+        String countQuery = "Select COUNT(n) From News n";
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(news);
+        return Response.ok().entity(go).build();
     }
 
     /**

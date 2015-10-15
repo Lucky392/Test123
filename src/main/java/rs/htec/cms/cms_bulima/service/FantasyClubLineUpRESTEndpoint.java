@@ -43,6 +43,17 @@ public class FantasyClubLineUpRESTEndpoint {
         validator = new Validator();
     }
 
+    /**
+     * API for method: .../rest/lineup/{idFantasyClub}/{idMatchday} This method return list of
+     * Fantasy Club lineup players for defined club and matchday in JSON.
+     *
+     * Example for JSON response:
+     *
+     * @param token
+     * @param idFantasyClub
+     * @param idMatchday
+     * @return
+     */
     @GET
     @Path("/{idFantasyClub}/{idMatchday}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -74,8 +85,8 @@ public class FantasyClubLineUpRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFormation(@HeaderParam("authorization") String token, @PathParam("idFantasyClub") long idFantasyClub,
             @PathParam("idMatchday") long idMatchday) {
-//        EntityManager em = helper.getEntityManager();
-        EntityManager em = EMF.createEntityManager();
+        EntityManager em = helper.getEntityManager();
+//        EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         LineUpDifference lineUp = new LineUpDifference();
         String f1 = lineUp.getFormation(idFantasyClub, idMatchday);
@@ -111,10 +122,20 @@ public class FantasyClubLineUpRESTEndpoint {
         return Response.ok().entity(difference).build();
     }
 
+    /**
+     * API for method: .../rest/lineup/{id} This method return single element of
+     * Fantasy Club lineup with defined id in JSON.
+     *
+     * Example for JSON response:
+     *
+     * @param token
+     * @param id
+     * @return
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getLineUpId(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         FantasyClubLineUp fantasyClubLineUp = null;

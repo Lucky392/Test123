@@ -10,6 +10,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
@@ -17,6 +18,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -25,6 +27,7 @@ import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -44,8 +47,9 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/slider/{page}/{limit} This method returns JSON
-     * list of slider content at defined page with defined limit. It produces
+     * API for method: .../rest/slider?page=VALUE&limit=VALUE This method returns JSON
+     * list of slider content at defined page with defined limit. 
+     * Default value for page is 1, and for limit is 10. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
      * limit:<br/> [ {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
@@ -80,17 +84,21 @@ public class SliderContentCmsRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @GET
-    @Path("/{page}/{limit}/")
+    @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSlider(@HeaderParam("authorization") String token, @PathParam("page") int page, @PathParam("limit") int limit) {
+    public Response getSlider(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page, @DefaultValue("10")@QueryParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
         List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (slider.isEmpty()) {
             throw new DataNotFoundException("There is no sliders!");
-        } else {
-            return Response.ok().entity(slider).build();
         }
+        String countQuery = "Select COUNT(ip) From SliderContent ip";
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(slider);
+        return Response.ok().entity(go).build();
     }
 
     /**

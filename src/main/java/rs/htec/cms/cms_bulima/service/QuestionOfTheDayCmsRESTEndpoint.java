@@ -28,6 +28,7 @@ import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -122,7 +123,12 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         if (questions == null || questions.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(questions).build();
+        String countQuery = "Select COUNT(ip) From QuestionOfTheDay ip";;
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(questions);
+        return Response.ok().entity(go).build();
     }
     
     

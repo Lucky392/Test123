@@ -33,6 +33,16 @@ public class FantasyClubLineUpPlayerRESTEndpoint {
         helper = new RestHelperClass();
     }   
     
+    /**
+     * API for method: .../rest/lineupPlayer/{id} This method return single element 
+     * of lineupPlayer with defined id in JSON. 
+     * 
+     * Example for JSON response: 
+     * 
+     * @param token
+     * @param id
+     * @return
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

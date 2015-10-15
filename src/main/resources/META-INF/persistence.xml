@@ -50,10 +50,10 @@
     <class>rs.htec.cms.cms_bulima.domain.Match</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima?zeroDateTimeBehavior=convertToNull"/>
-      <property name="javax.persistence.jdbc.user" value="bulima"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://bulima-cms-devel.htec.co.rs:13306/bulima?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.user" value="cmsdeveldb"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="bulima"/>
+      <property name="javax.persistence.jdbc.password" value="XPrxo2v4Zr"/>
     </properties>
   </persistence-unit>
 </persistence>

@@ -27,6 +27,7 @@ import rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -47,8 +48,9 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
 
     /**
      * API for method: .../rest/prize?page=VALUE&limit=VALUE This method returns JSON
-     * list of questions at defined page with defined limit. It produces
-     * APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit:
+     * list of questions at defined page with defined limit. Default value for page is 1, and for limit
+     * is 10.
+     * It produces APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit:
      * <br/>[ {<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id":
      * "3",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> },<br/> {<br/>
      * "prizeMoney": "60000",<br/> "name": "Tag 4",<br/>
@@ -72,7 +74,12 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
         if (prize.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(prize).build();
+        String countQuery = "Select COUNT(ip) From QuestionOfTheDayPrize ip";
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(prize);
+        return Response.ok().entity(go).build();
     }
 
     /**
