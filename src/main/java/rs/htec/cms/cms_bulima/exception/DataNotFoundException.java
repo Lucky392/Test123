@@ -17,4 +17,6 @@ public class DataNotFoundException extends CMSException {
     public DataNotFoundException (String message){
         super(message, 404, Response.Status.NOT_FOUND);
     }
+    
+    
 }
