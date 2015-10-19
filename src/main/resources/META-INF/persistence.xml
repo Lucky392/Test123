@@ -51,6 +51,7 @@
     <class>rs.htec.cms.cms_bulima.domain.BatchjobStep</class>
     <class>rs.htec.cms.cms_bulima.domain.BatchjobHistory</class>
     <class>rs.htec.cms.cms_bulima.domain.Batchjob</class>
+    <class>rs.htec.cms.cms_bulima.domain.BugReport</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://bulima-cms-devel.htec.co.rs:13306/bulima?zeroDateTimeBehavior=convertToNull"/>

@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -52,6 +53,9 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "User.findByPayingUser", query = "SELECT u FROM User u WHERE u.payingUser = :payingUser"),
     @NamedQuery(name = "User.findByPremiumStatusActiveTimestamp", query = "SELECT u FROM User u WHERE u.premiumStatusActiveTimestamp = :premiumStatusActiveTimestamp")})
 public class User implements Serializable {
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
+    private BugReport bugReport;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUser")
     private List<LoginHistory> loginHistoryList;
     @OneToMany(mappedBy = "idUser")
@@ -306,5 +310,17 @@ public class User implements Serializable {
     public void setLoginHistoryList(List<LoginHistory> loginHistoryList) {
         this.loginHistoryList = loginHistoryList;
     }
-    
+
+    @XmlTransient
+    @JsonIgnore
+    public BugReport getBugReport() {
+        return bugReport;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public void setBugReport(BugReport bugReport) {
+        this.bugReport = bugReport;
+    }
+
 }

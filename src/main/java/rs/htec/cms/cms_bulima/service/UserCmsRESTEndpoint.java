@@ -32,7 +32,7 @@ import rs.htec.cms.cms_bulima.token.JsonToken;
  *
  * @author lazar
  */
-@Path("/user")
+@Path("/cmsUser")
 public class UserCmsRESTEndpoint {
 
     RestHelperClass helper;
