@@ -20,7 +20,7 @@ var username = document.getElementById("username").value;
 var password = document.getElementById("password").value;
     $.ajax({
         type: "POST",
-        url: "http://10.10.0.40:8080/CMS_Bulima/rest/user/login",
+        url: "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/user/login",
         dataType: "json",
         headers: { 
             'Content-Type': 'application/json' 

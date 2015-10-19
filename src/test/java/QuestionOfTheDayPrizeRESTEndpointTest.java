@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+import com.sun.xml.internal.ws.api.message.Packet;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -41,23 +42,24 @@ import rs.htec.cms.cms_bulima.service.QuestionOfTheDayPrizeRESTEndpoint;
  * @author marko
  */
 public class QuestionOfTheDayPrizeRESTEndpointTest {
-    
+
     QuestionOfTheDayPrizeRESTEndpoint qotdp;
     
     @Rule
     public ExpectedException thrown = ExpectedException.none();
     
+
     public QuestionOfTheDayPrizeRESTEndpointTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
         this.qotdp = new QuestionOfTheDayPrizeRESTEndpoint();
@@ -65,12 +67,12 @@ public class QuestionOfTheDayPrizeRESTEndpointTest {
         this.qotdp.helper = mock(RestHelperClass.class);
         this.qotdp.validator = mock(Validator.class);
     }
-    
+
     @After
     public void tearDown() {
     }
-    
-    void mockMethods(){
+
+    void mockMethods() {
         when(this.qotdp.helper.getEntityManager()).thenReturn(this.qotdp.em);
         Mockito.doNothing().when(this.qotdp.helper).checkUserAndPrivileges((EntityManager) Matchers.anyObject(), Matchers.anyInt(), any(MethodConstants.class), anyString());
         Query mockedQuery = mock(Query.class);
@@ -129,6 +131,7 @@ public class QuestionOfTheDayPrizeRESTEndpointTest {
          final Response r = this.qotdp.getPrizeById("test", 1);} catch (DataNotFoundException e){
              
          }
+
 //         
 //         assertNotNull(r);
 //         assertEquals(r.getStatus(), 200);
@@ -137,4 +140,5 @@ public class QuestionOfTheDayPrizeRESTEndpointTest {
      
      
       
+
 }

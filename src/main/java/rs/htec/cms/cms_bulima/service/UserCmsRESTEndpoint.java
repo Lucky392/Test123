@@ -49,7 +49,7 @@ public class UserCmsRESTEndpoint {
      * API for this method: .../rest/user This method return list of users in
      * JSON object. Example for JSON: <br/>[ {<br/>
      * "idRole": {<br/> "name": "admin",<br/> "id": 1 <br/>}, <br/>"userName":
-     * "marko", <br/>"token": "TOKEN##1",<br/> "password": "makic",<br/> "id":
+     * "name", <br/>"token": "TOKEN",<br/> "password": "pass",<br/> "id":
      * 1<br/> } ]
      *
      * @param token is a header parameter for checking permission

@@ -19,7 +19,7 @@ public class Dashboard {
     private List<DashboardElement> elements;
     private String[] time;
     private String[] platforms = {null, "web", "android", "ios"};
-    
+
     public Dashboard() {
         time = new String[]{"today", "yesterday"};
         elements = new ArrayList<>();

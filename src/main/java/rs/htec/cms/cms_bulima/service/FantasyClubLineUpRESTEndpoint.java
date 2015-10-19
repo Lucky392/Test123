@@ -67,6 +67,17 @@ public class FantasyClubLineUpRESTEndpoint {
         return Response.ok().entity(helper.getJson(lineUpPlayer)).build();
     }
 
+    /**
+     * API for method: .../rest/lineup/points/{idFantasyClub}/{idMatchday} This method return bulima points
+     * of lineup for defined club and matchday.
+     *
+     * Example for JSON response: 20
+     *
+     * @param token
+     * @param idFantasyClub
+     * @param idMatchday
+     * @return long value for points
+     */
     @GET
     @Path("points/{idFantasyClub}/{idMatchday}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -80,6 +91,17 @@ public class FantasyClubLineUpRESTEndpoint {
         return Response.ok().entity(points).build();
     }
 
+    /**
+     * API for method: .../rest/lineup/formation/{idFantasyClub}/{idMatchday} This method return formation
+     * of lineup for defined club and matchday.
+     *
+     * Example for JSON response: 3-4-3
+     *
+     * @param token
+     * @param idFantasyClub
+     * @param idMatchday
+     * @return formation in String
+     */
     @GET
     @Path("formation/{idFantasyClub}/{idMatchday}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -94,6 +116,21 @@ public class FantasyClubLineUpRESTEndpoint {
         return Response.ok().entity(f1).build();
     }
 
+    /**
+     * THIS METHOD SHOULD BE CHANGED WHEN DB UPDATES, IT SHOULD USE @PathParam
+     * 
+     * API for method: .../rest/lineup/formation/{idFantasyClub}/{idMatchday} This method return formation
+     * of lineup for defined club and matchday.
+     *
+     * Example for JSON response: 3-4-3
+     *
+     * @param token
+     * @param idFantasyClub1
+     * @param idFantasyClub2
+     * @param idMatchday1
+     * @param idMatchday2
+     * @return formation in String
+     */
     @GET
     @Path("/difference")
     @Produces(MediaType.APPLICATION_JSON)
