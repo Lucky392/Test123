@@ -113,7 +113,7 @@ public class QuestionOfTheDayPrizeRESTEndpointTest {
     //
      @Test
      public void testGetPrizeSuccess(){
-         mockMethods1();
+         mockMethods();
          final Response r = this.qotdp.getPrize("test", 1, 1);
          assertNotNull(r);
          assertEquals(r.getStatus(), 200);

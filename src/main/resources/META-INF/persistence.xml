@@ -48,6 +48,9 @@
     <class>rs.htec.cms.cms_bulima.domain.UserPremiumItem</class>
     <class>rs.htec.cms.cms_bulima.domain.MatchPlayer</class>
     <class>rs.htec.cms.cms_bulima.domain.Match</class>
+    <class>rs.htec.cms.cms_bulima.domain.BatchjobStep</class>
+    <class>rs.htec.cms.cms_bulima.domain.BatchjobHistory</class>
+    <class>rs.htec.cms.cms_bulima.domain.Batchjob</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://bulima-cms-devel.htec.co.rs:13306/bulima?zeroDateTimeBehavior=convertToNull"/>

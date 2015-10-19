@@ -20,7 +20,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -100,7 +99,7 @@ public class NewsCmsRESTEndpoint {
      * @param maxDate is a end date for filtering time in millis
      * @param newsType type of News
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException DataNotFoundException Example for
+     * @throws DataNotFoundException Example for
      * exception:<br/> {<br/>
      * "errorMessage": "Requested page does not exist..",<br/>
      * "errorCode": 404<br/> }
@@ -118,7 +117,6 @@ public class NewsCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         List<News> news;
         StringBuilder query = new StringBuilder("SELECT n FROM News n ");
-
         if (minDate != 0 && maxDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
@@ -153,7 +151,8 @@ public class NewsCmsRESTEndpoint {
         }
 //        GenericEntity<List<News>> newsEntity = new GenericEntity<List<News>>(news) {
 //        };
-        String countQuery = "Select COUNT(n) From News n";
+        String countQuery = query.toString().replaceFirst("n", "count(n)");
+        System.out.println(countQuery);
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
