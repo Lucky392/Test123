@@ -64,6 +64,8 @@ public class CmsUserPrivileges implements Serializable {
         this.cmsUserPrivilegesPK = new CmsUserPrivilegesPK(roleId, tableId);
     }
 
+    @XmlTransient
+    @JsonIgnore
     public CmsUserPrivilegesPK getCmsUserPrivilegesPK() {
         return cmsUserPrivilegesPK;
     }
@@ -104,8 +106,6 @@ public class CmsUserPrivileges implements Serializable {
         this.deleteAction = deleteAction;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public CmsRole getCmsRole() {
         return cmsRole;
     }
@@ -114,8 +114,6 @@ public class CmsUserPrivileges implements Serializable {
         this.cmsRole = cmsRole;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public CmsTables getCmsTables() {
         return cmsTables;
     }

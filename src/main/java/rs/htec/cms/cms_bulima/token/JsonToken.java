@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.token;
 
 import java.util.List;
+import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 
 /**
@@ -13,7 +14,16 @@ import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
  * @author lazar
  */
 public class JsonToken {
-    
+   
+    private CmsUser user;
+
+    public CmsUser getUser() {
+        return user;
+    }
+
+    public void setUser(CmsUser user) {
+        this.user = user;
+    }
     private String token;
     private List<CmsUserPrivileges> cmsUserPrivileges;
 

@@ -25,6 +25,7 @@ import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.CmsUserPojo;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 import rs.htec.cms.cms_bulima.token.JsonToken;
 
@@ -60,7 +61,7 @@ public class UserCmsRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
+//        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
         List<CmsUser> users = em.createNamedQuery("CmsUser.findAll").getResultList();
         if (users == null || users.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
@@ -97,7 +98,6 @@ public class UserCmsRESTEndpoint {
     @POST
     @Path("/login")
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response logIn(@HeaderParam("authorization") String authorization) {
         String[] userPass;
         EntityManager em = helper.getEntityManager();
@@ -114,10 +114,16 @@ public class UserCmsRESTEndpoint {
                 user.setToken(tokenHelper.createToken(user.getId()));
                 helper.mergeObject(em, user);
             }
-            JsonToken jsonToken = new JsonToken(tokenHelper.encode(user.getToken()));
+//            JsonToken jsonToken = new JsonToken(tokenHelper.encode(user.getToken()));
             List<CmsUserPrivileges> cmsUserPrivileges = em.createNamedQuery("CmsUserPrivileges.findByRoleId").setParameter("roleId", user.getIdRole().getId()).getResultList();
-            jsonToken.setCmsUserPrivileges(cmsUserPrivileges);
-            return Response.ok().entity(jsonToken).build();
+//            jsonToken.setCmsUserPrivileges(cmsUserPrivileges);
+//            jsonToken.setUser(user);
+            CmsUserPojo userPojo = new CmsUserPojo();
+            userPojo.setUsername(user.getUserName());
+            userPojo.setId(user.getId());
+            userPojo.createPermissions(cmsUserPrivileges);
+            userPojo.setToken(tokenHelper.encode(user.getToken()));
+            return Response.ok().entity(userPojo).build();
         } catch (RuntimeException e) {
             throw new BasicAuthenticationException(e.getMessage());
         }
