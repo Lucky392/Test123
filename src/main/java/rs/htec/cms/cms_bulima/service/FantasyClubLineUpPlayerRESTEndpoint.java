@@ -18,7 +18,6 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.helper.Validator;
 
 /**
  *
