@@ -38,55 +38,55 @@ public class MatchdayChallengeRESTEndpoint {
         helper = new RestHelperClass();
         validator = new Validator();
     }
-    
-    @GET
-    @Path("/")
-    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("filter") String filter,
-            @QueryParam("matchdayChallengeType") int matchdayChallengeType, @QueryParam("isPublished") boolean isPublished) {
-
-        EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        List<FantasyManagerMatchdayChallengeLineUp> fantasyManagerMatchdayChallengeLineUps;
-        StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallenge m ");
-        
-        if (filter != null) {
-            query.append("WHERE m.matchdayChallengeTitle LIKE '%").append(filter).append("%' AND m.matchdayChallengeTitle LIKE '%").append(filter).append("%'");
-        } else {
-            query.append("WHERE m.matchdayChallengeTitle LIKE '%'");
-        }
-        
-        if (createDate != null) {
-            query.append(" AND f.createDate LIKE '%").append(createDate).append("%'");
-        }
-        
-        if (matchdayChallenge != null) {
-            query.append(" AND f.idMatchdayChallenge = ").append(matchdayChallenge);
-        }
-        
-        if (managerId != null) {
-            query.append(" AND f.idFantasyManager = ").append(managerId);
-        }
-
-        if (orderingColumn != null) {
-            if (orderingColumn.startsWith("-")) {
-                orderingColumn = orderingColumn.substring(1) + " desc";
-            }
-            query.append(" ORDER BY ").append(orderingColumn);
-        }
-        
-        fantasyManagerMatchdayChallengeLineUps = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        if (fantasyManagerMatchdayChallengeLineUps == null || fantasyManagerMatchdayChallengeLineUps.isEmpty()) {
-            throw new DataNotFoundException("There is no FantasyManagerMatchdayChallengeLineUp for this search!");
-        }
-        
-        String countQuery = "Select COUNT(f) From FantasyManagerMatchdayChallengeLineUp f";
-        long count = (long) em.createQuery(countQuery).getSingleResult();
-        GetObject go = new GetObject();
-        go.setCount(count);
-        go.setData(returnPOJOs(fantasyManagerMatchdayChallengeLineUps));
-        return Response.ok().entity(go).build();
-    }
-    
+//    
+//    @GET
+//    @Path("/")
+//    @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
+//    public Response getFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+//            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("filter") String filter,
+//            @QueryParam("matchdayChallengeType") int matchdayChallengeType, @QueryParam("isPublished") boolean isPublished) {
+//
+//        EntityManager em = EMF.createEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+//        List<FantasyManagerMatchdayChallengeLineUp> fantasyManagerMatchdayChallengeLineUps;
+//        StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallenge m ");
+//        
+//        if (filter != null) {
+//            query.append("WHERE m.matchdayChallengeTitle LIKE '%").append(filter).append("%' AND m.matchdayChallengeTitle LIKE '%").append(filter).append("%'");
+//        } else {
+//            query.append("WHERE m.matchdayChallengeTitle LIKE '%'");
+//        }
+//        
+//        if (createDate != null) {
+//            query.append(" AND f.createDate LIKE '%").append(createDate).append("%'");
+//        }
+//        
+//        if (matchdayChallenge != null) {
+//            query.append(" AND f.idMatchdayChallenge = ").append(matchdayChallenge);
+//        }
+//        
+//        if (managerId != null) {
+//            query.append(" AND f.idFantasyManager = ").append(managerId);
+//        }
+//
+//        if (orderingColumn != null) {
+//            if (orderingColumn.startsWith("-")) {
+//                orderingColumn = orderingColumn.substring(1) + " desc";
+//            }
+//            query.append(" ORDER BY ").append(orderingColumn);
+//        }
+//        
+//        fantasyManagerMatchdayChallengeLineUps = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+//        if (fantasyManagerMatchdayChallengeLineUps == null || fantasyManagerMatchdayChallengeLineUps.isEmpty()) {
+//            throw new DataNotFoundException("There is no FantasyManagerMatchdayChallengeLineUp for this search!");
+//        }
+//        
+//        String countQuery = "Select COUNT(f) From FantasyManagerMatchdayChallengeLineUp f";
+//        long count = (long) em.createQuery(countQuery).getSingleResult();
+//        GetObject go = new GetObject();
+//        go.setCount(count);
+//        go.setData(returnPOJOs(fantasyManagerMatchdayChallengeLineUps));
+//        return Response.ok().entity(go).build();
+//    }
+//    
 }
