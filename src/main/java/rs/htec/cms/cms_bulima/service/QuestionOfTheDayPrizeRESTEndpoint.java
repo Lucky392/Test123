@@ -123,7 +123,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
      */
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         em = helper.getEntityManager();
@@ -172,7 +172,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
      * "errorMessage": "Prize at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
         em = helper.getEntityManager();

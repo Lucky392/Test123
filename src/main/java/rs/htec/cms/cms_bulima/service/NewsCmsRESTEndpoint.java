@@ -241,7 +241,7 @@ public class NewsCmsRESTEndpoint {
      * "errorCode": 400<br/> }
      *
      */
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();
@@ -297,7 +297,7 @@ public class NewsCmsRESTEndpoint {
      * "errorMessage": "News at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateNews(@HeaderParam("authorization") String token, News news) {
         EntityManager em = helper.getEntityManager();

@@ -47,6 +47,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "FantasyManager.findByCreateDate", query = "SELECT f FROM FantasyManager f WHERE f.createDate = :createDate"),
     @NamedQuery(name = "FantasyManager.findByProfilePhotoUrl", query = "SELECT f FROM FantasyManager f WHERE f.profilePhotoUrl = :profilePhotoUrl")})
 public class FantasyManager implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idFantasyManager")
+    private List<FantasyManagerMatchdayChallengeLineUp> fantasyManagerMatchdayChallengeLineUpList;
     @OneToMany(mappedBy = "idFantasyManager")
     private List<PremiumHistory> premiumHistoryList;
     private static final long serialVersionUID = 1L;
@@ -225,6 +227,16 @@ public class FantasyManager implements Serializable {
 
     public void setPremiumHistoryList(List<PremiumHistory> premiumHistoryList) {
         this.premiumHistoryList = premiumHistoryList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<FantasyManagerMatchdayChallengeLineUp> getFantasyManagerMatchdayChallengeLineUpList() {
+        return fantasyManagerMatchdayChallengeLineUpList;
+    }
+
+    public void setFantasyManagerMatchdayChallengeLineUpList(List<FantasyManagerMatchdayChallengeLineUp> fantasyManagerMatchdayChallengeLineUpList) {
+        this.fantasyManagerMatchdayChallengeLineUpList = fantasyManagerMatchdayChallengeLineUpList;
     }
     
 }

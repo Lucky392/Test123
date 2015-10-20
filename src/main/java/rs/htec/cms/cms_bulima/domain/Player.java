@@ -74,6 +74,8 @@ public class Player implements Serializable {
     @Column(name = "photo")
     private byte[] photo;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlayer")
+    private List<MatchdayChallengePlayer> matchdayChallengePlayerList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idPlayer")
     private List<MatchPlayer> matchPlayerList;
     private static final long serialVersionUID = 1L;
     @Id
@@ -514,6 +516,17 @@ public class Player implements Serializable {
 
     public void setMatchPlayerList(List<MatchPlayer> matchPlayerList) {
         this.matchPlayerList = matchPlayerList;
+    }
+
+
+    @XmlTransient
+    @JsonIgnore
+    public List<MatchdayChallengePlayer> getMatchdayChallengePlayerList() {
+        return matchdayChallengePlayerList;
+    }
+
+    public void setMatchdayChallengePlayerList(List<MatchdayChallengePlayer> matchdayChallengePlayerList) {
+        this.matchdayChallengePlayerList = matchdayChallengePlayerList;
     }
 
     public byte[] getPhoto() {

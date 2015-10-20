@@ -48,6 +48,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "Reward.findByCreateDate", query = "SELECT r FROM Reward r WHERE r.createDate = :createDate"),
     @NamedQuery(name = "Reward.findByImageUrl", query = "SELECT r FROM Reward r WHERE r.imageUrl = :imageUrl")})
 public class Reward implements Serializable {
+    @OneToMany(mappedBy = "idReward")
+    private List<MatchdayChallenge> matchdayChallengeList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -218,6 +220,16 @@ public class Reward implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<MatchdayChallenge> getMatchdayChallengeList() {
+        return matchdayChallengeList;
+    }
+
+    public void setMatchdayChallengeList(List<MatchdayChallenge> matchdayChallengeList) {
+        this.matchdayChallengeList = matchdayChallengeList;
     }
     
 }

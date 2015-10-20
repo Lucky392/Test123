@@ -49,6 +49,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "Matchday.findByIsCompleted", query = "SELECT m FROM Matchday m WHERE m.isCompleted = :isCompleted")})
 public class Matchday implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchday")
+    private List<MatchdayChallenge> matchdayChallengeList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchday")
     private List<Match> matchList;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchday")
     private List<FantasyClubLineUp> fantasyClubLineUpList;
@@ -258,6 +260,16 @@ public class Matchday implements Serializable {
 
     public void setMatchList(List<Match> matchList) {
         this.matchList = matchList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<MatchdayChallenge> getMatchdayChallengeList() {
+        return matchdayChallengeList;
+    }
+
+    public void setMatchdayChallengeList(List<MatchdayChallenge> matchdayChallengeList) {
+        this.matchdayChallengeList = matchdayChallengeList;
     }
     
 }

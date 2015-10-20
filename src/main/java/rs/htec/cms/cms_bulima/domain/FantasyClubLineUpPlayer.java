@@ -138,7 +138,8 @@ public class FantasyClubLineUpPlayer implements Serializable {
             return false;
         }
         FantasyClubLineUpPlayer other = (FantasyClubLineUpPlayer) object;
-        if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id))) {
+        if ((this.id == null && other.id != null) || (this.id != null && this.id.equals(other.id)
+                && this.idPlayerSlot.getId().equals(other.idPlayerSlot.getId()) && this.isCaptain.equals(other.isCaptain))) {
             return false;
         }
         return true;
