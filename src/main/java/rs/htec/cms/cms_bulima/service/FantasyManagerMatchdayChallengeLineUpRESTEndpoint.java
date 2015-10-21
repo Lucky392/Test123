@@ -88,7 +88,7 @@ public class FantasyManagerMatchdayChallengeLineUpRESTEndpoint {
             throw new DataNotFoundException("There is no FantasyManagerMatchdayChallengeLineUp for this search!");
         }
         
-        String countQuery = "Select COUNT(f) From FantasyManagerMatchdayChallengeLineUp f";
+        String countQuery = query.toString().replaceFirst("f", "count(f)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
