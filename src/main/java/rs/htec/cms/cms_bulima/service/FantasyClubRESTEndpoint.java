@@ -24,7 +24,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author stefan
  */
-@Path("/club")
+@Path("/fantasyClub")
 public class FantasyClubRESTEndpoint {
 
     RestHelperClass helper;
@@ -34,7 +34,7 @@ public class FantasyClubRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/club/{id} This method returns
+     * API for this method: .../rest/fantasyClub/{id} This method returns
      * JSON list of Fantasy Clubs for one Fantasy Manager. It produces
      * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
      * "lastLogin": "2014-08-04 14:36:54.0",<br/> "totalBLMPoints": "0",<br/>

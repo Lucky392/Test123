@@ -47,7 +47,6 @@
     <class>rs.htec.cms.cms_bulima.domain.LoginHistory</class>
     <class>rs.htec.cms.cms_bulima.domain.UserPremiumItem</class>
     <class>rs.htec.cms.cms_bulima.domain.MatchPlayer</class>
-    <class>rs.htec.cms.cms_bulima.domain.Match</class>
     <class>rs.htec.cms.cms_bulima.domain.BatchjobStep</class>
     <class>rs.htec.cms.cms_bulima.domain.BatchjobHistory</class>
     <class>rs.htec.cms.cms_bulima.domain.Batchjob</class>
@@ -59,6 +58,9 @@
     <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeResultTableElement</class>
     <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeScoreCalculation</class>
     <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation</class>
+    <class>rs.htec.cms.cms_bulima.domain.Match</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchPlayerEvent</class>
+    <class>rs.htec.cms.cms_bulima.domain.Match_1</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <!--localhost:3306-->

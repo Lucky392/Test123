@@ -7,7 +7,9 @@ package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,11 +19,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -42,6 +47,8 @@ import javax.xml.bind.annotation.XmlRootElement;
     @NamedQuery(name = "MatchPlayer.findByExtra2", query = "SELECT m FROM MatchPlayer m WHERE m.extra2 = :extra2"),
     @NamedQuery(name = "MatchPlayer.findByCreateDate", query = "SELECT m FROM MatchPlayer m WHERE m.createDate = :createDate")})
 public class MatchPlayer implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchPlayer")
+    private List<MatchPlayerEvent> matchPlayerEventList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -204,6 +211,16 @@ public class MatchPlayer implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.MatchPlayer[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<MatchPlayerEvent> getMatchPlayerEventList() {
+        return matchPlayerEventList;
+    }
+
+    public void setMatchPlayerEventList(List<MatchPlayerEvent> matchPlayerEventList) {
+        this.matchPlayerEventList = matchPlayerEventList;
     }
     
 }

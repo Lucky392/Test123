@@ -271,5 +271,6 @@ public class Matchday implements Serializable {
     public void setMatchdayChallengeList(List<MatchdayChallenge> matchdayChallengeList) {
         this.matchdayChallengeList = matchdayChallengeList;
     }
+
     
 }

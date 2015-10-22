@@ -220,5 +220,6 @@ public class Club implements Serializable {
     public void setLogo(byte[] logo) {
         this.logo = logo;
     }
+
     
 }
