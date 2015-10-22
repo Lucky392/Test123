@@ -49,8 +49,8 @@ public class BugReportRESTEndpoint {
 
     /**
      * Returns Bug report for specified id.
-     * 
-     * Example for returned BugReport 
+     * <br/>
+     * Example for returned BugReport: <br/>
      * {<br/>
      * "urlToUser": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/user/24076",<br/>
      * "errorType": "Others",<br/>
@@ -92,12 +92,12 @@ public class BugReportRESTEndpoint {
     }
 
     /**
-     * Returns list of Bug reports.
-     * That list can be:
-     * -ordered by specified column
-     * -filtered by erroorType and origin (WEB for example)
-     * -searched through club name and description
-     * -filtered between two dates
+     * Returns list of Bug reports. <br/>
+     * That list can be:<br/>
+     * -ordered by specified column<br/>
+     * -filtered by erroorType and origin (WEB for example)<br/>
+     * -searched through club name and description<br/>
+     * -filtered between two dates<br/>
      *[<br/>
      * "count": 2,<br/>
      * "data": [ <br/>
@@ -221,8 +221,8 @@ public class BugReportRESTEndpoint {
 
     /**
      * Returns all error types that exist for bugs.
-     * 
-     * Example:
+     * <br/>
+     * Example:<br/>
      * [<br/>
      * "Shop",<br/>
      *  "Registration",<br/>
@@ -255,7 +255,8 @@ public class BugReportRESTEndpoint {
 
     /**
      * Return all origins that caused bug report.
-     * Example:
+     * <br/>
+     * Example:<br/>
      * [<br/>
      *  "358239056742523",<br/>
      *  "355449052588209",<br/>
@@ -280,9 +281,9 @@ public class BugReportRESTEndpoint {
 
     /**
      * Finds Bug report in db by id of BugReport specified in json body,
-     * and updates it fields with changed attributes.
-     * 
-     * Example for json body that should be sent:
+     * and updates it fields with changed attributes. <br/>
+     * <br/>
+     * Example for json body that should be sent:<br/>
      *{ <br/>
      * "urlToUser": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/user/24076",<br/>
      * "errorType": "Others",<br/>
@@ -291,7 +292,7 @@ public class BugReportRESTEndpoint {
      * "deviceType": "iPhone 6 Plus",<br/>
      * "other": "",<br/>
      * "reportDate": 968577300000,<br/>
-     * "appVersion": "3.4",<br/>
+     *     "appVersion": "3.4",<br/>
      * "clubName": "VfR Atletico Schrotkorn 1943",<br/>
      * "userId": 24076,<br/>
      * "origin": "8DFDAF95-0DDA-4330-BFF3-76DBF139727A",<br/>
