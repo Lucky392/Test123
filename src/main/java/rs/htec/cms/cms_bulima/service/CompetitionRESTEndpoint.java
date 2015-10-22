@@ -15,52 +15,48 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.Club;
+import rs.htec.cms.cms_bulima.domain.Competition;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.pojo.ClubPOJO;
 
 /**
  *
  * @author marko
  */
-@Path("/club")
-public class ClubRESTEndpoint {
+@Path("/competition")
+public class CompetitionRESTEndpoint {
 
     RestHelperClass helper;
 
-    public ClubRESTEndpoint() {
+    public CompetitionRESTEndpoint() {
         helper = new RestHelperClass();
     }
 
     /**
-     * API for method: .../rest/club/{id} This method return single element of
-     * club at index in JSON. Example for JSON response:<br/> { <br/>"createDate":
-     * 1388530800000,<br/> "shortName": "FCK",<br/> "leagueUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/league/2",<br/>
-     * "idSport1Team": "6",<br/> "mediumName": "1. FC Kaiserslautern",<br/> "logoUrl":
-     * "http://assets.bundesligamanager.htec.co.rs/images/favoriteclublogos/1.-FC-Kaiserslautern.png",<br/>
-     * "logo": null,<br/> "id": 3<br/> }
+     * API for method: .../rest/league/{id} This method return single element of
+     * club at index in JSON. Example for JSON response: <br/> { <br/>"createDate":
+     * 1406914086000,<br/> "sport": "Fußball",<br/> "gender": "male",<br/> "name": "2.
+     * Bundesliga",<br/> "id": 2, <br/>"type": "championship"<br/> }
      *
      * @param token is a header parameter for checking permission
-     * @param id of club we are searching for
+     * @param id of competition we are searching for
      * @return Response 200 OK status with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
-     * "errorMessage": "There is no club at index 5!",<br/>
+     * "errorMessage": "There is no competition at index 5!",<br/>
      * "errorCode": 404<br/> }
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getCompetition(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        Club club = em.find(Club.class, id);
-        if (club == null) {
-            throw new DataNotFoundException("There is no club at index " + id + "!");
+        Competition competition = em.find(Competition.class, id);
+        if (competition == null) {
+            throw new DataNotFoundException("There is no competition at index " + id + "!");
         }
-        return Response.ok().entity(new ClubPOJO(club)).build();
+        return Response.ok().entity(competition).build();
     }
 }

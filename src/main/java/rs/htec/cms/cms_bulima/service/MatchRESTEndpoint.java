@@ -32,33 +32,72 @@ import rs.htec.cms.cms_bulima.pojo.MatchPOJO;
  */
 @Path("/match")
 public class MatchRESTEndpoint {
-    
+
     RestHelperClass helper;
 
     public MatchRESTEndpoint() {
         helper = new RestHelperClass();
     }
-    
+
+    /**
+     * API for method:
+     * .../rest/match?page=VALUE&limit=VALUE&clubID=VALUE&matchdayID=VALUE&startDate=VALUE
+     * This method returns JSON list and count number. Default value for page is
+     * 1, and for limit is 10. There is a possibility for search by clubID and
+     * matchdayID. Filtering by startDate. It produces APPLICATION_JSON media
+     * type. Example for JSON list for 1 page, 2 limit:<br/> { <br/>"count": 612,<br/> "data":
+     * [ {<br/> "matchdayUrl":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/1",<br/>
+     * "clubGuesUrl":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/3",<br/>
+     * "clubHomeUrl":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/93",<br/>
+     * "clubGuestName": "1. FC Kaiserslautern",<br/> "clubHomeName": "MSV Duisburg",<br/>
+     * "createDate": 1437385012000,<br/> "updateAt": 1438071030000,<br/> "isCalculated":
+     * 1,<br/> "idSport1Match": "2415925",<br/> "homeScore": 1,<br/> "guestScore": 3,<br/>
+     * "startTime": 1437762600000,<br/> "id": 1<br/> },<br/> { "matchdayUrl":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/1",<br/>
+     * "clubGuesUrl":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/59",<br/>
+     * "clubHomeUrl":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/58",<br/>
+     * "clubGuestName": "Karlsruher SC",<br/> "clubHomeName": "SpVgg Greuther Fürth",<br/>
+     * "createDate": 1437385012000,<br/> "updateAt": 1438071038000,<br/> "isCalculated":
+     * 1,<br/> "idSport1Match": "2415969",<br/> "homeScore": 1,<br/> "guestScore": 0,<br/>
+     * "startTime": 1437822000000,<br/> "id": 2<br/> } ]<br/> }
+     *
+     * @param token is a header parameter for checking permission
+     * @param page number of page at which we search for Match
+     * @param limit number of Match returns
+     * @param clubID id of club
+     * @param matchdayID id of match day
+     * @param startDate start date
+     * @return Response 200 OK with JSON body
+     * @throws DataNotFoundException Example for
+     * exception:<br/> {<br/>
+     * "errorMessage": "There is no matches for this search!",<br/>
+     * "errorCode": 404<br/> }
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMatch(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("clubID") long clubID, @QueryParam("matchdayID") long matchdayID, @QueryParam("startDate") long startDate){
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("clubID") long clubID, @QueryParam("matchdayID") long matchdayID, @QueryParam("startDate") long startDate) {
         EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT m FROM Match m ");
-        if (clubID != 0){
+        if (clubID != 0) {
             query.append("WHERE (m.idGuestClub.id = ")
                     .append(clubID)
                     .append(" OR m.idHomeClub.id = ")
                     .append(clubID)
                     .append(")");
         }
-        if (matchdayID != 0){
+        if (matchdayID != 0) {
             query.append(clubID != 0 ? " AND" : "WHERE")
                     .append(" m.idMatchday.id = ")
                     .append(matchdayID);
         }
-        if (startDate != 0){
+        if (startDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Date date = new Date(startDate);
             query.append(clubID != 0 || matchdayID != 0 ? " AND" : "WHERE")
