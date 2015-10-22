@@ -33,13 +33,37 @@ import rs.htec.cms.cms_bulima.pojo.MatchdayPOJO;
  */
 @Path("/matchday")
 public class MatchdayRESTEndpoint {
-    
+
     RestHelperClass helper;
-    
+
     public MatchdayRESTEndpoint() {
         helper = new RestHelperClass();
     }
-    
+
+    /**
+     * Returns Matchday for specified id.
+     * <br/>
+     * Example for Matchday response:<br/>
+     *
+     * {<br/>
+     * "createDate": 1437385012000,<br/>
+     * "startDate": 1439569800000,<br/>
+     * "endDate": 1439835300000,<br/>
+     * "idSport1Matchday": "3",<br/>
+     * "matchday": 3,<br/>
+     * "isCurrent": 1,<br/>
+     * "isCalculated": 0,<br/>
+     * "isCompleted": 0,<br/>
+     * "idSeason": 4,<br/>
+     * "urlToSeason":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/4",<br/>
+     * "id": 3<br/>
+     * }<br/>
+     *
+     * @param token
+     * @param id of Matchday that should be returned
+     * @return Matchday for defined id
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -55,7 +79,57 @@ public class MatchdayRESTEndpoint {
         }
         return Response.ok().entity(pojo).build();
     }
-    
+
+    /**
+     * Returns list of Matchday objects. That list can be:<br/>
+     * -ordered by specified column<br/>
+     * -filtered by idSeason and matchday (for matchday ID should be provided)<br/>
+     * -filtered between two dates<br/>
+     *
+     * {<br/>
+     * "data": [<br/>
+     * {<br/>
+     * "createDate": 1437385012000,<br/>
+     * "startDate": 1437762600000,<br/>
+     * "endDate": 1438020900000,<br/>
+     * "idSport1Matchday": "1",<br/>
+     * "matchday": 1,<br/>
+     * "isCurrent": 0,<br/>
+     * "isCalculated": 1,<br/>
+     * "isCompleted": 1,<br/>
+     * "idSeason": 4,<br/>
+     * "urlToSeason":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/4",<br/>
+     * "id": 1<br/>
+     * },<br/>
+     * {<br/>
+     * "createDate": 1437385012000,<br/>
+     * "startDate": 1438360200000,<br/>
+     * "endDate": 1438625700000,<br/>
+     * "idSport1Matchday": "2",<br/>
+     * "matchday": 2,<br/>
+     * "isCurrent": 0,<br/>
+     * "isCalculated": 1,<br/>
+     * "isCompleted": 1,<br/>
+     * "idSeason": 4,<br/>
+     * "urlToSeason":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/4",<br/>
+     * "id": 2<br/>
+     * }<br/>
+     * ],<br/>
+     * "count": 2<br/>
+     * }<br/>
+     *
+     * @param token
+     * @param page
+     * @param limit
+     * @param orderBy
+     * @param matchday
+     * @param idSeason
+     * @param minDate
+     * @param maxDate
+     * @return Matchdays for specified search
+     */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
@@ -75,7 +149,7 @@ public class MatchdayRESTEndpoint {
             query.append(" WHERE m.startDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
             operator = " AND";
         }
-        
+
         if (matchday != null) {
             query.append(operator).append(" m.matchday = '").append(matchday).append("'");
             operator = " AND";
