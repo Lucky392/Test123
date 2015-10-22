@@ -24,6 +24,7 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.BugReport;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -41,11 +42,9 @@ import rs.htec.cms.cms_bulima.pojo.BugReportPOJO;
 public class BugReportRESTEndpoint {
 
     RestHelperClass helper;
-    Validator validator;
-
+    
     public BugReportRESTEndpoint() {
         helper = new RestHelperClass();
-        validator = new Validator();
     }
 
     /**
@@ -100,7 +99,7 @@ public class BugReportRESTEndpoint {
      * -searched through club name and description
      * -filtered between two dates
      *[<br/>
-     * "count": 10,<br/>
+     * "count": 2,<br/>
      * "data": [ <br/>
      * {<br/>
      * "urlToUser": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/user/24076",<br/>
@@ -149,6 +148,7 @@ public class BugReportRESTEndpoint {
      * @param maxDate
      * @param errorType filter for errorTupe
      * @param origin filter for origin that have bug
+     * @param system of the origin
      * @return list of Bug reports
      * @throws DataNotFoundException if there is no result for query
      */
@@ -157,31 +157,41 @@ public class BugReportRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBugReport(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("search") String search,
-            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("errorType") String errorType, @QueryParam("origin") String origin) {
+            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("errorType") String errorType,
+            @QueryParam("origin") String origin, @QueryParam("system") String system) {
         EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
 
         List<BugReport> bugReport;
-        StringBuilder query = new StringBuilder("SELECT b FROM BugReport b ");
-
+        StringBuilder query = new StringBuilder("SELECT b FROM BugReport b");
+        
+        String operator = " WHERE";
         if (minDate != 0 && maxDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append("WHERE b.reportDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            query.append(" WHERE b.reportDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            operator = " AND";
         }
 
         if (errorType != null) {
-            query.append(minDate != 0 ? " AND" : "WHERE").append(" b.errorType = '").append(errorType).append("'");
+            query.append(operator).append(" b.errorType = '").append(errorType).append("'");
+            operator = " AND";
         }
 
         if (origin != null) {
-            query.append(minDate != 0 || errorType != null ? " AND" : "WHERE").append(" b.origin = '").append(origin).append("'");
+            query.append(operator).append(" b.origin = '").append(origin).append("'");
+            operator = " AND";
+        }
+        
+        if (system != null) {
+            query.append(operator).append(" b.system = '").append(system).append("'");
+            operator = " AND";
         }
 
         if (search != null) {
             search = "%" + search + "%";
-            query.append(minDate != 0 || errorType != null || origin != null ? " AND" : "WHERE")
+            query.append(operator)
                     .append(" (b.description LIKE '")
                     .append(search).append("' OR b.clubName LIKE '")
                     .append(search).append("')");
@@ -202,7 +212,9 @@ public class BugReportRESTEndpoint {
         List<BugReportPOJO> pojos = BugReportPOJO.toBugReportPOJOList(bugReport);
 
         GetObject go = new GetObject();
-        go.setCount(10l);
+        String countQuery = query.toString().replaceFirst("b", "count(b)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        go.setCount(count);
         go.setData(pojos);
         return Response.ok().entity(go).build();
     }
@@ -299,11 +311,21 @@ public class BugReportRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBugReport(@HeaderParam("authorization") String token, BugReport bugReport) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
         BugReport foundedBugReport = em.find(BugReport.class, bugReport.getId());
         if (foundedBugReport != null) {
+            Validator validator = new Validator();
+            if (validator.checkLenght(bugReport.getEmail(), 255, false) && validator.checkLenght(bugReport.getErrorType(), 255, false) &&
+                    validator.checkLenght(bugReport.getDescription(), 1500, false) && validator.checkLenght(bugReport.getOrigin(), 255, false) && 
+                    validator.checkLenght(bugReport.getSystem(), 255, false) && validator.checkLenght(bugReport.getDeviceType(), 255, false) &&
+                    validator.checkLenght(bugReport.getTask(), 255, true) && validator.checkLenght(bugReport.getStatus(), 255, true) &&
+                    validator.checkLenght(bugReport.getOther(), 500, true) && validator.checkLenght(bugReport.getAppVersion(), 255, true) &&
+                    validator.checkLenght(bugReport.getClubName(), 255, true)) {
 
-            helper.mergeObject(em, bugReport);
+                helper.mergeObject(em, bugReport);
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
 
         } else {
             throw new DataNotFoundException("Bug report at index " + bugReport.getId() + " does not exits");

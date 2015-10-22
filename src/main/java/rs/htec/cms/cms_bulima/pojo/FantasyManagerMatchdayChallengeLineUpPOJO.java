@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.pojo;
 import java.util.Date;
 import javax.xml.bind.annotation.XmlRootElement;
 import rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUp;
+import rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUpPlayer;
 
 /**
  *
@@ -30,6 +31,10 @@ public class FantasyManagerMatchdayChallengeLineUpPOJO {
         this.ID_MATCHDAY_CHALLENGE = "" + fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge().getId();
         this.formation = fantasyManagerMatchdayChallengeLineUp.getFormation();
         this.createDate = fantasyManagerMatchdayChallengeLineUp.getCreateDate();
+    }
+
+    public FantasyManagerMatchdayChallengeLineUpPOJO(FantasyManagerMatchdayChallengeLineUpPlayer matchdayChallengeLineUpPlayer) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     public long getId() {
