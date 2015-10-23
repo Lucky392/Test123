@@ -8,7 +8,6 @@ package rs.htec.cms.cms_bulima.pojo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import rs.htec.cms.cms_bulima.domain.Match;
 import rs.htec.cms.cms_bulima.domain.MatchPlayerEvent;
 
 /**

@@ -55,7 +55,7 @@ public class MatchRESTEndpoint {
      * "clubGuestName": "1. FC Kaiserslautern",<br/> "clubHomeName": "MSV Duisburg",<br/>
      * "createDate": 1437385012000,<br/> "updateAt": 1438071030000,<br/> "isCalculated":
      * 1,<br/> "idSport1Match": "2415925",<br/> "homeScore": 1,<br/> "guestScore": 3,<br/>
-     * "startTime": 1437762600000,<br/> "id": 1<br/> },<br/> { "matchdayUrl":
+     * "startTime": 1437762600000,<br/> "id": 1<br/> },<br/> {<br/> "matchdayUrl":
      * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/1",<br/>
      * "clubGuesUrl":
      * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/59",<br/>

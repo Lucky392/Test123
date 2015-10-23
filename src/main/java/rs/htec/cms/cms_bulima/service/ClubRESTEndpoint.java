@@ -46,7 +46,7 @@ public class ClubRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param id of club we are searching for
      * @return Response 200 OK status with JSON body
-     * @throws DataNotFoundException DataNotFoundException Example for
+     * @throws DataNotFoundException Example for
      * exception:<br/> {<br/>
      * "errorMessage": "There is no club at index 5!",<br/>
      * "errorCode": 404<br/> }

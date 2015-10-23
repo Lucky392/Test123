@@ -6,9 +6,7 @@
 package rs.htec.cms.cms_bulima.pojo;
 
 import java.util.HashMap;
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
-import org.hibernate.mapping.Map;
 
 /**
  *
