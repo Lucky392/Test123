@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import rs.htec.cms.cms_bulima.domain.MatchPlayerEvent;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -29,7 +30,7 @@ public class MatchPlayerEventPOJO {
         this.eventTimeMinute = mpe.getEventTimeMinute();
         this.updateAt = mpe.getUpdateAt();
         this.createDate = mpe.getCreateDate();
-        this.matchPlayerUrl = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchPlayer/" + mpe.getIdMatchPlayer().getId();
+        this.matchPlayerUrl = Util.getInstance().getUrl() + "rest/matchPlayer/" + mpe.getIdMatchPlayer().getId();
     }
 
     public long getId() {

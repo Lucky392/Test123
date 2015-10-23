@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import rs.htec.cms.cms_bulima.domain.MatchPlayer;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -41,9 +42,9 @@ public class MatchPlayerPOJO {
         this.extra2 = player.getExtra2();
         this.createDate = player.getCreateDate();
         this.idMatch = player.getIdMatch().getId();
-        this.urlToMatch = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/match/" + player.getIdMatch().getId();
+        this.urlToMatch = Util.getInstance().getUrl() + "rest/match/" + player.getIdMatch().getId();
         this.idPlayer = player.getIdPlayer().getId();
-        this.urlToPlayer = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/player/" + player.getIdPlayer().getId();
+        this.urlToPlayer = Util.getInstance().getUrl() + "rest/player/" + player.getIdPlayer().getId();
 
     }
 

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import rs.htec.cms.cms_bulima.domain.Match;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -39,11 +40,11 @@ public class MatchPOJO {
         this.createDate = match.getCreateDate();
         this.startTime = match.getStartTime();
         this.isCalculated = match.getIsCalculated();
-        this.clubGuesUrl = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/club/" + match.getIdGuestClub().getId();
+        this.clubGuesUrl = Util.getInstance().getUrl() + "rest/club/" + match.getIdGuestClub().getId();
         this.clubGuestName = match.getIdGuestClub().getMediumName();
-        this.clubHomeUrl = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/club/" + match.getIdHomeClub().getId();
+        this.clubHomeUrl = Util.getInstance().getUrl() + "rest/club/" + match.getIdHomeClub().getId();
         this.clubHomeName = match.getIdHomeClub().getMediumName();
-        this.matchdayUrl = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchday/" + match.getIdMatchday().getId();
+        this.matchdayUrl = Util.getInstance().getUrl() + "rest/matchday/" + match.getIdMatchday().getId();
     }
 
     public long getId() {

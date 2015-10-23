@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import rs.htec.cms.cms_bulima.domain.Matchday;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -40,7 +41,7 @@ public class MatchdayPOJO {
         this.isCalculated = matchdayDb.getIsCalculated();
         this.isCompleted = matchdayDb.getIsCompleted();
         this.idSeason = matchdayDb.getIdSeason().getId();
-        this.urlToSeason = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/season/" + matchdayDb.getIdSeason().getId();
+        this.urlToSeason = Util.getInstance().getUrl() + "rest/season/" + matchdayDb.getIdSeason().getId();
     }
 
     public Long getId() {

@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import rs.htec.cms.cms_bulima.domain.BugReport;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -53,7 +54,7 @@ public class BugReportPOJO {
         this.clubName = bugReport.getClubName();
         this.userId = bugReport.getUserId();
         if (bugReport.getUserId() != null) {
-            this.urlToUser = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/user/" + bugReport.getUserId();
+            this.urlToUser = Util.getInstance().getUrl() + "rest/user/" + bugReport.getUserId();
         }
 
     }

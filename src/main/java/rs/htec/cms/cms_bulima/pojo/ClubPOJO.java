@@ -7,6 +7,7 @@ package rs.htec.cms.cms_bulima.pojo;
 
 import java.util.Date;
 import rs.htec.cms.cms_bulima.domain.Club;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -31,7 +32,7 @@ public class ClubPOJO {
         this.logoUrl = club.getLogoUrl();
         this.createDate = club.getCreateDate();
         this.logo = club.getLogo();
-        this.leagueUrl = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/league/" + club.getIdLeague().getId();
+        this.leagueUrl = Util.getInstance().getUrl() + "rest/league/" + club.getIdLeague().getId();
     }
 
     public long getId() {
