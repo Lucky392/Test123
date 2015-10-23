@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -20,13 +21,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.BugReport;
 import rs.htec.cms.cms_bulima.domain.MatchPlayerStat;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.pojo.BugReportPOJO;
 import rs.htec.cms.cms_bulima.pojo.MatchPlayerStatPOJO;
 
 /**
@@ -35,41 +34,197 @@ import rs.htec.cms.cms_bulima.pojo.MatchPlayerStatPOJO;
  */
 @Path("/matchPlayerStat")
 public class MatchPlayerStatRESTEndpoint {
-    
+
     RestHelperClass helper;
-    
+
     public MatchPlayerStatRESTEndpoint() {
         helper = new RestHelperClass();
     }
-    
+
+    /**
+     * Returns MatchPlayerStat for defined id.
+     *<br/>
+     * Example for response:<br/>
+     *{<br/>
+     * "createDate": 1439797302000,<br/>
+     * "score": 0,<br/>
+     * "idMatchPlayer": 523,<br/>
+     * "rating": 4.72,<br/>
+     * "assists": 0,<br/>
+     * "scorePenalty": 0,<br/>
+     * "scoreFoot": 0,<br/>
+     * "scoreHeader": 0,<br/>
+     * "scoreOwnGoal": 0,<br/>
+     * "goalsAgainst": 5,<br/>
+     * "cleanSheet": 0,<br/>
+     * "shots": 0,<br/>
+     * "shotsFoot": 0,<br/>
+     * "shotsHeader": 0,<br/>
+     * "shotsInsideBox": 0,<br/>
+     * "shotsOutsideBox": 0,<br/>
+     * "shotsPenalty": 0,<br/>
+     * "shotsPenaltyShotMissed": 0,<br/>
+     * "shotAssists": 0,<br/>
+     * "penaltySaves": 0,<br/>
+     * "playing": 1,<br/>
+     * "playingLineup": 1,<br/>
+     * "playingSubstituteIn": 0,<br/>
+     * "playingSubstituteOut": 0,<br/>
+     * "playingMinutes": 90,<br/>
+     * "cardYellow": 0,<br/>
+     * "cardYellowRed": 0,<br/>
+     * "cardRed": 0,<br/>
+     * "ballsTouched": 38,<br/>
+     * "passesComplete": 4,<br/>
+     * "passesCompletePercentage": 26.67,<br/>
+     * "passesFailed": 11,<br/>
+     * "passesFailedPercentage": 73.33,<br/>
+     * "duelsWon": 4,<br/>
+     * "duelsWonGround": 4,<br/>
+     * "duelsWonHeader": 0,<br/>
+     * "duelsWonPercentage": 44.44,<br/>
+     * "duelsLost": 5,<br/>
+     * "duelsLostGround": 4,<br/>
+     * "duelsLostHeader": 1,<br/>
+     * "duelsLostPercentage": 55.56,<br/>
+     * "foulsCommitted": 0,<br/>
+     * "foulsSuffered": 0,<br/>
+     * "crosses": 1,<br/>
+     * "cornerKicks": 0,<br/>
+     * "freekicks": 0,<br/>
+     * "offsides": 0,<br/>
+     * "saves": 0,<br/>
+     * "trackingDistance": 10636,<br/>
+     * "trackingFastRuns": 34,<br/>
+     * "trackingSprints": 19,<br/>
+     * "trackingMaxSpeed": 33,<br/>
+     * "positionId": null,<br/>
+     * "uniformNumber": null,<br/>
+     * "grade": 3.3,<br/>
+     * "yCoordinate": null,<br/>
+     * "urlToMatchPlayer":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchPlayer/523",<br/>
+     * "xCoordinate": null,<br/>
+     * "id": 523<br/>
+     * }<br/>
+     * 
+     * @param token is a header parameter for checking permission
+     * @param id of MatchPlayerStat that should be returned
+     * @return MatchPlayerStat
+     * @throws DataNotFoundException if MatchPlayerStat does not exist
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMatchPlayerStatById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        MatchPlayerStat matchPlayerStat = null;
+        MatchPlayerStatPOJO pojo;
         try {
-            matchPlayerStat = (MatchPlayerStat) em.createNamedQuery("MatchPlayerStat.findById").setParameter("id", id).getSingleResult();
-        } catch (Exception e) {
+            MatchPlayerStat matchPlayerStat = (MatchPlayerStat) em.createNamedQuery("MatchPlayerStat.findById").setParameter("id", id).getSingleResult();
+            pojo = new MatchPlayerStatPOJO(matchPlayerStat);
+        } catch (NoResultException e) {
             throw new DataNotFoundException("MatchPlayerStat with id " + id + " does not exist..");
         }
-        return Response.ok().entity(matchPlayerStat).build();
+        return Response.ok().entity(pojo).build();
     }
-    
+
+    /**
+     * Returns list of MatchPlayerStat-s for specified search.
+     * <br/>
+     * Example for return:<br/>
+     *
+     * {<br/>
+     * "count": 1,<br/>
+     * "data": [<br/>
+     * {<br/>
+     * "createDate": 1439797302000,<br/>
+     * "score": 0,<br/>
+     * "idMatchPlayer": 523,<br/>
+     * "rating": 4.72,<br/>
+     * "assists": 0,<br/>
+     * "scorePenalty": 0,<br/>
+     * "scoreFoot": 0,<br/>
+     * "scoreHeader": 0,<br/>
+     * "scoreOwnGoal": 0,<br/>
+     * "goalsAgainst": 5,<br/>
+     * "cleanSheet": 0,<br/>
+     * "shots": 0,<br/>
+     * "shotsFoot": 0,<br/>
+     * "shotsHeader": 0,<br/>
+     * "shotsInsideBox": 0,<br/>
+     * "shotsOutsideBox": 0,<br/>
+     * "shotsPenalty": 0,<br/>
+     * "shotsPenaltyShotMissed": 0,<br/>
+     * "shotAssists": 0,<br/>
+     * "penaltySaves": 0,<br/>
+     * "playing": 1,<br/>
+     * "playingLineup": 1,<br/>
+     * "playingSubstituteIn": 0,<br/>
+     * "playingSubstituteOut": 0,<br/>
+     * "playingMinutes": 90,<br/>
+     * "cardYellow": 0,<br/>
+     * "cardYellowRed": 0,<br/>
+     * "cardRed": 0,<br/>
+     * "ballsTouched": 38,<br/>
+     * "passesComplete": 4,<br/>
+     * "passesCompletePercentage": 26.67,<br/>
+     * "passesFailed": 11,<br/>
+     * "passesFailedPercentage": 73.33,<br/>
+     * "duelsWon": 4,<br/>
+     * "duelsWonGround": 4,<br/>
+     * "duelsWonHeader": 0,<br/>
+     * "duelsWonPercentage": 44.44,<br/>
+     * "duelsLost": 5,<br/>
+     * "duelsLostGround": 4,<br/>
+     * "duelsLostHeader": 1,<br/>
+     * "duelsLostPercentage": 55.56,<br/>
+     * "foulsCommitted": 0,<br/>
+     * "foulsSuffered": 0,<br/>
+     * "crosses": 1,<br/>
+     * "cornerKicks": 0,<br/>
+     * "freekicks": 0,<br/>
+     * "offsides": 0,<br/>
+     * "saves": 0,<br/>
+     * "trackingDistance": 10636,<br/>
+     * "trackingFastRuns": 34,<br/>
+     * "trackingSprints": 19,<br/>
+     * "trackingMaxSpeed": 33,<br/>
+     * "positionId": null,<br/>
+     * "uniformNumber": null,<br/>
+     * "grade": 3.3,<br/>
+     * "yCoordinate": null,<br/>
+     * "urlToMatchPlayer":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchPlayer/523",<br/>
+     * "xCoordinate": null,<br/>
+     * "id": 523<br/>
+     * }<br/>
+     * ]<br/>
+     * }<br/>
+     *
+     * @param token
+     * @param page
+     * @param limit
+     * @param orderBy
+     * @param minDate
+     * @param maxDate
+     * @param idMatchPlayer
+     * @return list of MatchPlayerStat
+     * @throws DataNotFoundException if MatchPlayerStat does not exist for
+     * search
+     */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMatchPlayerStat(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("search") String search,
-            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("errorType") String errorType,
-            @QueryParam("origin") String origin, @QueryParam("system") String system) {
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy,
+            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("idMatchPlayer") String idMatchPlayer) {
         EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
 
         List<MatchPlayerStat> matchPlayerStat;
         StringBuilder query = new StringBuilder("SELECT m FROM MatchPlayerStat m");
-        
+
         String operator = " WHERE";
         if (minDate != 0 && maxDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
@@ -78,29 +233,10 @@ public class MatchPlayerStatRESTEndpoint {
             query.append(" WHERE m.createDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
             operator = " AND";
         }
-//
-//        if (errorType != null) {
-//            query.append(operator).append(" b.errorType = '").append(errorType).append("'");
-//            operator = " AND";
-//        }
-//
-//        if (origin != null) {
-//            query.append(operator).append(" b.origin = '").append(origin).append("'");
-//            operator = " AND";
-//        }
-//        
-//        if (system != null) {
-//            query.append(operator).append(" b.system = '").append(system).append("'");
-//            operator = " AND";
-//        }
 
-//        if (search != null) {
-//            search = "%" + search + "%";
-//            query.append(operator)
-//                    .append(" (b.description LIKE '")
-//                    .append(search).append("' OR b.clubName LIKE '")
-//                    .append(search).append("')");
-//        }
+        if (idMatchPlayer != null) {
+            query.append(operator).append(" m.idMatchPlayer = '").append(idMatchPlayer).append("'");
+        }
 
         if (orderBy != null) {
             if (orderBy.startsWith("-")) {

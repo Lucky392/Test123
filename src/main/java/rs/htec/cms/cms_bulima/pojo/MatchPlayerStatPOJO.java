@@ -134,8 +134,10 @@ public class MatchPlayerStatPOJO {
         this.yCoordinate = stat.getYCoordinate();
         this.createDate = stat.getCreateDate();
         this.grade = stat.getGrade();
-        this.idMatchPlayer = stat.getIdMatchPlayer().getId();
-        this.urlToMatchPlayer = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchPlayer/" + stat.getIdMatchPlayer().getId();
+        if (stat.getIdMatchPlayer() != null) {
+            this.idMatchPlayer = stat.getIdMatchPlayer().getId();
+            this.urlToMatchPlayer = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchPlayer/" + stat.getIdMatchPlayer().getId();
+        }
     }
 
     public Long getId() {
