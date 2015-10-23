@@ -16,17 +16,17 @@ import rs.htec.cms.cms_bulima.domain.Matchday;
  */
 public class MatchdayPOJO {
 
-    private static final long serialVersionUID = 1L;
-    private long id;
+    private static final Long serialVersionUID = 1L;
+    private Long id;
     private String idSport1Matchday;
-    private int matchday;
+    private Integer matchday;
     private Short isCurrent;
     private Date startDate;
     private Date endDate;
     private Date createDate;
     private Short isCalculated;
     private Short isCompleted;
-    private long idSeason;
+    private Long idSeason;
     private String urlToSeason;
 
     public MatchdayPOJO(Matchday matchdayDb) {
@@ -43,11 +43,11 @@ public class MatchdayPOJO {
         this.urlToSeason = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/season/" + matchdayDb.getIdSeason().getId();
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -59,11 +59,11 @@ public class MatchdayPOJO {
         this.idSport1Matchday = idSport1Matchday;
     }
 
-    public int getMatchday() {
+    public Integer getMatchday() {
         return matchday;
     }
 
-    public void setMatchday(int matchday) {
+    public void setMatchday(Integer matchday) {
         this.matchday = matchday;
     }
 
@@ -115,7 +115,7 @@ public class MatchdayPOJO {
         this.isCompleted = isCompleted;
     }
 
-    public long getIdSeason() {
+    public Long getIdSeason() {
         return idSeason;
     }
 
@@ -127,7 +127,7 @@ public class MatchdayPOJO {
         this.urlToSeason = urlToSeason;
     }
 
-    public void setIdSeason(long idSeason) {
+    public void setIdSeason(Long idSeason) {
         this.idSeason = idSeason;
     }
 

@@ -5,7 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
@@ -15,36 +17,36 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.User;
+import rs.htec.cms.cms_bulima.domain.Player;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.PlayerPOJO;
 
 /**
  *
  * @author stefan
  */
-@Path("/user")
-public class UserRESTEndpoint {
+@Path("/player")
+public class PlayerRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public UserRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPlayerById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        User user = null;
+        PlayerPOJO pojo;
         try {
-            user = (User) em.createNamedQuery("User.findById").setParameter("id", id).getSingleResult();
-        } catch (Exception e) {
-            throw new DataNotFoundException("User with id " + id + " does not exist..");
+            Player player = (Player) em.createNamedQuery("Player.findById").setParameter("id", id).getSingleResult();
+            pojo = new PlayerPOJO(player);
+        } catch (NoResultException e) {
+            throw new DataNotFoundException("Player at index " + id + " does not exist..");
         }
-        return Response.ok().entity(user).build();
-    }
+        return Response.ok().entity(pojo).build();
+    }    
+    
 
 }

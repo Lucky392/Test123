@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,11 +41,10 @@ import rs.htec.cms.cms_bulima.pojo.BugReportPOJO;
  */
 @Path("/bugReport")
 public class BugReportRESTEndpoint {
-
+    @InjectParam
     RestHelperClass helper;
     
     public BugReportRESTEndpoint() {
-        helper = new RestHelperClass();
     }
 
     /**

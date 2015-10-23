@@ -16,18 +16,18 @@ import rs.htec.cms.cms_bulima.domain.MatchPlayer;
  */
 public class MatchPlayerPOJO {
 
-    private long id;
+    private Long id;
     private Date updateAt;
-    private double rating;
+    private Double rating;
     private Date ratingAt;
-    private int blmPoints;
+    private Integer blmPoints;
     private Date blmPointsUpdateAt;
-    private short extra1;
-    private short extra2;
+    private Short extra1;
+    private Short extra2;
     private Date createDate;
-    private long idMatch;
+    private Long idMatch;
     private String urlToMatch;
-    private long idPlayer;
+    private Long idPlayer;
     private String urlToPlayer;
 
     public MatchPlayerPOJO(MatchPlayer player) {
@@ -47,11 +47,11 @@ public class MatchPlayerPOJO {
 
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -63,11 +63,11 @@ public class MatchPlayerPOJO {
         this.updateAt = updateAt;
     }
 
-    public double getRating() {
+    public Double getRating() {
         return rating;
     }
 
-    public void setRating(double rating) {
+    public void setRating(Double rating) {
         this.rating = rating;
     }
 
@@ -79,11 +79,11 @@ public class MatchPlayerPOJO {
         this.ratingAt = ratingAt;
     }
 
-    public int getBlmPoints() {
+    public Integer getBlmPoints() {
         return blmPoints;
     }
 
-    public void setBlmPoints(int blmPoints) {
+    public void setBlmPoints(Integer blmPoints) {
         this.blmPoints = blmPoints;
     }
 
@@ -95,19 +95,19 @@ public class MatchPlayerPOJO {
         this.blmPointsUpdateAt = blmPointsUpdateAt;
     }
 
-    public short getExtra1() {
+    public Short getExtra1() {
         return extra1;
     }
 
-    public void setExtra1(short extra1) {
+    public void setExtra1(Short extra1) {
         this.extra1 = extra1;
     }
 
-    public short getExtra2() {
+    public Short getExtra2() {
         return extra2;
     }
 
-    public void setExtra2(short extra2) {
+    public void setExtra2(Short extra2) {
         this.extra2 = extra2;
     }
 
@@ -119,11 +119,11 @@ public class MatchPlayerPOJO {
         this.createDate = createDate;
     }
 
-    public long getIdMatch() {
+    public Long getIdMatch() {
         return idMatch;
     }
 
-    public void setIdMatch(long idMatch) {
+    public void setIdMatch(Long idMatch) {
         this.idMatch = idMatch;
     }
 
@@ -135,11 +135,11 @@ public class MatchPlayerPOJO {
         this.urlToMatch = urlToMatch;
     }
 
-    public long getIdPlayer() {
+    public Long getIdPlayer() {
         return idPlayer;
     }
 
-    public void setIdPlayer(long idPlayer) {
+    public void setIdPlayer(Long idPlayer) {
         this.idPlayer = idPlayer;
     }
 

@@ -60,6 +60,7 @@
     <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation</class>
     <class>rs.htec.cms.cms_bulima.domain.Match</class>
     <class>rs.htec.cms.cms_bulima.domain.MatchPlayerEvent</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchPlayerStat</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
       <!--localhost:3306-->

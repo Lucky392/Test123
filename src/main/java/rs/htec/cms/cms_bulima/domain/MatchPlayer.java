@@ -48,6 +48,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "MatchPlayer.findByCreateDate", query = "SELECT m FROM MatchPlayer m WHERE m.createDate = :createDate")})
 public class MatchPlayer implements Serializable {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchPlayer")
+    private List<MatchPlayerStat> matchPlayerStatList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idMatchPlayer")
     private List<MatchPlayerEvent> matchPlayerEventList;
     private static final long serialVersionUID = 1L;
     @Id
@@ -221,6 +223,16 @@ public class MatchPlayer implements Serializable {
 
     public void setMatchPlayerEventList(List<MatchPlayerEvent> matchPlayerEventList) {
         this.matchPlayerEventList = matchPlayerEventList;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<MatchPlayerStat> getMatchPlayerStatList() {
+        return matchPlayerStatList;
+    }
+
+    public void setMatchPlayerStatList(List<MatchPlayerStat> matchPlayerStatList) {
+        this.matchPlayerStatList = matchPlayerStatList;
     }
     
 }

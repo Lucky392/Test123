@@ -46,6 +46,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "Club.findByLogoUrl", query = "SELECT c FROM Club c WHERE c.logoUrl = :logoUrl"),
     @NamedQuery(name = "Club.findByCreateDate", query = "SELECT c FROM Club c WHERE c.createDate = :createDate")})
 public class Club implements Serializable {
+
     @Lob
     @Column(name = "logo")
     private byte[] logo;
@@ -140,7 +141,6 @@ public class Club implements Serializable {
         this.logoUrl = logoUrl;
     }
 
-
     public Date getCreateDate() {
         return createDate;
     }
@@ -192,7 +192,6 @@ public class Club implements Serializable {
         return id + "";
     }
 
-
     @XmlTransient
     @JsonIgnore
     public List<Match> getMatchList() {
@@ -221,5 +220,4 @@ public class Club implements Serializable {
         this.logo = logo;
     }
 
-    
 }

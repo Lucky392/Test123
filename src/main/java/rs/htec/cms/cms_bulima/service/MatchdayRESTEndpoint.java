@@ -75,7 +75,7 @@ public class MatchdayRESTEndpoint {
             Matchday matchday = (Matchday) em.createNamedQuery("Matchday.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchdayPOJO(matchday);
         } catch (Exception e) {
-            throw new DataNotFoundException("Matchday at index " + id + " does not exist.." + e.getMessage());
+            throw new DataNotFoundException("Matchday at index " + id + " does not exist..");
         }
         return Response.ok().entity(pojo).build();
     }
