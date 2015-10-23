@@ -7,6 +7,7 @@ package rs.htec.cms.cms_bulima.pojo;
 
 import java.util.Date;
 import rs.htec.cms.cms_bulima.domain.Season;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -30,11 +31,11 @@ public class SeasonPOJO {
         this.createDate = season.getCreateDate();
         if (season.getIdFirstMatchday() != null) {
             this.idFirstMatchday = season.getIdFirstMatchday().getId();
-            this.urlToFirstMatchday = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchday/" + season.getIdFirstMatchday().getId();
+            this.urlToFirstMatchday = Util.getInstance().getUrl() + "rest/matchday/" + season.getIdFirstMatchday().getId();
         }
         if (season.getIdLeague() != null) {
             this.idLeague = season.getIdLeague().getId();
-            this.urlToLeague = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/league/" + season.getIdLeague().getId();
+            this.urlToLeague = Util.getInstance().getUrl() + "rest/league/" + season.getIdLeague().getId();
         }
     }
 

@@ -7,6 +7,7 @@ package rs.htec.cms.cms_bulima.pojo;
 
 import java.util.Date;
 import rs.htec.cms.cms_bulima.domain.Player;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -89,23 +90,23 @@ public class PlayerPOJO {
         this.fullname = player.getFullname();
         if (player.getIdPlayerPosition() != null) {
             this.idPlayerPosition = player.getIdPlayerPosition().getId();
-            this.urlToPlayerPosition = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/playerPosition/" + player.getIdPlayerPosition().getId();
+            this.urlToPlayerPosition = Util.getInstance().getUrl() + "rest/playerPosition/" + player.getIdPlayerPosition().getId();
         }
         if (player.getIdNation() != null) {
             this.idNation = player.getIdNation().getId();
-            this.urlToNation = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/nation/" + player.getIdNation().getId();
+            this.urlToNation = Util.getInstance().getUrl() + "rest/nation/" + player.getIdNation().getId();
         }
         if (player.getIdSeasonCurrent() != null) {
             this.idSeasonCurrent = player.getIdSeasonCurrent().getId();
-            this.urlToSeasonCurrent = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/season/" + player.getIdSeasonCurrent().getId();
+            this.urlToSeasonCurrent = Util.getInstance().getUrl() + "rest/season/" + player.getIdSeasonCurrent().getId();
         }
         if (player.getIdBlockStartMatchday() != null) {
             this.idBlockStartMatchday = player.getIdBlockStartMatchday().getId();
-            this.urlToBlockStartMatchday = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchday/" + player.getIdBlockStartMatchday().getId();
+            this.urlToBlockStartMatchday = Util.getInstance().getUrl() + "rest/matchday/" + player.getIdBlockStartMatchday().getId();
         }
         if (player.getIdClub() != null) {
             this.idClub = player.getIdClub().getId();
-            this.urlToClub = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/club/" + player.getIdClub().getId();
+            this.urlToClub = Util.getInstance().getUrl() + "rest/club/" + player.getIdClub().getId();
         }
     }
 

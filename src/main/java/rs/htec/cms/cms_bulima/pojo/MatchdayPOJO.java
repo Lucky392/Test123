@@ -17,7 +17,6 @@ import rs.htec.cms.cms_bulima.helper.Util;
  */
 public class MatchdayPOJO {
 
-    private static final Long serialVersionUID = 1L;
     private Long id;
     private String idSport1Matchday;
     private Integer matchday;

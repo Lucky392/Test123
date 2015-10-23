@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import rs.htec.cms.cms_bulima.domain.MatchPlayerStat;
+import rs.htec.cms.cms_bulima.helper.Util;
 
 /**
  *
@@ -136,7 +137,7 @@ public class MatchPlayerStatPOJO {
         this.grade = stat.getGrade();
         if (stat.getIdMatchPlayer() != null) {
             this.idMatchPlayer = stat.getIdMatchPlayer().getId();
-            this.urlToMatchPlayer = "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/" + "rest/matchPlayer/" + stat.getIdMatchPlayer().getId();
+            this.urlToMatchPlayer = Util.getInstance().getUrl() + "rest/matchPlayer/" + stat.getIdMatchPlayer().getId();
         }
     }
 
