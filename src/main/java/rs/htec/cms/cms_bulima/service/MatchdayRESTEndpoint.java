@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,11 +36,8 @@ import rs.htec.cms.cms_bulima.pojo.MatchdayPOJO;
 @Path("/matchday")
 public class MatchdayRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public MatchdayRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * Returns Matchday for specified id.

@@ -73,7 +73,7 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
             MatchdayChallengeResultTableElement element = (MatchdayChallengeResultTableElement) em.createNamedQuery("MatchdayChallengeResultTableElement.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchdayChallengeResultTableElementPOJO(element);
         } catch (Exception e) {
-            throw new DataNotFoundException("MatchdayChallengeResultTableElement at index " + id + " does not exist.." + e.getMessage());
+            throw new DataNotFoundException("MatchdayChallengeResultTableElement at index " + id + " does not exist..");
         }
         return Response.ok().entity(pojo).build();
     }

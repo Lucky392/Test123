@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -85,8 +86,8 @@ public class BugReportRESTEndpoint {
         try {
             BugReport bugReport = (BugReport) em.createNamedQuery("BugReport.findById").setParameter("id", id).getSingleResult();
             pojo = new BugReportPOJO(bugReport);
-        } catch (Exception e) {
-            throw new DataNotFoundException("Bug report at index " + id + " does not exist.." + e.getMessage());
+        } catch (NoResultException e) {
+            throw new DataNotFoundException("Bug report at index " + id + " does not exist..");
         }
         return Response.ok().entity(pojo).build();
     }

@@ -180,7 +180,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
      */
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
@@ -236,7 +236,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * "errorMessage": "Question at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question
     ) {
