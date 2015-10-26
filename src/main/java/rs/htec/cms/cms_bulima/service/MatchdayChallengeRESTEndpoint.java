@@ -9,19 +9,22 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUp;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
+import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -47,7 +50,7 @@ public class MatchdayChallengeRESTEndpoint {
     @GET
     @Path("/")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchdayChallenge(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("filter") String filter,
             @QueryParam("matchdayChallengeType") int matchdayChallengeType, @QueryParam("isPublished") Boolean isPublished) {
 
@@ -96,22 +99,75 @@ public class MatchdayChallengeRESTEndpoint {
         go.setData(matchdayChallenges);
         return Response.ok().entity(go).build();
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token,
-            FantasyManagerMatchdayChallengeLineUp fantasyManagerMatchdayChallengeLineUp) {
+    public Response insertMatchdayChallenge(@HeaderParam("authorization") String token,
+            MatchdayChallenge matchdayChallenge) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
-        if (fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager() != null
-                && fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge() != null
-                && validator.checkLenght(fantasyManagerMatchdayChallengeLineUp.getFormation(), 255, false)) {
-            fantasyManagerMatchdayChallengeLineUp.setCreateDate(new Date());
-            helper.persistObject(em, fantasyManagerMatchdayChallengeLineUp);
+        if (validator.checkLenght(matchdayChallenge.getMatchdayChallengeTitle(), 255, false)
+                && validator.checkLenght(matchdayChallenge.getMatchdayChallengeDescription(), 255, false)
+                && validator.checkLenght(matchdayChallenge.getMatchdayChallengeType(), 255, false)
+                && validator.checkLenght(matchdayChallenge.getLogo(), 255, false)
+                && validator.checkLenght(matchdayChallenge.getFormation(), 255, true)
+                && matchdayChallenge.getIdMatchday() != null
+                && validator.checkLenght(matchdayChallenge.getTarget(), 255, true)
+                && validator.checkLenght(matchdayChallenge.getSubheadline(), 255, true)
+                && validator.checkLenght(matchdayChallenge.getSquad(), 255, true)) {
+            matchdayChallenge.setCreateDate(new Date());
+            helper.persistObject(em, matchdayChallenge);
             return Response.status(Response.Status.CREATED).build();
         } else {
             throw new InputValidationException("Validation failed");
         }
+    }
+
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateMatchdayChallenge(@HeaderParam("authorization") String token,
+            MatchdayChallenge matchdayChallenge) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        MatchdayChallenge x = em.find(MatchdayChallenge.class, matchdayChallenge.getId());
+        if (x != null) {
+            if (validator.checkLenght(matchdayChallenge.getMatchdayChallengeTitle(), 255, false)
+                    && validator.checkLenght(matchdayChallenge.getMatchdayChallengeDescription(), 255, false)
+                    && validator.checkLenght(matchdayChallenge.getMatchdayChallengeType(), 255, false)
+                    && validator.checkLenght(matchdayChallenge.getLogo(), 255, false)
+                    && validator.checkLenght(matchdayChallenge.getFormation(), 255, true)
+                    && matchdayChallenge.getIdMatchday() != null
+                    && validator.checkLenght(matchdayChallenge.getTarget(), 255, true)
+                    && validator.checkLenght(matchdayChallenge.getSubheadline(), 255, true)
+                    && validator.checkLenght(matchdayChallenge.getSquad(), 255, true)) {
+                matchdayChallenge.setCreateDate(x.getCreateDate());
+                helper.mergeObject(em, matchdayChallenge);
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
+        } else {
+            throw new DataNotFoundException("Fantasy Manager Matchday Challenge Line Up at index " + matchdayChallenge.getId() + " does not exits");
+        }
+        return Response.ok().build();
+    }
+    
+    /**
+     * API for method: .../rest/matchday_challenge/{id} This method find matchdayChallenge with defined id.
+     * Id is retrieved from URL. If matchdayChallenge with that index does not exist method
+     * throws exception. Otherwise method remove that matchdayChallenge.
+     *
+     * @param token is a header parameter for checking permission
+     * @param id of matchdayChallenge that should be deleted.
+     * @return Response 200 OK
+     */
+    @DELETE
+    @Path("/{id}")
+    public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token);
+        MatchdayChallenge x = em.find(MatchdayChallenge.class, id);
+        helper.removeObject(em, x, id);
+        return Response.ok().build();
     }
 
 }

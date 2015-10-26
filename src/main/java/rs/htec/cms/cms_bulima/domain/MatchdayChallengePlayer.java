@@ -65,6 +65,8 @@ public class MatchdayChallengePlayer implements Serializable {
         this.id = id;
     }
 
+    @XmlTransient
+    @JsonIgnore
     public MatchdayChallenge getIdMatchdayChallenge() {
         return idMatchdayChallenge;
     }
