@@ -46,7 +46,7 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getScoreCalculation(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search, @QueryParam("matchdayChallengeID") long matchChallengeID){
+                @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search, @QueryParam("matchdayChallengeID") long matchChallengeID){
         EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT b FROM MatchdayChallengeScoreCalculation b ");

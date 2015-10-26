@@ -171,5 +171,5 @@ public class MatchdayChallengeTargetCalculation implements Serializable {
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation[ id=" + id + " ]";
     }
-    
+
 }

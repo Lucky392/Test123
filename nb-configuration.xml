@@ -28,6 +28,7 @@ Any value defined here will override the pom.xml file value but is only applicab
         <word>batchjob</word>
         <word>batchjobs</word>
         <word>Matchday</word>
+        <word>millis</word>
         <word>recieves</word>
     </spellchecker-wordlist>
 </project-shared-configuration>
