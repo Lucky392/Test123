@@ -111,7 +111,7 @@ public class MatchPlayerStatRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param id of MatchPlayerStat that should be returned
      * @return MatchPlayerStat
-     * @throws DataNotFoundException if MatchPlayerStat does not exist
+     * @throws DataNotFoundException if MatchPlayerStat for id does not exist
      */
     @GET
     @Path("/{id}")
@@ -202,13 +202,13 @@ public class MatchPlayerStatRESTEndpoint {
      * ]<br/>
      * }<br/>
      *
-     * @param token
-     * @param page
-     * @param limit
-     * @param orderBy
-     * @param minDate
-     * @param maxDate
-     * @param idMatchPlayer
+     * @param token - header parameter for checking permission
+     * @param page - number of page for searched results
+     * @param limit - number of matchPlayerStats that are returned in body
+     * @param orderBy - column name (if there is - before colum name, results will be sorted in descending order)
+     * @param minDate - filters result form defined date
+     * @param maxDate - filters result to defined date
+     * @param idMatchPlayer - filters results base on defined id for MatchPlayer
      * @return list of MatchPlayerStat
      * @throws DataNotFoundException if MatchPlayerStat does not exist for
      * search

@@ -6,11 +6,13 @@
 package rs.htec.cms.cms_bulima.helper;
 
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 
 /**
  *
  * @author stefan
  */
+@JsonPropertyOrder({ "count","data" })
 public class GetObject {
     private long count;
     private List data;

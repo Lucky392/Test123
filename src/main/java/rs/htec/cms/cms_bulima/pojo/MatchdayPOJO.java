@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.pojo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.codehaus.jackson.annotate.JsonPropertyOrder;
 import rs.htec.cms.cms_bulima.domain.Matchday;
 import rs.htec.cms.cms_bulima.helper.Util;
 
@@ -15,6 +16,7 @@ import rs.htec.cms.cms_bulima.helper.Util;
  *
  * @author stefan
  */
+@JsonPropertyOrder({ "id" })
 public class MatchdayPOJO {
 
     private Long id;

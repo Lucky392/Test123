@@ -61,6 +61,7 @@ public class MatchRESTEndpoint {
      *
      * @param token is a header parameter for checking permission
      * @param id of Match that is looked for
+     * @return 
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "There is no matches for this search!",<br/>
      * "errorCode": 404<br/> }

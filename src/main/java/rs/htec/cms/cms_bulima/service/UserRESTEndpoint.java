@@ -32,6 +32,14 @@ public class UserRESTEndpoint {
         helper = new RestHelperClass();
     }
 
+    /**
+     * Returns User for specified id.
+     * 
+     * @param token - header parameter for checking permission
+     * @param id - of User that should be returned
+     * @return User
+     * @throws DataNotFoundException if User for defined id does not exist
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

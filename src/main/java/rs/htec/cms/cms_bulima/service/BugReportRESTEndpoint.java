@@ -70,10 +70,10 @@ public class BugReportRESTEndpoint {
      *}<br/>
      * 
      * 
-     * @param token
-     * @param id
-     * @return BugReportPojo
-     * @throws DataNotFoundException if Bug report with defined id doesn't exist
+     * @param token - header parameter for checking permission
+     * @param id - of BugReport that should be returned
+     * @return BugReport
+     * @throws DataNotFoundException if BugReport with defined id doesn't exist
      */
     @GET
     @Path("/{id}")
@@ -139,17 +139,17 @@ public class BugReportRESTEndpoint {
      *}<br/>
      * 
      * 
-     * @param token
-     * @param page
-     * @param limit
-     * @param orderBy defined column, if there is '-' before column it orders it in descending
-     * @param search words in description and clubName
-     * @param minDate
-     * @param maxDate
-     * @param errorType filter for errorTupe
-     * @param origin filter for origin that have bug
-     * @param system of the origin
-     * @return list of Bug reports
+     * @param token - header parameter for checking permission
+     * @param page - number of page for searched results
+     * @param limit - number of matchPlayerStats that are returned in body
+     * @param orderBy - column name (if there is '-' before colum name, results will be sorted in descending order)
+     * @param search - words in description and clubName
+     * @param minDate - filters result form defined date
+     * @param maxDate - filters result to defined date
+     * @param errorType - filter for errorTupe
+     * @param origin - filter for origin that have bug
+     * @param system - of the origin
+     * @return list of BugReports
      * @throws DataNotFoundException if there is no result for query
      */
     @GET
@@ -245,7 +245,7 @@ public class BugReportRESTEndpoint {
     @GET
     @Path("/errorType")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getErrorType(@HeaderParam("authorization") String token) {
+    public Response getErrorTypes(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         String query = "SELECT distinct b.errorType FROM BugReport b";
@@ -265,13 +265,13 @@ public class BugReportRESTEndpoint {
      *  "353918058050135"<br/>
      * ]<br/>
      * 
-     * @param token
+     * @param token - header parameter for checking permission
      * @return list of origins
      */
     @GET
     @Path("/errorOrigin")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrigin(@HeaderParam("authorization") String token) {
+    public Response getOrigins(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         String query = "SELECT distinct b.origin FROM BugReport b";
@@ -280,19 +280,18 @@ public class BugReportRESTEndpoint {
     }
 
     /**
-     * Finds Bug report in db by id of BugReport specified in json body,
+     * Finds Bug report in db by id of BugReport specified in JSON body,
      * and updates it fields with changed attributes. <br/>
      * <br/>
      * Example for json body that should be sent:<br/>
      *{ <br/>
-     * "urlToUser": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/user/24076",<br/>
      * "errorType": "Others",<br/>
      * "email": "christest1@stryking.com",<br/>
      * "system": "iOS 8.4.1",<br/>
      * "deviceType": "iPhone 6 Plus",<br/>
      * "other": "",<br/>
      * "reportDate": 968577300000,<br/>
-     *     "appVersion": "3.4",<br/>
+     * "appVersion": "3.4",<br/>
      * "clubName": "VfR Atletico Schrotkorn 1943",<br/>
      * "userId": 24076,<br/>
      * "origin": "8DFDAF95-0DDA-4330-BFF3-76DBF139727A",<br/>
@@ -302,10 +301,11 @@ public class BugReportRESTEndpoint {
      * "id": 7<br/>
      *}<br/>
      * 
-     * @param token
-     * @param bugReport
+     * @param token - header parameter for checking permission
+     * @param bugReport - in body in JSON
      * @return response OK (200) if Bug report is updated
-     * @throws DataNotFoundException if Bug report requested for update doesn't exist
+     * @throws DataNotFoundException if BugReport requested for update doesn't exist
+     * @throws InputValidationException if BugReport object is not valid
      */
     @PUT
     @Path("/")

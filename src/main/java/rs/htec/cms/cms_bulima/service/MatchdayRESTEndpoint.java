@@ -9,6 +9,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -60,9 +61,11 @@ public class MatchdayRESTEndpoint {
      * "id": 3<br/>
      * }<br/>
      *
-     * @param token
-     * @param id of Matchday that should be returned
+     * @param token - header parameter for checking permission
+     * @param id - of Matchday that should be returned
      * @return Matchday for defined id
+     * @throws DataNotFoundException if Matchday does not exist for
+     * search
      */
     @GET
     @Path("/{id}")
@@ -74,7 +77,7 @@ public class MatchdayRESTEndpoint {
         try {
             Matchday matchday = (Matchday) em.createNamedQuery("Matchday.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchdayPOJO(matchday);
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             throw new DataNotFoundException("Matchday at index " + id + " does not exist..");
         }
         return Response.ok().entity(pojo).build();
@@ -120,15 +123,17 @@ public class MatchdayRESTEndpoint {
      * "count": 2<br/>
      * }<br/>
      *
-     * @param token
-     * @param page
-     * @param limit
-     * @param orderBy
-     * @param matchday
-     * @param idSeason
-     * @param minDate
-     * @param maxDate
+     * @param token - header parameter for checking permission
+     * @param page - number of page for searched results
+     * @param limit - number of matchPlayerStats that are returned in body
+     * @param orderBy - column name (if there is '-' before colum name, results will be sorted in descending order)
+     * @param matchday - filters results base on defined matchday
+     * @param idSeason - filters results base on defined id for Season
+     * @param minDate - filters result form defined date
+     * @param maxDate - filters result to defined date
      * @return Matchdays for specified search
+     * @throws DataNotFoundException if Matchday does not exist for
+     * search
      */
     @GET
     @Path("/")
