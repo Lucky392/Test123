@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -37,11 +38,8 @@ import rs.htec.cms.cms_bulima.pojo.FantasyManagerMatchdayChallengeLineUpPlayerPO
 @Path("/challengeLineUpPlayer")
 public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{ 
     
+    @InjectParam
     RestHelperClass helper;
-
-    public FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
     
     /**
      * Returns FantasyManagerMatchdayChallengeLineUpPlayer for defined id.

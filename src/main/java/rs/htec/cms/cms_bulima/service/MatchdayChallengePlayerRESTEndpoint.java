@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -24,7 +25,6 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallengePlayer;
-import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.domain.Player;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -40,14 +40,73 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("/MatchdayChallengePlayer")
 public class MatchdayChallengePlayerRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+
+    @InjectParam
     Validator validator;
 
-    public MatchdayChallengePlayerRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
-
+    /**
+     * Returns list of MatchdayChallengePlayers for defined
+     * parameters. 
+     * That list can be: 
+     * {<br/>
+     * "data": [<br/>
+     * {<br/>
+     * "idPlayer": {<br/> "fullname": "Daniel Halfar",<br/> "marketValue": 0, <br/>"updateAt":
+     * 1439784030000,<br/> "isCaptain": 0, <br/>"totalBLMPoints": 5,<br/>
+     * "marketValueUpdateAt": 1437438630000,<br/> "blmPointsDiff": 1,<br/>
+     * "idSport1Player": "1874",<br/> "firstName": "Daniel", <br/>"lastName": "Halfar",<br/>
+     * "trikotName": "Daniel Halfar",<br/> "sizeCm": 173,<br/> "weightKg": 65,<br/>
+     * "dateOfBirth": 568508400000,<br/> "photoUrl": null,<br/> "dateJoinedTeam":
+     * 1435701600000,<br/> "shirtNumber": "28",<br/> "matchesTopLeage": 0,<br/>
+     * "scoreCountTopLeague": 0,<br/> "gradeAutoSeason": 0,<br/>
+     * "gradeAutoSeasonLeagueAvg": 0,<br/> "isHurt": 0,<br/> "hasYellowCard": 0,<br/>
+     * "hasYellowRedCard": 0,<br/> "hasRedCard": 0,<br/> "photoUrl2":
+     * "http://assets.bundesligamanager.htec.co.rs/images/bulima-player-card/photos/playerpic_Daniel_Halfar.png",<br/>
+     * "blockType": null,<br/> "blockMatchdayAmount": 0, <br/>"idPlayerPosition": <br/>{<br/>
+     * "createDate": 1388530800000,<br/> "name": "Midfield",<br/> "id": 3<br/> },<br/> "idNation": <br/>{<br/>
+     * "createDate": 1388530800000,<br/> "name": "Deutschland", <br/>"id": 1 <br/>},<br/>
+     * "idSeasonCurrent": <br/>{<br/> "idLeague": <br/>{<br/> "idSport1League": "3", <br/>"sport":
+     * "soccer",<br/> "idCompetition": <br/>{<br/> "sport": "Fußball",<br/> "gender": "male",<br/>
+     * "createDate": 1406914086000,<br/> "name": "2. Bundesliga", <br/>"id": 2, <br/>"type":
+     * "championship" <br/>}, <br/>"createDate": 1406914139000,<br/> "id": 2 <br/>},<br/>
+     * "idSport1Season": "18337",<br/> "idFirstMatchday": null,<br/> "createDate":
+     * 1437383427000, <br/>"name": "2015/2016", <br/>"id": 4<br/> }, <br/>"idBlockStartMatchday":
+     * null,<br/> "idClub":<br/> { <br/>"idSport1Team": "6",<br/> "mediumName": "1. FC
+     * Kaiserslautern",<br/> "logoUrl":
+     * "http://assets.bundesligamanager.htec.co.rs/images/favoriteclublogos/1.-FC-Kaiserslautern.png",<br/>
+     * "idLeague": <br/>{<br/> "idSport1League": "3", <br/>"sport": "soccer",<br/> "idCompetition":<br/>
+     * {<br/> "sport": "Fußball", <br/>"gender": "male",<br/> "createDate": 1406914086000,<br/>
+     * "name": "2. Bundesliga",<br/> "id": 2,<br/> "type": "championship"<br/> },<br/> "createDate":
+     * 1406914139000,<br/> "id": 2 <br/>}, <br/>"shortName": "FCK",<br/> "logo": null, <br/>"createDate":
+     * 1388530800000,<br/> "id": 3 <br/>},<br/> "photo": null,<br/> "createDate": 1407424292000,<br/>
+     * "id": 3690 <br/>},<br/> "id": 1 <br/>}<br/>
+     * ],<br/>
+     * "count": 1<br/>
+     * }<br/>
+     *
+     * @param token
+     * @param id
+     * @param page
+     * @param limit
+     * @param orderingColumn
+     * @param filter
+     * @param club
+     * @param position
+     * @param nation
+     * @param isCaptain
+     * @param minSizeCm
+     * @param minWeightKg
+     * @param maxSizeCm
+     * @param maxWeightKg
+     * @param hasYellow
+     * @param hasYellowRed
+     * @param hasRed
+     * @param isHurt
+     * @return List of MatchdayChallengePlayers for search at defined page and
+     * limit and their total count
+     */
     @GET
     @Path("/{matchdayChallengeId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
@@ -137,10 +196,11 @@ public class MatchdayChallengePlayerRESTEndpoint {
         go.setData(players);
         return Response.ok().entity(go).build();
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertMatchdayChallenge(@HeaderParam("authorization") String token,
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response insertMatchdayChallengePlayer(@HeaderParam("authorization") String token,
             MatchdayChallengePlayer matchdayChallengePlayer) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
@@ -152,17 +212,18 @@ public class MatchdayChallengePlayerRESTEndpoint {
             throw new InputValidationException("Validation failed");
         }
     }
-    
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateMatchdayChallenge(@HeaderParam("authorization") String token,
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response updateMatchdayChallengePlayer(@HeaderParam("authorization") String token,
             MatchdayChallengePlayer matchdayChallengePlayer) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, matchdayChallengePlayer.getId());
         if (x != null) {
             if (matchdayChallengePlayer.getIdMatchdayChallenge() != null
-                && matchdayChallengePlayer.getIdPlayer() != null) {
+                    && matchdayChallengePlayer.getIdPlayer() != null) {
                 helper.mergeObject(em, matchdayChallengePlayer);
             } else {
                 throw new InputValidationException("Validation failed");
@@ -172,12 +233,12 @@ public class MatchdayChallengePlayerRESTEndpoint {
         }
         return Response.ok().build();
     }
-    
-    
+
     /**
-     * API for method: .../rest/matchdayChallengePlayer/{id} This method find matchdayChallengePlayer with defined id.
-     * Id is retrieved from URL. If matchdayChallengePlayer with that index does not exist method
-     * throws exception. Otherwise method remove that matchdayChallengePlayer.
+     * API for method: .../rest/matchdayChallengePlayer/{id} This method find
+     * matchdayChallengePlayer with defined id. Id is retrieved from URL. If
+     * matchdayChallengePlayer with that index does not exist method throws
+     * exception. Otherwise method remove that matchdayChallengePlayer.
      *
      * @param token is a header parameter for checking permission
      * @param id of matchdayChallengePlayer that should be deleted.
@@ -185,7 +246,8 @@ public class MatchdayChallengePlayerRESTEndpoint {
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteMatchdayChallengePlayer(@HeaderParam("authorization") String token,
+            @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token);
         MatchdayChallengePlayer x = em.find(MatchdayChallengePlayer.class, id);
