@@ -209,7 +209,6 @@ public class PremiumPackageRESTEndpoint {
      */
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePackage(@HeaderParam("authorization") String token, PremiumPackage premiumPackage) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);

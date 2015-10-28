@@ -225,7 +225,6 @@ public class PremiumPackageContentRESTEndpoint {
     @PUT
     @Path("/{idItem}/{idPackage}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumPackageContent packageContent,
             @PathParam("idItem") long idItem, @PathParam("idPackage") long idPackage) {
         EntityManager em = helper.getEntityManager();

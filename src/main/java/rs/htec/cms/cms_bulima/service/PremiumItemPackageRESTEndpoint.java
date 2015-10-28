@@ -260,7 +260,6 @@ public class PremiumItemPackageRESTEndpoint {
     @PUT
     @Path("/{idItem}")
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idItem") long idItem) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
