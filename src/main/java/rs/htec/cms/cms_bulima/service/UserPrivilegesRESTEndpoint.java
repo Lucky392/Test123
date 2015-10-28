@@ -18,9 +18,12 @@ import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.CmsRole;
+import rs.htec.cms.cms_bulima.domain.CmsTables;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
+import rs.htec.cms.cms_bulima.domain.CmsUserPrivilegesPK;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.RolePOJO;
 
 /**
  *
@@ -38,36 +41,37 @@ public class UserPrivilegesRESTEndpoint {
     /**
      * API for method: .../rest/privileges This method gets authorization token
      * from HTTP header and list of user privileges in JSON format and insert
-     * them into database. Example for JSON
-     * <br/>
-     * [<br/>{<br/> "searchAction": true,<br/> "editAction": true,<br/>
-     * "addAction": true,<br/>
-     * "deleteAction": true,<br/> "cmsUserPrivilegesPK": <br/>{<br/> "tableId":
-     * 1 <br/>},<br/> "cmsRole":
-     * <br/>{<br/> "name": "custom1" <br/>} <br/>},<br/> {<br/> "searchAction":
-     * true,<br/> "editAction": true,<br/>
-     * "addAction": true,<br/> "deleteAction": true,<br/> "cmsUserPrivilegesPK":
-     * <br/>{<br/>
-     * "tableId": 2 <br/>},<br/> "cmsRole": <br/>{<br/> "name": "custom1" <br/>}
-     * <br/>}<br/> ]
+     * them into database. Example for JSON: <br/>{<br/>"roleName": "custom",<br/>
+     * "permissions": {<br/> "SHOP": [<br/> "ADD",<br/> "SEARCH"<br/> ],<br/> "CMS_USER": [<br/> "ADD",<br/>
+     * "SEARCH" <br/>],<br/> "CMS_USER_PRIVILEGES": [<br/> "ADD",<br/> "SEARCH"<br/> ],<br/> "SLIDER_CONTENT":
+     * [<br/> "ADD",<br/> "SEARCH" <br/>],<br/> "QUESTION_OF_THE_DAY_PRIZE": [<br/> "ADD",<br/> "SEARCH" <br/>],<br/>
+     * "STATISTICS": [<br/> "ADD",<br/> "SEARCH"<br/> ],<br/> "NEWS": [<br/> "ADD",<br/> "SEARCH"<br/> ],<br/>
+     * "QUESTION_OF_THE_DAY": [ <br/>"ADD",<br/> "SEARCH"<br/> ], <br/>"CMS_ROLE": [ <br/>"ADD",<br/> "SEARCH"<br/>
+     * ] <br/>}<br/>}
      *
      * @param token is a header parameter for checking permission
-     * @param userPrivileges is JSON object that Jackson convert to object
+     * @param role is JSON object that Jackson convert to object
      * @return Response 201 CREATED
      * @throws RuntimeException
      */
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPrivileges(@HeaderParam("authorization") String token, List<CmsUserPrivileges> userPrivileges) {
+    public Response insertPrivileges(@HeaderParam("authorization") String token, RolePOJO role) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.ADD, token);
+        List<CmsUserPrivileges> userPrivileges = RolePOJO.createListPrivileges(role);
         if (userPrivileges.size() > 0 && userPrivileges.get(0).getCmsRole() != null) {
             helper.persistObject(em, userPrivileges.get(0).getCmsRole());
-            CmsRole role = (CmsRole) em.createNamedQuery("CmsRole.findByName").setParameter("name", userPrivileges.get(0).getCmsRole().getName()).getSingleResult();
-            long roleID = role.getId();
+            CmsRole cmsRole = (CmsRole) em.createNamedQuery("CmsRole.findByName").setParameter("name", userPrivileges.get(0).getCmsRole().getName()).getSingleResult();
+            long roleID = cmsRole.getId();
             for (CmsUserPrivileges cup : userPrivileges) {
-                cup.getCmsUserPrivilegesPK().setRoleId(roleID);
+                CmsTables table = (CmsTables) em.createNamedQuery("CmsTables.findByTableName").setParameter("tableName", cup.getCmsTables().getTableName()).getSingleResult();
+                CmsUserPrivilegesPK pk = new CmsUserPrivilegesPK(roleID, table.getId());
+//                cup.getCmsUserPrivilegesPK().setRoleId(roleID);
+//                cup.getCmsUserPrivilegesPK().setTableId(table.getId());
+                cup.setCmsUserPrivilegesPK(pk);
+                cup.setCmsTables(null);
                 cup.setCmsRole(null);
                 helper.persistObject(em, cup);
             }

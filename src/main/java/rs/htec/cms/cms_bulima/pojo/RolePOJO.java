@@ -5,8 +5,16 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlRootElement;
+import org.eclipse.persistence.internal.expressions.MapEntryExpression;
+import rs.htec.cms.cms_bulima.domain.CmsRole;
+import rs.htec.cms.cms_bulima.domain.CmsTables;
+import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 
 /**
  *
@@ -41,5 +49,40 @@ public class RolePOJO {
 
     public void setId(long id) {
         this.id = id;
+    }
+    
+    public static List<CmsUserPrivileges> createListPrivileges(RolePOJO role){
+        CmsRole cmsRole = new CmsRole();
+        cmsRole.setName(role.getRoleName());
+        HashMap map = role.getPermissions();
+        Iterator it = map.entrySet().iterator();
+        List<CmsUserPrivileges> privileges = new ArrayList<>();
+        while (it.hasNext()){
+            Map.Entry pair = (Map.Entry)it.next();
+            CmsUserPrivileges cup = new CmsUserPrivileges();
+            CmsTables cmsTable = new CmsTables();
+            cmsTable.setTableName((String) pair.getKey());
+            List<String> list = (List<String>) pair.getValue();
+            for (String item : list) {
+                switch(item){
+                    case "ADD":
+                        cup.setAddAction(true);
+                        break;
+                    case "DELETE":
+                        cup.setDeleteAction(true);
+                        break;
+                    case "EDIT":
+                        cup.setEditAction(true);
+                        break;
+                    case "SEARCH":
+                        cup.setSearchAction(true);
+                        break;
+                }
+            }
+            cup.setCmsRole(cmsRole);
+            cup.setCmsTables(cmsTable);
+            privileges.add(cup);
+        }
+        return privileges;
     }
 }

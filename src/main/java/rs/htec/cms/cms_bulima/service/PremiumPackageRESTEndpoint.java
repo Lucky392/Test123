@@ -27,6 +27,7 @@ import rs.htec.cms.cms_bulima.domain.PremiumPackage;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -95,7 +96,12 @@ public class PremiumPackageRESTEndpoint {
         if (packages == null || packages.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(packages).build();
+        String countQuery = query.toString().replaceFirst("p", "count(p)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(packages);
+        return Response.ok().entity(go).build();
     }
 
     /**

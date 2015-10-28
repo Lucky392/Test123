@@ -19,6 +19,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.FantasyClubPOJO;
 
 /**
  *
@@ -76,7 +77,7 @@ public class FantasyClubRESTEndpoint {
         if (fc.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
         } else {
-            return Response.ok().entity(fc).build();
+            return Response.ok().entity(FantasyClubPOJO.toFantasyCLubPOJOList(fc)).build();
         }
     }
 }

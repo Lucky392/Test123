@@ -27,7 +27,6 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.CmsUserPojo;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
-import rs.htec.cms.cms_bulima.token.JsonToken;
 
 /**
  *

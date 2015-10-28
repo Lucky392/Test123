@@ -39,13 +39,13 @@ public class CmsUserPrivileges implements Serializable {
     @EmbeddedId
     protected CmsUserPrivilegesPK cmsUserPrivilegesPK;
     @Column(name = "search_action")
-    private Boolean searchAction;
+    private boolean searchAction;
     @Column(name = "edit_action")
-    private Boolean editAction;
+    private boolean editAction;
     @Column(name = "add_action")
-    private Boolean addAction;
+    private boolean addAction;
     @Column(name = "delete_action")
-    private Boolean deleteAction;
+    private boolean deleteAction;
     @JoinColumn(name = "role_id", referencedColumnName = "id", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private CmsRole cmsRole;
@@ -74,35 +74,35 @@ public class CmsUserPrivileges implements Serializable {
         this.cmsUserPrivilegesPK = cmsUserPrivilegesPK;
     }
 
-    public Boolean getSearchAction() {
+    public boolean getSearchAction() {
         return searchAction;
     }
 
-    public void setSearchAction(Boolean searchAction) {
+    public void setSearchAction(boolean searchAction) {
         this.searchAction = searchAction;
     }
 
-    public Boolean getEditAction() {
+    public boolean getEditAction() {
         return editAction;
     }
 
-    public void setEditAction(Boolean editAction) {
+    public void setEditAction(boolean editAction) {
         this.editAction = editAction;
     }
 
-    public Boolean getAddAction() {
+    public boolean getAddAction() {
         return addAction;
     }
 
-    public void setAddAction(Boolean addAction) {
+    public void setAddAction(boolean addAction) {
         this.addAction = addAction;
     }
 
-    public Boolean getDeleteAction() {
+    public boolean getDeleteAction() {
         return deleteAction;
     }
 
-    public void setDeleteAction(Boolean deleteAction) {
+    public void setDeleteAction(boolean deleteAction) {
         this.deleteAction = deleteAction;
     }
 

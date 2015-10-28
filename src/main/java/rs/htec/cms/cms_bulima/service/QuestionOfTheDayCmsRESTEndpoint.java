@@ -106,8 +106,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
                     .append(search)
                     .append("' OR q.correctAnswer LIKE '")
                     .append(search).append("' OR q.wrongAnswer1 LIKE '")
-                    .append(search).append("' OR n.wrongAnswer2 LIKE '")
-                    .append(search).append("' OR n.wrongAnswer3 LIKE '")
+                    .append(search).append("' OR q.wrongAnswer2 LIKE '")
+                    .append(search).append("' OR q.wrongAnswer3 LIKE '")
                     .append(search).append("')");
         }
 
@@ -123,7 +123,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         if (questions == null || questions.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        String countQuery = "Select COUNT(ip) From QuestionOfTheDay ip";;
+        String countQuery = query.toString().replaceFirst("q", "count(q)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);

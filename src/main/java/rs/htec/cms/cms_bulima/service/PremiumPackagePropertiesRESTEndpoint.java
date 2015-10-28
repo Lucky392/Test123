@@ -28,6 +28,7 @@ import rs.htec.cms.cms_bulima.domain.PremiumPackageProperties;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 
@@ -122,7 +123,12 @@ public class PremiumPackagePropertiesRESTEndpoint {
         if (premiumPackageProperties == null || premiumPackageProperties.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(premiumPackageProperties).build();
+        String countQuery = "Select COUNT(p) From PremiumPackageProperties p";
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(premiumPackageProperties);
+        return Response.ok().entity(go).build();
     }
 
     /**

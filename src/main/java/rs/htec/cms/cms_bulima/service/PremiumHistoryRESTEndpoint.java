@@ -18,6 +18,7 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.PremiumHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
@@ -34,8 +35,8 @@ public class PremiumHistoryRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/premiumHistory/user/{email} This
-     * method return JSON list of Premium History for one User. It produces
+     * API for this method: .../rest/premiumHistory/user/{email} This method
+     * return JSON list of Premium History for one User. It produces
      * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
      * <br/>"idUser": "54483",<br/> "charges": "1",<br/> "idFantasyClub":
      * "52162",<br/> "idReward": "null",<br/>
@@ -70,13 +71,18 @@ public class PremiumHistoryRESTEndpoint {
         if (history.isEmpty()) {
             throw new DataNotFoundException("There is no Premium History for this user!");
         } else {
-            return Response.ok().entity(history).build();
+            String countQuery = query.toString().replaceFirst("ph", "count(ph)");
+            long count = (long) em.createQuery(countQuery).getSingleResult();
+            GetObject go = new GetObject();
+            go.setCount(count);
+            go.setData(history);
+            return Response.ok().entity(go).build();
         }
     }
 
     /**
-     * API for this method: .../rest/premiumHistory/club/{idClub} This
-     * method return JSON list of Premium History for one Club. It produces
+     * API for this method: .../rest/premiumHistory/club/{idClub} This method
+     * return JSON list of Premium History for one Club. It produces
      * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
      * <br/>"idUser": "29867",<br/> "charges": "1",<br/> "idFantasyClub":
      * "27434",<br/> "idReward": "null",<br/>
