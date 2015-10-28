@@ -114,6 +114,7 @@ public class PremiumItemRESTEndpoint {
         }
         String countQuery = query.toString().replaceFirst("p", "count(p)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
+        System.out.println(countQuery);
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(items);
