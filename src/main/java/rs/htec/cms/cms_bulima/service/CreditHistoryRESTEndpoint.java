@@ -5,10 +5,13 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,7 +21,9 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 
 /**
  *
@@ -28,15 +33,17 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class CreditHistoryRESTEndpoint {
 
     RestHelperClass helper;
+    Validator validator;
 
     public CreditHistoryRESTEndpoint() {
         helper = new RestHelperClass();
+        validator = new Validator();
     }
 
     /**
-     * API for this method: .../rest/creditHistory/{id} This method
-     * returns JSON list of Credit History for one Fantasy Club. It produces
-     * APPLICATION_JSON media type. Example for JSON list: <br/> [ {
+     * API for this method: .../rest/creditHistory/{id} This method returns JSON
+     * list of Credit History for one Fantasy Club. It produces APPLICATION_JSON
+     * media type. Example for JSON list: <br/> [ {
      * <br/> "updatedCredit": "16502803",<br/> "idFantasyClub": "100",<br/>
      * "idAuction": "null",<br/> "action": "QUESTION_OF_THE_DAY",<br/> "id":
      * "380601",<br/> "credit": "10000",<br/> "createDate": "2015-07-29
@@ -56,7 +63,7 @@ public class CreditHistoryRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCreditHistory(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getCreditHistoryForFantasyClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClubCreditHistory> creditHistory;
@@ -69,4 +76,37 @@ public class CreditHistoryRESTEndpoint {
             return Response.ok().entity(creditHistory).build();
         }
     }
+
+    /**
+     * Create and insert new FantasyClubCreditHistory in db.
+     * Create date property is automatically set to current time.
+     * <br/>
+     * Example for JSON body: <br/>
+     * { <br/>
+     * "idFantasyClub" : 54,<br/>
+     * "action": "QUESTION_OF_THE_DAY",<br/>
+     * "credit": 10000,<br/>
+     * "updatedCredit": 12000<br/>
+     * }<br/>
+     *
+     * @param token is a header parameter for checking permission
+     * @param creditHistory FantasyClubCreditHistory in JSON
+     * @return status 201 created
+     * @throws InputValidationException if validation is invalid
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertsFantasyClubCreditHistory(@HeaderParam("authorization") String token, FantasyClubCreditHistory creditHistory) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        if (validator.checkLenght(creditHistory.getAction(), 255, false)) {
+            creditHistory.setCreateDate(new Date());
+            helper.persistObject(em, creditHistory);
+            return Response.status(Response.Status.CREATED).build();
+        } else {
+            throw new InputValidationException("Validation failed");
+
+        }
+    }
+
 }

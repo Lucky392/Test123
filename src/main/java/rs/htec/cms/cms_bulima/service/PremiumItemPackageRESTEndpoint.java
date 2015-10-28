@@ -177,7 +177,7 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/itemPackage/{id} where id is id for Item
+     * API for this method is .../rest/itemPackage/{idPremiumItem}
      * we want to include in our Premium item package. This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
      * {<br/>
@@ -191,6 +191,7 @@ public class PremiumItemPackageRESTEndpoint {
      *
      * @param token is a header parameter for checking permission
      * @param itemPackage is an object that Jackson convert from JSON to object
+     * @param idPremiumItem id of item that should be inserted in Package
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -198,13 +199,13 @@ public class PremiumItemPackageRESTEndpoint {
      *
      */
     @POST
-    @Path("/{id}")
+    @Path("/{idPremiumItem}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("id") long idItem) {
+    public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idPremiumItem") long idPremiumItem) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
         itemPackage.setCreateDate(new Date());
-        PremiumItem item = em.find(PremiumItem.class, idItem);
+        PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
         itemPackage.setIdPremiumItem(item);
         if (validator.checkLenght(itemPackage.getName(), 255, true) && validator.checkLenght(itemPackage.getTitle(), 255, true)
                 && validator.checkLenght(itemPackage.getHighlightUrl(), 255, true) && validator.checkLenght(itemPackage.getAdditionalInfo(), 255, true)) {
@@ -247,7 +248,7 @@ public class PremiumItemPackageRESTEndpoint {
      *
      * @param token is a header parameter for checking permission
      * @param itemPackage is an object that Jackson convert from JSON to object
-     * @param idItem id of item that we add to item package
+     * @param idPremiumItem id of PremiumItem that should be updated
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -258,9 +259,9 @@ public class PremiumItemPackageRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @PUT
-    @Path("/{idItem}")
+    @Path("/{idPremiumItem}")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idItem") long idItem) {
+    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idPremiumItem") long idPremiumItem) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
 
@@ -271,7 +272,7 @@ public class PremiumItemPackageRESTEndpoint {
 
                 itemPackage.setUpdateTimestamp(new Date());
                 itemPackage.setCreateDate(oldPackage.getCreateDate());
-                PremiumItem item = em.find(PremiumItem.class, idItem);
+                PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
                 itemPackage.setIdPremiumItem(item);
                 helper.mergeObject(em, itemPackage);
             } else {

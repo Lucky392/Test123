@@ -22,8 +22,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -139,8 +137,6 @@ public class PremiumHistory implements Serializable {
         this.updatedPremiumCurrency = updatedPremiumCurrency;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public Reward getIdReward() {
         return idReward;
     }
@@ -149,8 +145,6 @@ public class PremiumHistory implements Serializable {
         this.idReward = idReward;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyManager getIdFantasyManager() {
         return idFantasyManager;
     }
@@ -159,8 +153,6 @@ public class PremiumHistory implements Serializable {
         this.idFantasyManager = idFantasyManager;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyClub getIdFantasyClub() {
         return idFantasyClub;
     }
@@ -169,8 +161,6 @@ public class PremiumHistory implements Serializable {
         this.idFantasyClub = idFantasyClub;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public User getIdUser() {
         return idUser;
     }
@@ -179,8 +169,6 @@ public class PremiumHistory implements Serializable {
         this.idUser = idUser;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public PremiumAction getIdPremiumAction() {
         return idPremiumAction;
     }
@@ -189,8 +177,6 @@ public class PremiumHistory implements Serializable {
         this.idPremiumAction = idPremiumAction;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public PremiumItem getIdPremiumItem() {
         return idPremiumItem;
     }

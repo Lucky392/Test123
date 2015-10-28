@@ -5,10 +5,13 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,6 +23,8 @@ import rs.htec.cms.cms_bulima.domain.PremiumHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.PremiumHistoryPOJO;
 
 /**
  *
@@ -29,9 +34,11 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 public class PremiumHistoryRESTEndpoint {
 
     RestHelperClass helper;
+    Validator validator;
 
     public PremiumHistoryRESTEndpoint() {
         helper = new RestHelperClass();
+        validator = new Validator();
     }
 
     /**
@@ -52,7 +59,7 @@ public class PremiumHistoryRESTEndpoint {
      * 07:44:19.0"<br/> } ]
      *
      * @param token is a header parameter for checking permission
-     * @param email is email for what user you want Fantasy Managers
+     * @param email is email for what user you want PremiumHistory
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for this exception:<br/> {<br/>
      * "errorMessage": "There is no Premium History for this user!",<br/>
@@ -74,8 +81,9 @@ public class PremiumHistoryRESTEndpoint {
             String countQuery = query.toString().replaceFirst("ph", "count(ph)");
             long count = (long) em.createQuery(countQuery).getSingleResult();
             GetObject go = new GetObject();
+            List<PremiumHistoryPOJO> pojos = PremiumHistoryPOJO.toPremiumHistoryPOJOList(history);
             go.setCount(count);
-            go.setData(history);
+            go.setData(pojos);
             return Response.ok().entity(go).build();
         }
     }
@@ -117,8 +125,45 @@ public class PremiumHistoryRESTEndpoint {
         if (history.isEmpty()) {
             throw new DataNotFoundException("There is no Premium History for this Club!");
         } else {
-            return Response.ok().entity(history).build();
+            String countQuery = query.toString().replaceFirst("ph", "count(ph)");
+            long count = (long) em.createQuery(countQuery).getSingleResult();
+            GetObject go = new GetObject();
+            List<PremiumHistoryPOJO> pojos = PremiumHistoryPOJO.toPremiumHistoryPOJOList(history);
+            go.setCount(count);
+            go.setData(pojos);
+            return Response.ok().entity(go).build();
         }
+    }
+
+    /**
+     * Create and insert new PremiumHistory in db.
+     * <br/>
+     * Create date property is automatically set to current time.<br/>
+     * { <br/>
+     * "idFantasyManager": 84,<br/>
+     * "idReward": 14,<br/>
+     * "idPremiumItem": null,<br/>
+     * "charges": 100,<br/>
+     * "updatedCharges": null,<br/>
+     * "premiumCurrency": 565,<br/>
+     * "updatedPremiumCurrency": null,<br/>
+     * "idFantasyClub": null,<br/>
+     * "idUser": 94,<br/>
+     * "idPremiumAction": 13<br/>
+     * }<br/>
+     *
+     * @param token is a header parameter for checking permission
+     * @param premiumHistory PremiumHistory in JSON
+     * @return status 201 created
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response insertPremiumHistory(@HeaderParam("authorization") String token, PremiumHistory premiumHistory) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        premiumHistory.setCreateDate(new Date());
+        helper.persistObject(em, premiumHistory);
+        return Response.status(Response.Status.CREATED).build();
     }
 
 }
