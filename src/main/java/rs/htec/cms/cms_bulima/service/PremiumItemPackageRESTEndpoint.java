@@ -32,6 +32,7 @@ import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.PremiumItemPackagePOJO;
 
 /**
  *
@@ -137,7 +138,7 @@ public class PremiumItemPackageRESTEndpoint {
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
-        go.setData(itemPackage);
+        go.setData(PremiumItemPackagePOJO.toPremiumItemPackagePOJOList(itemPackage));
         return Response.ok().entity(go).build();
     }
 
