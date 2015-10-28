@@ -185,25 +185,25 @@ public class PremiumPackageContentRESTEndpoint {
         return Response.status(Response.Status.CREATED).build();
     }
 
-    /**
-     * API for method: .../rest/packageContent/{id} This method find package
-     * content with defined id and delete it. Id is retrieved from URL. If
-     * package content with that index does not exist method throws exception.
-     * Otherwise method remove that package content.
-     *
-     * @param token is a header parameter for checking permission
-     * @param id of Package Content that should be deleted.
-     * @return Response 200 OK
-     */
-    @DELETE
-    @Path("/{id}")
-    public Response deleteItemPackageContent(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
-        PremiumPackageContent packageContent = em.find(PremiumPackageContent.class, id);
-        helper.removeObject(em, packageContent, id);
-        return Response.ok().build();
-    }
+//    /**
+//     * API for method: .../rest/packageContent/{id} This method find package
+//     * content with defined id and delete it. Id is retrieved from URL. If
+//     * package content with that index does not exist method throws exception.
+//     * Otherwise method remove that package content.
+//     *
+//     * @param token is a header parameter for checking permission
+//     * @param id of Package Content that should be deleted.
+//     * @return Response 200 OK
+//     */
+//    @DELETE
+//    @Path("/{id}")
+//    public Response deleteItemPackageContent(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
+//        PremiumPackageContent packageContent = em.find(PremiumPackageContent.class, id);
+//        helper.removeObject(em, packageContent, id);
+//        return Response.ok().build();
+//    }
 
     /**
      * API for this method is .../rest/packageContent/{idItem}/{idPackage} This
@@ -243,7 +243,7 @@ public class PremiumPackageContentRESTEndpoint {
             throw new DataNotFoundException("Premium items package content at index " + packageContent.getId() + " does not exits");
         }
 
-        return Response.ok("Successfully updated!").build();
+        return Response.ok().build();
     }
     
     /**

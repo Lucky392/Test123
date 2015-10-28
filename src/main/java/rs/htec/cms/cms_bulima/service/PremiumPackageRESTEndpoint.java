@@ -169,24 +169,24 @@ public class PremiumPackageRESTEndpoint {
         }
     }
 
-    /**
-     * API for method: .../rest/package/{id} This method find package with
-     * defined id. Id is retrieved from URL. If Item with that index does not
-     * exist method throws exception. Otherwise method remove that package.
-     *
-     * @param token is a header parameter for checking permission
-     * @param id of Premium Package that should be deleted.
-     * @return Response 200 OK
-     */
-    @DELETE
-    @Path("{id}")
-    public Response deletePackage(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
-        PremiumPackage premiumPackage = em.find(PremiumPackage.class, id);
-        helper.removeObject(em, premiumPackage, id);
-        return Response.ok().build();
-    }
+//    /**
+//     * API for method: .../rest/package/{id} This method find package with
+//     * defined id. Id is retrieved from URL. If Item with that index does not
+//     * exist method throws exception. Otherwise method remove that package.
+//     *
+//     * @param token is a header parameter for checking permission
+//     * @param id of Premium Package that should be deleted.
+//     * @return Response 200 OK
+//     */
+//    @DELETE
+//    @Path("{id}")
+//    public Response deletePackage(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
+//        PremiumPackage premiumPackage = em.find(PremiumPackage.class, id);
+//        helper.removeObject(em, premiumPackage, id);
+//        return Response.ok().build();
+//    }
 
     /**
      * API for this method is .../rest/package This method recieves JSON object,
@@ -208,7 +208,7 @@ public class PremiumPackageRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @PUT
-    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePackage(@HeaderParam("authorization") String token, PremiumPackage premiumPackage) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
@@ -223,7 +223,7 @@ public class PremiumPackageRESTEndpoint {
         } else {
             throw new DataNotFoundException("Premium package at index " + premiumPackage.getId() + " does not exits");
         }
-        return Response.ok("Succesffully updated!").build();
+        return Response.ok().build();
     }
     
     /**

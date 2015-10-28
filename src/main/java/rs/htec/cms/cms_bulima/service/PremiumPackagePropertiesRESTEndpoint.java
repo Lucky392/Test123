@@ -238,25 +238,25 @@ public class PremiumPackagePropertiesRESTEndpoint {
         }
     }
 
-    /**
-     * API for method: .../rest/premium_package_properties/{id} This method find
-     * premium_package_properties with defined id. Id is retrieved from URL. If
-     * Premium package property with that index does not exist method throws
-     * exception. Otherwise method remove that Premium package property.
-     *
-     * @param token is a header parameter for checking permission
-     * @param id of Premium action that should be deleted.
-     * @return Response 200 OK
-     */
-    @DELETE
-    @Path("/{id}")
-    public Response deletePremiumAction(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
-        PremiumPackageProperties premiumPackageProperties = em.find(PremiumPackageProperties.class, id);
-        helper.removeObject(em, premiumPackageProperties, id);
-        return Response.ok().build();
-    }
+//    /**
+//     * API for method: .../rest/premium_package_properties/{id} This method find
+//     * premium_package_properties with defined id. Id is retrieved from URL. If
+//     * Premium package property with that index does not exist method throws
+//     * exception. Otherwise method remove that Premium package property.
+//     *
+//     * @param token is a header parameter for checking permission
+//     * @param id of Premium action that should be deleted.
+//     * @return Response 200 OK
+//     */
+//    @DELETE
+//    @Path("/{id}")
+//    public Response deletePremiumAction(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
+//        PremiumPackageProperties premiumPackageProperties = em.find(PremiumPackageProperties.class, id);
+//        helper.removeObject(em, premiumPackageProperties, id);
+//        return Response.ok().build();
+//    }
 
     /**
      * API for this method is .../rest/premium_package_properties This method
@@ -313,7 +313,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
             throw new DataNotFoundException("Premium action at index" + premiumPackageProperty.getId() + " does not exits");
         }
 
-        return Response.ok("Successfully updated!").build();
+        return Response.ok().build();
     }
 
     private boolean someAttributeIsNotNull(PremiumPackageProperties premiumPackageProperties) {

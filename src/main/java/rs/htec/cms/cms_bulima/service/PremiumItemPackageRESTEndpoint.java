@@ -215,24 +215,24 @@ public class PremiumItemPackageRESTEndpoint {
         }
     }
 
-    /**
-     * API for method: .../rest/itemPackage/{id} This method find package with
-     * defined id. Id is retrieved from URL. If Package with that index does not
-     * exist method throws exception. Otherwise method remove that Package.
-     *
-     * @param token is a header parameter for checking permission
-     * @param id of Package that should be deleted.
-     * @return Response 200 OK
-     */
-    @DELETE
-    @Path("/{id}")
-    public Response deleteItemPackage(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
-        PremiumItemPackage itemPackage = em.find(PremiumItemPackage.class, id);
-        helper.removeObject(em, itemPackage, id);
-        return Response.ok().build();
-    }
+//    /**
+//     * API for method: .../rest/itemPackage/{id} This method find package with
+//     * defined id. Id is retrieved from URL. If Package with that index does not
+//     * exist method throws exception. Otherwise method remove that Package.
+//     *
+//     * @param token is a header parameter for checking permission
+//     * @param id of Package that should be deleted.
+//     * @return Response 200 OK
+//     */
+//    @DELETE
+//    @Path("/{id}")
+//    public Response deleteItemPackage(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
+//        PremiumItemPackage itemPackage = em.find(PremiumItemPackage.class, id);
+//        helper.removeObject(em, itemPackage, id);
+//        return Response.ok().build();
+//    }
 
     /**
      * API for this method is .../rest/itemPackage/{idItem} where id is id for
@@ -281,7 +281,7 @@ public class PremiumItemPackageRESTEndpoint {
             throw new DataNotFoundException("Premium items package at index " + itemPackage.getId() + " does not exits");
         }
 
-        return Response.ok("Successfully updated!").build();
+        return Response.ok().build();
     }
     
     /**

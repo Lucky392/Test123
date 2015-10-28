@@ -204,24 +204,27 @@ public class PremiumItemRESTEndpoint {
         }
     }
 
-    /**
-     * API for method: .../rest/items/{id} This method find package with defined
-     * id. Id is retrieved from URL. If Item with that index does not exist
-     * method throws exception. Otherwise method remove that Item.
-     *
-     * @param token is a header parameter for checking permission
-     * @param id of Premium Item that should be deleted.
-        * @return Response 200 OK
-     */
-    @DELETE
-    @Path("/{id}")
-    public Response deleteItem(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
-        PremiumItem item = em.find(PremiumItem.class, id);
-        helper.removeObject(em, item, id);
-        return Response.ok().build();
-    }
+//    /**
+//     * API for method: .../rest/items/{id} This method find package with defined
+//     * id. Id is retrieved from URL. If Item with that index does not exist
+//     * method throws exception. Otherwise method remove that Item.
+//     *
+//     * @param token is a header parameter for checking permission
+//     * @param id of Premium Item that should be deleted.
+//        * @return Response 200 OK
+//     */
+//    @DELETE
+//    @Path("/{id}")
+//    public Response deleteItem(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.DELETE, token);
+//        PremiumItem item = em.find(PremiumItem.class, id);
+//        if (item == null){
+//            throw new DataNotFoundException("There is no item ont this index!");
+//        }
+//        helper.removeObject(em, item, id);
+//        return Response.ok().build();
+//    }
 
     /**
      * API for this method is .../rest/items This method recieves JSON object,
@@ -268,7 +271,7 @@ public class PremiumItemRESTEndpoint {
         } else {
             throw new DataNotFoundException("Premium item at index" + item.getId() + " does not exits");
         }
-        return Response.ok("Successfully updated!").build();
+        return Response.ok().build();
     }
     
     /**
