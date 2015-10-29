@@ -5,10 +5,13 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,7 +21,9 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.FantasyClubPOJO;
 
 /**
@@ -28,11 +33,11 @@ import rs.htec.cms.cms_bulima.pojo.FantasyClubPOJO;
 @Path("/fantasyClub")
 public class FantasyClubRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
 
-    public FantasyClubRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
+    @InjectParam
+    Validator validator;
 
     /**
      * API for this method: .../rest/fantasyClub/{id} This method returns
@@ -80,4 +85,26 @@ public class FantasyClubRESTEndpoint {
             return Response.ok().entity(FantasyClubPOJO.toFantasyCLubPOJOList(fc)).build();
         }
     }
+    
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateFantasyClub(@HeaderParam("authorization") String token, FantasyClub fantasyClub) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        FantasyClub oldFC = em.find(FantasyClub.class, fantasyClub.getId());
+        if (oldFC != null) {
+            if (validator.checkLenght(fantasyClub.getName(), 255, true)
+                    && validator.checkLenght(fantasyClub.getActivity(), 255, true)
+                    && validator.checkLenght(fantasyClub.getLastLoginWith(), 255, true)) {
+                fantasyClub.setCreateDate(oldFC.getCreateDate());
+                helper.mergeObject(em, fantasyClub);
+            } else {
+                throw new InputValidationException("Validation failed");
+            }
+        } else {
+            throw new DataNotFoundException("FantasyClub at index " + fantasyClub.getId() + " does not exits");
+        }
+        return Response.ok().build();
+    }
+    
 }
