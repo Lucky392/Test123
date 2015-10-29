@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -137,8 +136,9 @@ public class PremiumItemPackageRESTEndpoint {
         String countQuery = query.toString().replaceFirst("p", "count(p)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
+        List<PremiumItemPackagePOJO> pojos = PremiumItemPackagePOJO.toPremiumItemPackagePOJOList(itemPackage);
         go.setCount(count);
-        go.setData(PremiumItemPackagePOJO.toPremiumItemPackagePOJOList(itemPackage));
+        go.setData(pojos);
         return Response.ok().entity(go).build();
     }
 
@@ -168,31 +168,35 @@ public class PremiumItemPackageRESTEndpoint {
     public Response getItemPackageById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
-        PremiumItemPackage itemPackage = null;
+
+        PremiumItemPackagePOJO itemPackagePojo = null;
         try {
-            itemPackage = (PremiumItemPackage) em.createNamedQuery("PremiumItemPackage.findById").setParameter("id", id).getSingleResult();
+            PremiumItemPackage itemPackage = (PremiumItemPackage) em.createNamedQuery("PremiumItemPackage.findById").setParameter("id", id).getSingleResult();
+            itemPackagePojo = new PremiumItemPackagePOJO(itemPackage);
         } catch (Exception e) {
             throw new DataNotFoundException("Premium item package at index " + id + " does not exist..");
         }
-        return Response.ok().entity(itemPackage).build();
+        return Response.ok().entity(itemPackagePojo).build();
     }
 
     /**
-     * API for this method is .../rest/itemPackage/{idPremiumItem}
-     * we want to include in our Premium item package. This method recieves JSON
-     * object, and put it in the base. Example for JSON that you need to send:
+     * API for this method is .../rest/itemPackage  This method recieves JSON object,
+     * and put it in the DB. Example for JSON that you need to send: 
      * {<br/>
-     * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
-     * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
-     * "idPremiumItem": "6",<br/>
-     * "position": "6",<br/> "title": "Bietmanager",<br/>
-     * "pricePremiumCurrency": "15",<br/>
-     * "updateTimestamp": "2014-07-11 00:00:00.0",<br/> "createDate":
-     * "2014-01-01 00:00:00.0" <br/>}
+     * "updateTimestamp": null,<br/>
+     * "highlightUrl": "images/shop/ribbon.png",<br/>
+     * "additionalInfo": "",<br/>
+     * "title": "Test2",<br/>
+     * "pricePremiumCurrency": 170,<br/>
+     * "amountPremiumItems": 5,<br/>
+     * "active": 3,<br/>
+     * "idPremiumItem": 9,<br/>
+     * "position": 1,<br/>
+     * "name": "Test2"<br/>
+     * }<br/>
      *
      * @param token is a header parameter for checking permission
      * @param itemPackage is an object that Jackson convert from JSON to object
-     * @param idPremiumItem id of item that should be inserted in Package
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -200,14 +204,14 @@ public class PremiumItemPackageRESTEndpoint {
      *
      */
     @POST
-    @Path("/{idPremiumItem}")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idPremiumItem") long idPremiumItem) {
+    public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
         itemPackage.setCreateDate(new Date());
-        PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
-        itemPackage.setIdPremiumItem(item);
+//        PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
+//        itemPackage.setIdPremiumItem(item);
         if (validator.checkLenght(itemPackage.getName(), 255, true) && validator.checkLenght(itemPackage.getTitle(), 255, true)
                 && validator.checkLenght(itemPackage.getHighlightUrl(), 255, true) && validator.checkLenght(itemPackage.getAdditionalInfo(), 255, true)) {
             helper.persistObject(em, itemPackage);
@@ -235,22 +239,26 @@ public class PremiumItemPackageRESTEndpoint {
 //        helper.removeObject(em, itemPackage, id);
 //        return Response.ok().build();
 //    }
-
     /**
-     * API for this method is .../rest/itemPackage/{idItem} where id is id for
-     * Item we want to include in our Premium item package. This method recieves
-     * JSON object, and update database. Example for JSON that you need to send:
-     * {<br/>
-     * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
-     * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
-     * "idPremiumItem": "6",<br/>
-     * "position": "6",<br/> "title": "Bietmanager",<br/>
-     * "pricePremiumCurrency": "15",<br/>}
+     * API for this method is .../rest/itemPackage This method recieves JSON
+     * object, and update database. Example for JSON that you need to send:
+     *
+     * { <br/>
+     * "highlightUrl": "",<br/>
+     * "additionalInfo": "2",<br/>
+     * "title": "Test3",<br/>
+     * "pricePremiumCurrency": 15,<br/>
+     * "amountPremiumItems": 2,<br/>
+     * "active": 1,<br/>
+     * "idPremiumItem": 4,<br/>
+     * "position": 6,<br/>
+     * "name": "Test3",<br/>
+     * "id": 8<br/>
+     * }<br/>
      *
      * @param token is a header parameter for checking permission
      * @param itemPackage is an object that Jackson convert from JSON to object
-     * @param idPremiumItem id of PremiumItem that should be updated
-     * @return Response with status OK (200) "Successfully updated!"
+     * @return Response with status OK (200)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
@@ -260,9 +268,9 @@ public class PremiumItemPackageRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @PUT
-    @Path("/{idPremiumItem}")
+    @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage, @PathParam("idPremiumItem") long idPremiumItem) {
+    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
 
@@ -273,8 +281,8 @@ public class PremiumItemPackageRESTEndpoint {
 
                 itemPackage.setUpdateTimestamp(new Date());
                 itemPackage.setCreateDate(oldPackage.getCreateDate());
-                PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
-                itemPackage.setIdPremiumItem(item);
+//                PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
+//                itemPackage.setIdPremiumItem(item);
                 helper.mergeObject(em, itemPackage);
             } else {
                 throw new InputValidationException("Validation failed");
@@ -285,17 +293,18 @@ public class PremiumItemPackageRESTEndpoint {
 
         return Response.ok().build();
     }
-    
+
     /**
-     * API for this method: .../rest/itemPackage/count
-     * This method return number of all item packages in database.
+     * API for this method: .../rest/itemPackage/count This method return number
+     * of all item packages in database.
+     *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountNews(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumItemPackage ip";

@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -34,11 +35,8 @@ import rs.htec.cms.cms_bulima.pojo.MatchPlayerPOJO;
 @Path("/matchPlayer")
 public class MatchPlayerRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public MatchPlayerRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
     
     /**
      * Returns MatchPlayer for specified id.
@@ -61,9 +59,10 @@ public class MatchPlayerRESTEndpoint {
      *  "id": 34<br/>
      *}<br/>
      * 
-     * @param token
-     * @param id
-     * @return
+     * @param token - header parameter for checking permission
+     * @param id - of MatchPlayer that should be returned
+     * @return MatchPlayer in JSON
+     * @throws DataNotFoundException if MatchPlayer doesn't exist for defined id
      */
     @GET
     @Path("/{id}")
@@ -124,14 +123,15 @@ public class MatchPlayerRESTEndpoint {
      *"count": 743<br/>
      *}<br/>
      * 
-     * @param token
-     * @param page
-     * @param limit
-     * @param orderBy
-     * @param idMatch
-     * @param idPlayer
-     * @param minDate
-     * @param maxDate
+     * @param token - header parameter for checking permission
+     * @param page - number of page at which we search for News
+     * @param limit - number of News method returns
+     * @param orderBy - column name for ordering, if you put "-" before
+     * column name, that mean DESC ordering.
+     * @param idMatch - filter based on id for Match
+     * @param idPlayer - filter based on id for Player
+     * @param minDate - start date for filtering time in millis
+     * @param maxDate - end date for filtering time in millis
      * @return
      */
     @GET

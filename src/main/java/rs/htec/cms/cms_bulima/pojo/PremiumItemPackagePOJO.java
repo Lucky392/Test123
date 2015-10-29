@@ -8,12 +8,14 @@ package rs.htec.cms.cms_bulima.pojo;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import rs.htec.cms.cms_bulima.domain.Match;
+
 import rs.htec.cms.cms_bulima.domain.PremiumItemPackage;
 
 /**
  *
+<<<<<<< HEAD
  * @author marko
+ * @author stefan
  */
 public class PremiumItemPackagePOJO {
     
@@ -143,11 +145,12 @@ public class PremiumItemPackagePOJO {
         this.idPremiumItem = idPremiumItem;
     }
     
-    public static List<PremiumItemPackagePOJO> toPremiumItemPackagePOJOList(List<PremiumItemPackage> packages){
+
+    public static List<PremiumItemPackagePOJO> toPremiumItemPackagePOJOList(List<PremiumItemPackage> list) {
         PremiumItemPackagePOJO pojo;
         List<PremiumItemPackagePOJO> pojos = new ArrayList<>();
-        for (PremiumItemPackage packag : packages) {
-            pojo = new PremiumItemPackagePOJO(packag);
+        for (PremiumItemPackage pip : list) {
+            pojo = new PremiumItemPackagePOJO(pip);
             pojos.add(pojo);
         }
         return pojos;

@@ -26,8 +26,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -121,8 +119,6 @@ public class FantasyLeaguePlayer implements Serializable {
         this.createDate = createDate;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyPlayer getFantasyPlayer() {
         return fantasyPlayer;
     }
@@ -131,8 +127,6 @@ public class FantasyLeaguePlayer implements Serializable {
         this.fantasyPlayer = fantasyPlayer;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }
@@ -141,8 +135,6 @@ public class FantasyLeaguePlayer implements Serializable {
         this.idFantasyLeague = idFantasyLeague;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public Player getIdPlayer() {
         return idPlayer;
     }
@@ -176,8 +168,6 @@ public class FantasyLeaguePlayer implements Serializable {
         return idPlayer.getFullname() + "";
     }
 
-    @XmlTransient
-    @JsonIgnore
     public List<Auction> getAuctionList() {
         return auctionList;
     }
@@ -186,8 +176,6 @@ public class FantasyLeaguePlayer implements Serializable {
         this.auctionList = auctionList;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public List<FantasyClubLineUpPlayer> getFantasyClubLineUpPlayerList() {
         return fantasyClubLineUpPlayerList;
     }
