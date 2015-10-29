@@ -19,9 +19,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.LoginHistory;
+import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.Dashboard;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.LoginHistoryPOJO;
 
 /**
  *
@@ -214,5 +217,18 @@ public class LoginHistoryRESTEndpoint {
             dashboard.instantiateDashboard(platform);
         }
         return Response.ok().entity(dashboard).build();
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Response getHistoryById(@HeaderParam("authorization") String token, @PathParam("id") long id){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        LoginHistory history = em.find(LoginHistory.class, id);
+        if (history == null) {
+            throw new DataNotFoundException("History at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(new LoginHistoryPOJO(history)).build();
     }
 }

@@ -118,6 +118,19 @@ public class FantasyManagerMatchdayChallengeLineUpRESTEndpoint {
         return Response.ok().entity(go).build();
     }
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Response getLineUpById(@HeaderParam("authorization") String token, @PathParam("id") long id){
+        EntityManager em = EMF.createEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        FantasyManagerMatchdayChallengeLineUp lineup = em.find(FantasyManagerMatchdayChallengeLineUp.class, id);
+        if (lineup == null){
+            throw new DataNotFoundException("Line up at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(new FantasyManagerMatchdayChallengeLineUpPOJO(lineup)).build();
+    }
+    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token,

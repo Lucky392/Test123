@@ -114,6 +114,19 @@ public class FantasyManagerMatchdayChallengeResultRESTEndpoint {
         go.setData(pojos);
         return Response.ok().entity(go).build();
     }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/{id}")
+    public Response getResult(@HeaderParam("authorization") String token, @PathParam("id") long id){
+        EntityManager em = EMF.createEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        FantasyManagerMatchdayChallengeResult result = em.find(FantasyManagerMatchdayChallengeResult.class, id);
+        if (result == null){
+            throw new DataNotFoundException("Result at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(new FantasyManagerMatchdayChallengeResultPOJO(result)).build();
+    }
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
