@@ -31,6 +31,7 @@ import rs.htec.cms.cms_bulima.helper.CountWrapper;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.PremiumPackagePropertiesPOJO;
 
 /**
  *
@@ -125,7 +126,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
-        go.setData(premiumPackageProperties);
+        go.setData(PremiumPackagePropertiesPOJO.toPremiumPackagePropertiesPOJOList(premiumPackageProperties));
         return Response.ok().entity(go).build();
     }
 
@@ -187,7 +188,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
         } catch (Exception e) {
             throw new DataNotFoundException("Premium package properties at index " + id + " does not exist..");
         }
-        return Response.ok().entity(properties).build();
+        return Response.ok().entity(new PremiumPackagePropertiesPOJO(properties)).build();
     }
 
     /**

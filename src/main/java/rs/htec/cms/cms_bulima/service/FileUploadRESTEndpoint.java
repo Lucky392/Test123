@@ -41,7 +41,9 @@ public class FileUploadRESTEndpoint {
     /**
      * API method: .../rest/uploadFile for uploading File to server.
      * @param token is a header parameter for checking permission
+     * @param uploadedInputStream
      * @param where 1 - player, 2 - club, 3 - slider, 4 - shop images, 5 - shop images special
+     * @param fileDetail
      * @return Response 200 OK status with uploaded file location URL which has to be put in database
      */
     @POST
