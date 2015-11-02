@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -28,11 +29,8 @@ import rs.htec.cms.cms_bulima.pojo.ClubPOJO;
 @Path("/club")
 public class ClubRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public ClubRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for method: .../rest/club/{id} This method return single element of

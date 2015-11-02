@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -33,13 +34,11 @@ import rs.htec.cms.cms_bulima.pojo.PremiumHistoryPOJO;
 @Path("/premiumHistory")
 public class PremiumHistoryRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public PremiumHistoryRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for this method: .../rest/premiumHistory/user/{email} This method

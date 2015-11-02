@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.sql.Date;
 import java.util.Calendar;
 import javax.persistence.EntityManager;
@@ -33,12 +34,9 @@ import rs.htec.cms.cms_bulima.pojo.LoginHistoryPOJO;
 @Path("loginHistory")
 public class LoginHistoryRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
     Date date = new Date(1439762400000l); // treba podesiti trenutni datum
-
-    public LoginHistoryRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -28,11 +29,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("/user")
 public class UserRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public UserRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * Returns User for specified id.

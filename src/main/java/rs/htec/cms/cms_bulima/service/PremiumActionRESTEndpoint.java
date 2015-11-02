@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -37,15 +38,13 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  */
 @Path("/premium_action")
 public class PremiumActionRESTEndpoint {
-
+    
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public PremiumActionRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
-
+    
     /**
      * API for method: .../rest/premium_action?page=VALUE&limit=VALUE This
      * method returns JSON list. Default value for page is 1, and for limit is

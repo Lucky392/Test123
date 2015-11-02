@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.PremiumItem;
 import rs.htec.cms.cms_bulima.domain.PremiumItemPackage;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -40,13 +40,11 @@ import rs.htec.cms.cms_bulima.pojo.PremiumItemPackagePOJO;
 @Path("/itemPackage")
 public class PremiumItemPackageRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public PremiumItemPackageRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method:

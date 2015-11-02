@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
@@ -27,11 +28,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("/auction")
 public class AuctionsRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public AuctionsRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for this method: .../rest/auction/{id} This method returns

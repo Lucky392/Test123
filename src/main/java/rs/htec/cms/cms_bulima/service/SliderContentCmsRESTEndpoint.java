@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -38,13 +39,11 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("/slider")
 public class SliderContentCmsRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public SliderContentCmsRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method: .../rest/slider?page=VALUE&limit=VALUE This method returns JSON
@@ -154,7 +153,7 @@ public class SliderContentCmsRESTEndpoint {
      * "errorMessage": "Validation failed",<br/>
      * "errorCode": 400<br/> }
      */
-    @PUT
+    @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
@@ -209,9 +208,8 @@ public class SliderContentCmsRESTEndpoint {
      * "errorMessage": "Slider at index 54 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
-    @POST
+    @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces(MediaType.APPLICATION_JSON)
     public Response updateSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
@@ -221,7 +219,7 @@ public class SliderContentCmsRESTEndpoint {
                     && validator.checkLenght(slider.getText(), 1023, true)) {
                 slider.setCreateDate(new Date());
                 helper.mergeObject(em, slider);
-                return Response.ok("Successfully updated!").build();
+                return Response.ok().build();
             } else {
                 throw new InputValidationException("Validation failed");
             }

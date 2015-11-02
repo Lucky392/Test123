@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -27,11 +28,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("/competition")
 public class CompetitionRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public CompetitionRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for method: .../rest/league/{id} This method return single element of

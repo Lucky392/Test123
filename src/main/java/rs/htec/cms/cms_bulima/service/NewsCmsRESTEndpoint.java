@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,13 +41,11 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("/news")
 public class NewsCmsRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public NewsCmsRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method:

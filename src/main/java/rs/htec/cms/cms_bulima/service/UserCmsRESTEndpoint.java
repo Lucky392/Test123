@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -35,15 +36,14 @@ import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 @Path("/cmsUser")
 public class UserCmsRESTEndpoint {
 
-    RestHelperClass helper;
+    @InjectParam
     AbstractTokenCreator tokenHelper;
+    
+    @InjectParam
+    RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public UserCmsRESTEndpoint() {
-        helper = new RestHelperClass();
-        tokenHelper = helper.getAbstractToken();
-        validator = new Validator();
-    }
 
     /**
      * API for this method: .../rest/user This method return list of users in

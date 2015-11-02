@@ -17,11 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.FantasyPlayer;
 import rs.htec.cms.cms_bulima.domain.PlayerSlot;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.pojo.FantasyPlayerPOJO;
 
 /**
  *

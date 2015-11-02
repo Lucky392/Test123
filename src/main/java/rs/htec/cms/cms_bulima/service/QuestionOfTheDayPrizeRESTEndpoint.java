@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -38,14 +39,14 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("/prize")
 public class QuestionOfTheDayPrizeRESTEndpoint {
 
-    public RestHelperClass helper;
-    public Validator validator;
+    @InjectParam
+    RestHelperClass helper;
+    
+    @InjectParam
+    Validator validator;
+    
     public EntityManager em;
 
-    public QuestionOfTheDayPrizeRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method: .../rest/prize?page=VALUE&limit=VALUE This method returns JSON

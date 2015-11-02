@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -32,11 +33,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("batchjobHistory")
 public class BatchjobHistoryRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public BatchjobHistoryRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for method:

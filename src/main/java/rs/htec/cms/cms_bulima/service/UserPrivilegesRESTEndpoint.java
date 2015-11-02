@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -23,6 +24,7 @@ import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivilegesPK;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.RolePOJO;
 
 /**
@@ -32,12 +34,12 @@ import rs.htec.cms.cms_bulima.pojo.RolePOJO;
 @Path("/privileges")
 public class UserPrivilegesRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public UserPrivilegesRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
-
+    
+    @InjectParam
+    Validator validator;
+    
     /**
      * API for method: .../rest/privileges This method gets authorization token
      * from HTTP header and list of user privileges in JSON format and insert

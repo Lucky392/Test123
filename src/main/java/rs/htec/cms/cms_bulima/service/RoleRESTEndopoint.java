@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
@@ -26,11 +27,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("/role")
 public class RoleRESTEndopoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public RoleRESTEndopoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for method: .../rest/role<br/>

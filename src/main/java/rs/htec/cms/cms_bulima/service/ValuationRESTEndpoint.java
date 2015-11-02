@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
@@ -27,11 +28,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("/valuation")
 public class ValuationRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public ValuationRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for this method:

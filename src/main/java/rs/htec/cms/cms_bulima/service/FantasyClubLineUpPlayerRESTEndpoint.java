@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -26,11 +27,8 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 @Path("/lineupPlayer")
 public class FantasyClubLineUpPlayerRESTEndpoint {
  
+    @InjectParam
     RestHelperClass helper;
-
-    public FantasyClubLineUpPlayerRESTEndpoint() {
-        helper = new RestHelperClass();
-    }   
     
     /**
      * API for method: .../rest/lineupPlayer/{id} This method return single element 

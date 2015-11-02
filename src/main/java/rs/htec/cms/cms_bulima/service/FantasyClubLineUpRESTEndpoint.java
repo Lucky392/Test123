@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -34,14 +35,12 @@ import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
  */
 @Path("/lineup")
 public class FantasyClubLineUpRESTEndpoint {
-
+    
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public FantasyClubLineUpRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method: .../rest/lineup/{idFantasyClub}/{idMatchday} This method return list of

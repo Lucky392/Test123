@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -35,13 +36,11 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("batchjob")
 public class BatchjobRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public BatchjobRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method: .../rest/batchjob?page=VALUE&limit=VALUE&search=VALUE

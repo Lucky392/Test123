@@ -5,12 +5,12 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -39,13 +39,11 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("/premium_package_properties")
 public class PremiumPackagePropertiesRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public PremiumPackagePropertiesRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for method:

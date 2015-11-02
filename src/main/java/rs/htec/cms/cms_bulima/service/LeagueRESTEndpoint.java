@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -28,11 +29,8 @@ import rs.htec.cms.cms_bulima.pojo.LeaguePOJO;
 @Path("/league")
 public class LeagueRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public LeagueRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * API for method: .../rest/league/{id} This method return single element of

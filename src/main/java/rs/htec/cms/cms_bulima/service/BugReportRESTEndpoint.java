@@ -42,11 +42,9 @@ import rs.htec.cms.cms_bulima.pojo.BugReportPOJO;
  */
 @Path("/bugReport")
 public class BugReportRESTEndpoint {
+    
     @InjectParam
     RestHelperClass helper;
-    
-    public BugReportRESTEndpoint() {
-    }
 
     /**
      * Returns Bug report for specified id.

@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -35,11 +36,8 @@ import rs.htec.cms.cms_bulima.pojo.MatchPOJO;
 @Path("/match")
 public class MatchRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
-
-    public MatchRESTEndpoint() {
-        helper = new RestHelperClass();
-    }
 
     /**
      * Returns Match for defined id. <br/>
