@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.service;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -12,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -20,6 +22,7 @@ import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory;
+import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -32,13 +35,11 @@ import rs.htec.cms.cms_bulima.helper.Validator;
 @Path("/creditHistory")
 public class CreditHistoryRESTEndpoint {
 
+    @InjectParam
     RestHelperClass helper;
+    
+    @InjectParam
     Validator validator;
-
-    public CreditHistoryRESTEndpoint() {
-        helper = new RestHelperClass();
-        validator = new Validator();
-    }
 
     /**
      * API for this method: .../rest/creditHistory/{id} This method returns JSON
