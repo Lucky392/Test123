@@ -42,7 +42,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -53,42 +53,31 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * for forNonPayingUser is 0. You can put your values for forPayingUser,
      * forNonPayingUser. It produces APPLICATION_JSON media type. Example for
      * JSON list: <br/>
-     * [<br/>
      * {<br/>
-     * "forNonPayingUsers": 0,<br/>
-     * "redirectPositionTop": null,<br/>
-     * "redirectPositionLeft": null,<br/>
-     * "redirectImageUrl": "",<br/>
-     * "charityDonation": null,<br/>
-     * "charityDescription": "",<br/>
-     * "showUntil": null,<br/>
-     * "maxPurchasesPerUser": null,<br/>
-     * "idPremiumPackageUpgrade": null, <br/>
-     * "idFavoriteClub": null,<br/>
-     * "idPremiumPackageSuccessor": <br/>
-     * { "price": 19.99,<br/>
-     * "amountPremiumCurrency": 0,<br/>
-     * "imageUrl": "",<br/>
-     * "platform": "ALL", <br/>
-     * "isActive": 1, <br/>
-     * "updateTimestamp": null,<br/>
-     * "premiumStatusDuration": "season",<br/>
-     * "idPremiumPackageProperties": null,<br/>
-     * "createDate": 1427204474000, <br/>
-     * "title": "Saison", <br/>
-     * "position": null,<br/>
-     * "name": "Premium-Account - Saison-Paket",<br/>
-     * "id": 8 <br/>
-     * }, <br/>
-     * "highlightImageUrl": "",<br/>
-     * "showOnlySpecial": 0,<br/>
-     * "imageUrlSpecial": "",<br/>
-     * "forPayingUsers": 0,<br/>
-     * "showFrom": null,<br/>
-     * "updateTimestamp": null, <br/>
+     * "count": 1,<br/>
+     * "data": [<br/>
+     * {<br/>
      * "createDate": 1427204490000,<br/>
      * "redirectUrl": "",<br/>
-     * "id": 1 <br/>
+     * "charityDescription": "",<br/>
+     * "charityDonation": null,<br/>
+     * "forNonPayingUsers": 0,<br/>
+     * "forPayingUsers": 0,<br/>
+     * "highlightImageUrl": "",<br/>
+     * "showUntil": null,<br/>
+     * "idFavoriteClub": null,<br/>
+     * "idPremiumPackageSuccessor": 8,<br/>
+     * "idPremiumPackageUpgrade": null,<br/>
+     * "imageUrlSpecial": "",<br/>
+     * "maxPurchasesPerUser": null,<br/>
+     * "redirectImageUrl": "",<br/>
+     * "redirectPositionLeft": null,<br/>
+     * "redirectPositionTop": null,<br/>
+     * "updateTimestamp": null,<br/>
+     * "showOnlySpecial": 0,<br/>
+     * "showFrom": null,<br/>
+     * "id": 1<br/>
+     * }<br/>
      * }]<br/>
      *
      * @param token is a header parameter for checking permission
@@ -131,43 +120,32 @@ public class PremiumPackagePropertiesRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/premium_package_properties/{id} This method return single element of package properties at index
-     * in JSON. Example for JSON response: {<br/>
-     * "forNonPayingUsers": 0,<br/>
-     * "redirectPositionTop": null,<br/>
-     * "redirectPositionLeft": null,<br/>
-     * "redirectImageUrl": "",<br/>
-     * "charityDonation": null,<br/>
-     * "charityDescription": "",<br/>
-     * "showUntil": null,<br/>
-     * "maxPurchasesPerUser": null,<br/>
-     * "idPremiumPackageUpgrade": null, <br/>
-     * "idFavoriteClub": null,<br/>
-     * "idPremiumPackageSuccessor": <br/>
-     * { "price": 19.99,<br/>
-     * "amountPremiumCurrency": 0,<br/>
-     * "imageUrl": "",<br/>
-     * "platform": "ALL", <br/>
-     * "isActive": 1, <br/>
-     * "updateTimestamp": null,<br/>
-     * "premiumStatusDuration": "season",<br/>
-     * "idPremiumPackageProperties": null,<br/>
-     * "createDate": 1427204474000, <br/>
-     * "title": "Saison", <br/>
-     * "position": null,<br/>
-     * "name": "Premium-Account - Saison-Paket",<br/>
-     * "id": 8 <br/>
-     * }, <br/>
-     * "highlightImageUrl": "",<br/>
-     * "showOnlySpecial": 0,<br/>
-     * "imageUrlSpecial": "",<br/>
-     * "forPayingUsers": 0,<br/>
-     * "showFrom": null,<br/>
-     * "updateTimestamp": null, <br/>
+     * API for method: .../rest/premium_package_properties/{id} This method
+     * return single element of package properties at index in JSON. Example for
+     * JSON response:  <br/>
+     * {<br/>
      * "createDate": 1427204490000,<br/>
      * "redirectUrl": "",<br/>
-     * "id": 1 <br/>
-     * }
+     * "charityDescription": "",<br/>
+     * "charityDonation": null,<br/>
+     * "forNonPayingUsers": 0,<br/>
+     * "forPayingUsers": 0,<br/>
+     * "highlightImageUrl": "",<br/>
+     * "showUntil": null,<br/>
+     * "idFavoriteClub": null,<br/>
+     * "idPremiumPackageSuccessor": 8,<br/>
+     * "idPremiumPackageUpgrade": null,<br/>
+     * "imageUrlSpecial": "",<br/>
+     * "maxPurchasesPerUser": null,<br/>
+     * "redirectImageUrl": "",<br/>
+     * "redirectPositionLeft": null,<br/>
+     * "redirectPositionTop": null,<br/>
+     * "updateTimestamp": null,<br/>
+     * "showOnlySpecial": 0,<br/>
+     * "showFrom": null,<br/>
+     * "id": 1<br/>
+     * }<br/>
+     *
      * @param token is a header parameter for checking permission
      * @param id of premium package properties we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -256,7 +234,6 @@ public class PremiumPackagePropertiesRESTEndpoint {
 //        helper.removeObject(em, premiumPackageProperties, id);
 //        return Response.ok().build();
 //    }
-
     /**
      * API for this method is .../rest/premium_package_properties This method
      * recieves JSON object, and update database. Example for JSON that you
@@ -328,17 +305,18 @@ public class PremiumPackagePropertiesRESTEndpoint {
                 || premiumPackageProperties.getShowUntil() != null || premiumPackageProperties.getShowOnlySpecial() != 0
                 || premiumPackageProperties.getShowFrom() != null;
     }
-    
+
     /**
-     * API for this method: .../rest/premium_package_properties/count
-     * This method return number of all package properties in database.
+     * API for this method: .../rest/premium_package_properties/count This
+     * method return number of all package properties in database.
+     *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountNews(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumPackageProperties ip";
