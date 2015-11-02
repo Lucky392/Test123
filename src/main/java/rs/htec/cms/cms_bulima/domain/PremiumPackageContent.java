@@ -106,8 +106,6 @@ public class PremiumPackageContent implements Serializable {
         this.createDate = createDate;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public PremiumItem getIdPremiumItem() {
         return idPremiumItem;
     }
@@ -116,8 +114,6 @@ public class PremiumPackageContent implements Serializable {
         this.idPremiumItem = idPremiumItem;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public PremiumPackage getIdPremiumPackage() {
         return idPremiumPackage;
     }
