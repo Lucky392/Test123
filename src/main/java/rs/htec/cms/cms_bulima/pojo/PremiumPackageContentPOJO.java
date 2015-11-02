@@ -23,21 +23,41 @@ public class PremiumPackageContentPOJO {
     private Date createDate;
     private Long idPremiumItem;
     private Long idPremiumPackage;
+    private String premiumItem;
+    private String premiumPackage;
+
+    public String getPremiumItem() {
+        return premiumItem;
+    }
+
+    public void setPremiumItem(String PremiumItem) {
+        this.premiumItem = PremiumItem;
+    }
+
+    public String getPremiumPackage() {
+        return premiumPackage;
+    }
+
+    public void setPremiumPackage(String PremiumPackage) {
+        this.premiumPackage = PremiumPackage;
+    }
     private String urlToPremiumItem;
     private String urlToPremiumPackage;
 
     public PremiumPackageContentPOJO(PremiumPackageContent content) {
-        this.id = content.getId();
-        this.amount = content.getAmount();
-        this.updateTimestamp = content.getUpdateTimestamp();
-        this.createDate = content.getCreateDate();
+        id = content.getId();
+        amount = content.getAmount();
+        updateTimestamp = content.getUpdateTimestamp();
+        createDate = content.getCreateDate();
         if (content.getIdPremiumItem() != null) {
-            this.idPremiumItem = content.getIdPremiumItem().getId();
-            this.urlToPremiumItem = Util.getInstance().getUrl() + "rest/items/" + content.getIdPremiumItem().getId();
+            idPremiumItem = content.getIdPremiumItem().getId();
+            premiumItem = content.getIdPremiumItem().getName();
+            urlToPremiumItem = Util.getInstance().getUrl() + "rest/items/" + content.getIdPremiumItem().getId();
         }
         if (content.getIdPremiumPackage() != null) {
             this.idPremiumPackage = content.getIdPremiumPackage().getId();
-            this.urlToPremiumPackage = Util.getInstance().getUrl() + "rest/package/" + content.getIdPremiumPackage().getId();
+            urlToPremiumPackage = Util.getInstance().getUrl() + "rest/package/" + content.getIdPremiumPackage().getId();
+            premiumPackage = content.getIdPremiumPackage().getName();
         }
     }
 
@@ -104,8 +124,8 @@ public class PremiumPackageContentPOJO {
     public void setUrlToPremiumPackage(String urlToPremiumPackage) {
         this.urlToPremiumPackage = urlToPremiumPackage;
     }
-    
-    public static List<PremiumPackageContentPOJO> toBugReportPOJOList (List<PremiumPackageContent> list) {
+
+    public static List<PremiumPackageContentPOJO> toBugReportPOJOList(List<PremiumPackageContent> list) {
         PremiumPackageContentPOJO pojo;
         List<PremiumPackageContentPOJO> pojos = new ArrayList<>();
         for (PremiumPackageContent content : list) {

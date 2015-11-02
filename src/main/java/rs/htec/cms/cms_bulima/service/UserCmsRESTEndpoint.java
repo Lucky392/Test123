@@ -28,6 +28,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.CmsUserPojo;
 import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
+import rs.htec.cms.cms_bulima.token.Base64Token;
 
 /**
  *
@@ -36,7 +37,6 @@ import rs.htec.cms.cms_bulima.token.AbstractTokenCreator;
 @Path("/cmsUser")
 public class UserCmsRESTEndpoint {
 
-    @InjectParam
     AbstractTokenCreator tokenHelper;
     
     @InjectParam
@@ -44,6 +44,10 @@ public class UserCmsRESTEndpoint {
     
     @InjectParam
     Validator validator;
+
+    public UserCmsRESTEndpoint() {
+        tokenHelper = new Base64Token();
+    }
 
     /**
      * API for this method: .../rest/user This method return list of users in
