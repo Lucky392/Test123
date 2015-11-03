@@ -37,6 +37,9 @@ public class PremiumPackagePropertiesPOJO {
     private Long idPremiumPackageUpgrade;
     private Long idFavoriteClub;
     private Long idPremiumPackageSuccessor;
+    private String premiumPackageUpgrade;
+    private String favoriteClub;
+    private String premiumPackageSuccessor;
 
     public PremiumPackagePropertiesPOJO(PremiumPackageProperties ppp) {
         this.id = ppp.getId();
@@ -58,12 +61,15 @@ public class PremiumPackagePropertiesPOJO {
         this.maxPurchasesPerUser = ppp.getMaxPurchasesPerUser();
         if (ppp.getIdPremiumPackageUpgrade() != null){
             this.idPremiumPackageUpgrade = ppp.getIdPremiumPackageUpgrade().getId();
+            premiumPackageUpgrade = ppp.getIdPremiumPackageUpgrade().getName();
         }
         if (ppp.getIdFavoriteClub() != null){
             this.idFavoriteClub = ppp.getIdFavoriteClub().getId();
+            favoriteClub = ppp.getIdFavoriteClub().getMediumName();
         }
         if (ppp.getIdPremiumPackageSuccessor() != null){
             this.idPremiumPackageSuccessor = ppp.getIdPremiumPackageSuccessor().getId();
+            premiumPackageSuccessor = ppp.getIdPremiumPackageUpgrade().getName();
         }
     }
 
@@ -236,4 +242,30 @@ public class PremiumPackagePropertiesPOJO {
         }
         return pojos;
     }
+
+    public String getPremiumPackageUpgrade() {
+        return premiumPackageUpgrade;
+    }
+
+    public void setPremiumPackageUpgrade(String premiumPackageUpgrade) {
+        this.premiumPackageUpgrade = premiumPackageUpgrade;
+    }
+
+    public String getFavoriteClub() {
+        return favoriteClub;
+    }
+
+    public void setFavoriteClub(String favoriteClub) {
+        this.favoriteClub = favoriteClub;
+    }
+
+    public String getPremiumPackageSuccessor() {
+        return premiumPackageSuccessor;
+    }
+
+    public void setPremiumPackageSuccessor(String premiumPackageSuccessor) {
+        this.premiumPackageSuccessor = premiumPackageSuccessor;
+    }
+
+
 }

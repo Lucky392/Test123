@@ -15,7 +15,7 @@ import org.codehaus.jackson.annotate.JsonPropertyOrder;
 @JsonPropertyOrder({ "count","data" })
 public class GetObject {
     private long count;
-    private List data;
+    private Object data;
 
     public long getCount() {
         return count;
@@ -25,12 +25,12 @@ public class GetObject {
         this.count = count;
     }
 
-    public List getData() {
+    public Object getData() {
         return data;
     }
 
-    public void setData(List list) {
-        this.data = list;
+    public void setData(Object o) {
+        this.data = o;
     }
     
     
