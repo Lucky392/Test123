@@ -31,6 +31,7 @@ public class PremiumItemPackagePOJO {
     private Integer position;
     private String highlightUrl;
     private Long idPremiumItem;
+    private String namePremiumItem;
 
     public PremiumItemPackagePOJO(PremiumItemPackage pip) {
         this.id = pip.getId();
@@ -46,6 +47,7 @@ public class PremiumItemPackagePOJO {
         this.highlightUrl = pip.getHighlightUrl();
         if (pip.getIdPremiumItem() != null){
             this.idPremiumItem = pip.getIdPremiumItem().getId();
+            this.namePremiumItem = pip.getIdPremiumItem().getName();
         }
     }
 
@@ -144,7 +146,14 @@ public class PremiumItemPackagePOJO {
     public void setIdPremiumItem(Long idPremiumItem) {
         this.idPremiumItem = idPremiumItem;
     }
-    
+
+    public String getNamePremiumItem() {
+        return namePremiumItem;
+    }
+
+    public void setNamePremiumItem(String namePremiumItem) {
+        this.namePremiumItem = namePremiumItem;
+    }
 
     public static List<PremiumItemPackagePOJO> toPremiumItemPackagePOJOList(List<PremiumItemPackage> list) {
         PremiumItemPackagePOJO pojo;
