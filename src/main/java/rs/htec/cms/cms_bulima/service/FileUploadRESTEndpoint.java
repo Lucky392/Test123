@@ -54,7 +54,7 @@ public class FileUploadRESTEndpoint {
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @QueryParam("imageLocationFolder") int where) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         String uploadedFileLocation;
         String databaseString;
         switch(where){
