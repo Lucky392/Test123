@@ -13,35 +13,35 @@ import java.util.List;
  */
 public class DashboardPOJO {
 
-    private List<PlatformPOJO> dailyActiveUsers;
-    private List<PlatformPOJO> registrations;
-    private List<PlatformPOJO> payingUser;
+    private List<Object> dailyActiveUsers;
+    private List<Object> registrations;
+    private List<Object> payingUser;
     //long revenue;
 
     public DashboardPOJO() {
     }
 
-    public List<PlatformPOJO> getDailyActiveUsers() {
+    public List<Object> getDailyActiveUsers() {
         return dailyActiveUsers;
     }
 
-    public void setDailyActiveUsers(List<PlatformPOJO> dailyActiveUsers) {
+    public void setDailyActiveUsers(List<Object> dailyActiveUsers) {
         this.dailyActiveUsers = dailyActiveUsers;
     }
 
-    public List<PlatformPOJO> getRegistrations() {
+    public List<Object> getRegistrations() {
         return registrations;
     }
 
-    public void setRegistrations(List<PlatformPOJO> registrations) {
+    public void setRegistrations(List<Object> registrations) {
         this.registrations = registrations;
     }
 
-    public List<PlatformPOJO> getPayingUser() {
+    public List<Object> getPayingUser() {
         return payingUser;
     }
 
-    public void setPayingUser(List<PlatformPOJO> payingUser) {
+    public void setPayingUser(List<Object> payingUser) {
         this.payingUser = payingUser;
     }
 
