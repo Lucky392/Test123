@@ -79,20 +79,16 @@ public class FileUploadRESTEndpoint {
                 databaseString = "images/shop/specials/";
                 break;
             default:
-                uploadedFileLocation = "";
-                databaseString = "";
+                throw new InputValidationException("Enter valid number for image location folder!");
         }
         uploadedFileLocation += fileDetail.getFileName();
         databaseString += fileDetail.getFileName();
-        if (databaseString.equals("")) {
-            throw new InputValidationException("Enter valid number for image location folder!");
-        }
         File objFile = new File(uploadedFileLocation);
         if (objFile.exists()) {
             objFile.delete();
         }
         saveToFile(uploadedInputStream, uploadedFileLocation);
-        return Response.status(200).entity(uploadedFileLocation).build();
+        return Response.status(200).entity(databaseString).build();
     }
 
     private void saveToFile(InputStream uploadedInputStream,
