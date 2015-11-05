@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -42,7 +43,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -93,9 +94,10 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         StringBuilder query = new StringBuilder("SELECT q FROM QuestionOfTheDay q ");
 
         if (minDate != 0 && maxDate != 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append("WHERE q.date BETWEEN '").append(d1).append("' AND '").append(d2).append("'");
+            query.append("WHERE q.date BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
         }
 
         if (search != null) {
@@ -116,10 +118,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
             }
             query.append(" ORDER BY ").append(orderingColumn);
         }
-        System.out.println("QUERY " + query);
         questions = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        System.out.println(query);
-        if (questions == null || questions.isEmpty()) {
+                if (questions == null || questions.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = query.toString().replaceFirst("q", "count(q)");
@@ -129,11 +129,11 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         go.setData(questions);
         return Response.ok().entity(go).build();
     }
-    
-    
+
     /**
-     * API for method: .../rest/question/{id} This method return single element of questionOfTheDay at index
-     * in JSON. Example for JSON response: <br/>{<br/>
+     * API for method: .../rest/question/{id} This method return single element
+     * of questionOfTheDay at index in JSON. Example for JSON response:
+     * <br/>{<br/>
      * "date": "2015-07-20 00:00:00.0",<br/>
      * "wrongAnswer3": "Mehmet Scholl",<br/>
      * "question": "Wer erzielte das entscheidende Tor für den FC Bayern München
@@ -141,6 +141,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * war?",<br/> "id": "1",<br/> "correctAnswer": "Patrik Andersson",<br/>
      * "wrongAnswer1": "Giovanne Elber",<br/> "wrongAnswer2": "Stefan
      * Effenberg"<br/> }
+     *
      * @param token is a header parameter for checking permission
      * @param id of questionOfTheDay we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -165,8 +166,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/question This method recieves JSON object,
-     * and put it in the base. Example for JSON: {<br/> "date":
+     * API for this method is .../rest/question This method recieves JSON
+     * object, and put it in the base. Example for JSON: {<br/> "date":
      * "2015-07-25T00:00:00.0",<br/> "wrongAnswer3": "Jürgen Kohler",<br/>
      * "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",<br/>
      * "correctAnswer": "Andreas Möller",<br/> "wrongAnswer1": "Rudi
@@ -197,9 +198,9 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/question/{id} This method find question with defined id.
-     * Id is retrieved from URL. If question with that id does not exist method
-     * throws exception. Otherwise method remove that question.
+     * API for method: .../rest/question/{id} This method find question with
+     * defined id. Id is retrieved from URL. If question with that id does not
+     * exist method throws exception. Otherwise method remove that question.
      *
      * @param token is a header parameter for checking permission
      * @param id of question that should be deleted.
@@ -256,17 +257,18 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         return Response.ok().build();
 
     }
-    
+
     /**
-     * API for this method: .../rest/question/count
-     * This method return number of all questions in database.
+     * API for this method: .../rest/question/count This method return number of
+     * all questions in database.
+     *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountQuestions(@HeaderParam("authorization") String token){
+    public Response getCountQuestions(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From QuestionOfTheDay ip";
