@@ -69,7 +69,7 @@ public class PremiumPackagePropertiesPOJO {
         }
         if (ppp.getIdPremiumPackageSuccessor() != null){
             this.idPremiumPackageSuccessor = ppp.getIdPremiumPackageSuccessor().getId();
-            premiumPackageSuccessor = ppp.getIdPremiumPackageUpgrade().getName();
+            premiumPackageSuccessor = ppp.getIdPremiumPackageSuccessor().getName();
         }
     }
 
