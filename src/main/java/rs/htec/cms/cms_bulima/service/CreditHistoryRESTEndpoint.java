@@ -13,6 +13,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -108,6 +109,19 @@ public class CreditHistoryRESTEndpoint {
         }
     }
     
-    
+    @PUT
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response updateFantasyClubCreditHistory(@HeaderParam("authorization") String token, FantasyClubCreditHistory fantasyClubCreditHistory) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        FantasyClubCreditHistory oldFantasyClubCreditHistory = em.find(FantasyClubCreditHistory.class, fantasyClubCreditHistory.getId());
+        if (oldFantasyClubCreditHistory != null) {
+            oldFantasyClubCreditHistory.setCredit(fantasyClubCreditHistory.getCredit());
+            oldFantasyClubCreditHistory.setUpdatedCredit(fantasyClubCreditHistory.getCredit());
+        } else {
+            throw new DataNotFoundException("FantasyClubCreditHistory at index " + fantasyClubCreditHistory.getId() + " does not exits");
+        }
+        return Response.ok().build();
+    }
 
 }
