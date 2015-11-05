@@ -21,6 +21,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.constants.ImageLocationConstants;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
@@ -88,7 +89,9 @@ public class FileUploadRESTEndpoint {
             objFile.delete();
         }
         saveToFile(uploadedInputStream, uploadedFileLocation);
-        return Response.status(200).entity(databaseString).build();
+        JSONObject json = new JSONObject();
+        json.put("URL", databaseString);
+        return Response.status(200).entity(json).build();
     }
 
     private void saveToFile(InputStream uploadedInputStream,
@@ -104,7 +107,7 @@ public class FileUploadRESTEndpoint {
             out.flush();
             out.close();
         } catch (IOException e) {
-            throw new InputValidationException("Bad file");
+            throw new InputValidationException(e.getMessage());
         }
 
     }
