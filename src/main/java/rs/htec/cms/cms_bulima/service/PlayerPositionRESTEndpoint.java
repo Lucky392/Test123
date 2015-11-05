@@ -16,7 +16,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.Nation;
 import rs.htec.cms.cms_bulima.domain.PlayerPosition;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -33,7 +32,7 @@ public class PlayerPositionRESTEndpoint {
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/nation/{id} This method return single element of
+     * API for method: .../rest/playerPosition/{id} This method return single element of
      * club at index in JSON. Example for JSON response:<br/>{<br/>
      * "createDate": 1388530800000,<br/> "name": "Midfield",<br/> "id": 3<br/> }
      *

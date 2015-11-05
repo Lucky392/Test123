@@ -154,7 +154,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getQuestionById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
         QuestionOfTheDay question = null;
         try {
             question = (QuestionOfTheDay) em.createNamedQuery("QuestionOfTheDay.findById").setParameter("id", id).getSingleResult();
@@ -266,7 +266,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountQuestions(@HeaderParam("authorization") String token){
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From QuestionOfTheDay ip";

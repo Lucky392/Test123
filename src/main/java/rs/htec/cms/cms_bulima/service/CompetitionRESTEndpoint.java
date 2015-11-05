@@ -32,7 +32,7 @@ public class CompetitionRESTEndpoint {
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/league/{id} This method return single element of
+     * API for method: .../rest/competition/{id} This method return single element of
      * club at index in JSON. Example for JSON response: <br/> { <br/>"createDate":
      * 1406914086000,<br/> "sport": "Fußball",<br/> "gender": "male",<br/> "name": "2.
      * Bundesliga",<br/> "id": 2, <br/>"type": "championship"<br/> }

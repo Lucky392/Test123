@@ -136,7 +136,7 @@ public class MatchdayRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBugReport(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchday(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("matchday") String matchday,
             @QueryParam("idSeason") String idSeason, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();

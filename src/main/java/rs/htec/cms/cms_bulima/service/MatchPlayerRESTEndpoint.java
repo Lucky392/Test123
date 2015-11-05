@@ -132,12 +132,13 @@ public class MatchPlayerRESTEndpoint {
      * @param idPlayer - filter based on id for Player
      * @param minDate - start date for filtering time in millis
      * @param maxDate - end date for filtering time in millis
-     * @return
+     * @return 200 OK with list of MatchPlayer in JSON
+     * @throws DataNotFoundException if there is no MatchPlayer for search
      */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBugReport(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchPlayer(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("idMatch") String idMatch,
             @QueryParam("idPlayer") String idPlayer, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();

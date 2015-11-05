@@ -277,7 +277,7 @@ public class PremiumPackageContentRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token) {
+    public Response getCountPackageContent(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumPackageContent ip";

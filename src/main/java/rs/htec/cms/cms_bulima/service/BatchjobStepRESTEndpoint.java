@@ -151,7 +151,7 @@ public class BatchjobStepRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBatchjob(@HeaderParam("authorization") String token, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
         BatchjobStep oldBatchjobStep = em.find(BatchjobStep.class, batchjobStep.getId());
         if (oldBatchjobStep != null) {
             if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {

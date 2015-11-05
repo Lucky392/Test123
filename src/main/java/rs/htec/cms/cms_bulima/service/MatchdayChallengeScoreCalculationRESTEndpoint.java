@@ -89,7 +89,7 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
         }
         List<MatchdayChallengeScoreCalculation> scoreCalculation = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (scoreCalculation == null || scoreCalculation.isEmpty()) {
-            throw new DataNotFoundException("There is no batchjobs for this search!");
+            throw new DataNotFoundException("There is no MatchdayChallengeScoreCalculation for this search!");
         }
         String countQuery = query.toString().replaceFirst("b", "count(b)");
         System.out.println(countQuery);

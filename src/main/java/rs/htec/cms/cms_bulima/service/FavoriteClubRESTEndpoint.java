@@ -6,8 +6,6 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +21,6 @@ import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
-import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -49,7 +46,7 @@ public class FavoriteClubRESTEndpoint {
         
         fantasyClubs = em.createNamedQuery("FantasyClub.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (fantasyClubs == null || fantasyClubs.isEmpty()) {
-            throw new DataNotFoundException("There is no news for this search!");
+            throw new DataNotFoundException("There is no FantasyClub for this search!");
         }
         long count = (long) em.createQuery("SELECT count(fc) FROM FantasyClub fc").getSingleResult();
         GetObject go = new GetObject();

@@ -19,6 +19,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.FantasyClubLineUpPlayerPOJO;
 
 /**
  *
@@ -36,9 +37,10 @@ public class FantasyClubLineUpPlayerRESTEndpoint {
      * 
      * Example for JSON response: 
      * 
-     * @param token
-     * @param id
-     * @return
+     * @param token header parameter for checking permission
+     * @param id of LineUpPlayer
+     * @return 200 OK with LineUpPlayer in JSON format
+     * @throws DataNotFoundException if LineUpPlayer with id doesn't exist in DB
      */
     @GET
     @Path("/{id}")
@@ -46,14 +48,15 @@ public class FantasyClubLineUpPlayerRESTEndpoint {
     public Response getFantasyClubLineUpById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        FantasyClubLineUpPlayer fantasyClubLineUpPlayer = null;
+        FantasyClubLineUpPlayerPOJO pojo = null;
         try {
-            fantasyClubLineUpPlayer = (FantasyClubLineUpPlayer) em.createNamedQuery("FantasyClubLineUpPlayer.findById").setParameter("id", id).getSingleResult();   
+            FantasyClubLineUpPlayer fantasyClubLineUpPlayer = (FantasyClubLineUpPlayer) em.createNamedQuery("FantasyClubLineUpPlayer.findById").setParameter("id", id).getSingleResult();   
+            pojo = new FantasyClubLineUpPlayerPOJO(fantasyClubLineUpPlayer);
         } catch (Exception e) {
             throw new DataNotFoundException("Fantasy Club Line Up Player at index " + id + " does not exist..");
         }
         
-        return Response.ok().entity(fantasyClubLineUpPlayer).build();
+        return Response.ok().entity(pojo).build();
     }
     
 }

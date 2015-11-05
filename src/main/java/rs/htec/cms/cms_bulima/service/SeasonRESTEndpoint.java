@@ -17,11 +17,9 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.Player;
 import rs.htec.cms.cms_bulima.domain.Season;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
-import rs.htec.cms.cms_bulima.pojo.PlayerPOJO;
 import rs.htec.cms.cms_bulima.pojo.SeasonPOJO;
 
 /**
@@ -34,6 +32,25 @@ public class SeasonRESTEndpoint {
     @InjectParam
     RestHelperClass helper;
 
+    /**
+     * Returns Season for specified id.
+     * 
+     * { <br/>
+*  "createDate": 1420066800000,<br/>
+*  "idLeague": 1,<br/>
+*  "idSport1Season": "355",<br/>
+*  "idFirstMatchday": null,<br/>
+*  "urlToFirstMatchday": null,<br/>
+*  "urlToLeague": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/league/1",<br/>
+*  "name": "2014/2015",<br/>
+*  "id": 1<br/>
+*}<br/>
+     * 
+     * @param token- header parameter for checking permission
+     * @param id - for Season
+     * @return 200 OK and Season in JSON
+     * @throws DataNotFoundException if there is no Season for id
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)

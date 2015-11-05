@@ -83,8 +83,8 @@ public class PremiumItemRESTEndpoint {
      * "id": 10<br/> } ]
      *
      * @param token is a header parameter for checking permission
-     * @param page number of page at which we search for News
-     * @param limit number of News method returns
+     * @param page number of page at which we search for
+     * @param limit number of Objects method returns
      * @param search word for searching name, shopName
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -148,7 +148,7 @@ public class PremiumItemRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPremiumItemById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         PremiumItem item = null;
@@ -283,7 +283,7 @@ public class PremiumItemRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountPremiumItem(@HeaderParam("authorization") String token){
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumItem ip";

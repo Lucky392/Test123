@@ -34,7 +34,26 @@ public class UserRESTEndpoint {
 
     /**
      * Returns User for specified id.
-     * 
+     *
+     * Example for response:<br/>
+     * {<br/>
+     * "createDate": 1406901623000,<br/>
+     * "payingUser": 1,<br/>
+     * "email": "denis.heil@sport1.de",<br/>
+     * "userhash": "077b49da-0603-4dfd-9188-09d211b7f952",<br/>
+     * "newEmail": null,<br/>
+     * "newEmailActiveTimestamp": null,<br/>
+     * "landingPage": null,<br/>
+     * "socialNetwork": null,<br/>
+     * "premiumStatusActiveTimestamp": null,<br/>
+     * "amountPremiumCurrency": 102,<br/>
+     * "newsletter": 0,<br/>
+     * "confirmed": 0,<br/>
+     * "banned": 0,<br/>
+     * "password": "VPrDHin257E+/LX5C2KCVzlVbbU=",<br/>
+     * "id": 3<br/>
+     * }<br/>
+     *
      * @param token - header parameter for checking permission
      * @param id - of User that should be returned
      * @return User
@@ -54,39 +73,39 @@ public class UserRESTEndpoint {
         }
         return Response.ok().entity(user).build();
     }
-    
+
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUser(@HeaderParam("authorization") String token, User user){
+    public Response updateUser(@HeaderParam("authorization") String token, User user) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         User oldUser = em.find(User.class, user.getId());
-        if (oldUser == null){
+        if (oldUser == null) {
             throw new DataNotFoundException("User at index " + user.getId() + " doesn't exist..");
         }
         user.setCreateDate(oldUser.getCreateDate());
-        if (user.getEmail() == null){
+        if (user.getEmail() == null) {
             user.setEmail(oldUser.getEmail());
         }
-        if (user.getUserhash() == null){
+        if (user.getUserhash() == null) {
             user.setUserhash(oldUser.getUserhash());
         }
-        if (user.getNewEmail() == null){
+        if (user.getNewEmail() == null) {
             user.setNewEmail(oldUser.getNewEmail());
         }
-        if (user.getNewEmailActiveTimestamp() == null){
+        if (user.getNewEmailActiveTimestamp() == null) {
             user.setNewEmailActiveTimestamp(oldUser.getNewEmailActiveTimestamp());
         }
-        if (user.getLandingPage() == null){
+        if (user.getLandingPage() == null) {
             user.setLandingPage(oldUser.getLandingPage());
         }
-        if (user.getSocialNetwork() == null){
+        if (user.getSocialNetwork() == null) {
             user.setSocialNetwork(oldUser.getSocialNetwork());
         }
-        if (user.getPremiumStatusActiveTimestamp() == null){
+        if (user.getPremiumStatusActiveTimestamp() == null) {
             user.setPremiumStatusActiveTimestamp(oldUser.getPremiumStatusActiveTimestamp());
         }
-        if (user.getPassword() == null){
+        if (user.getPassword() == null) {
             user.setPassword(oldUser.getPassword());
         }
         helper.mergeObject(em, user);

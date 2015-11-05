@@ -22,7 +22,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
-import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.domain.UserPremiumItem;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -164,12 +163,12 @@ public class UserPremiumItemRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/news/{id} This method find news with defined id.
-     * Id is retrieved from URL. If News with that index does not exist method
-     * throws exception. Otherwise method remove that News.
+     * API for method: .../rest/userPremiumItem/{id} This method find userPremiumItem with defined id.
+     * Id is retrieved from URL. If UserPremiumItem with that index does not exist method
+     * throws exception. Otherwise method remove that UserPremiumItem.
      *
      * @param token is a header parameter for checking permission
-     * @param id of News that should be deleted.
+     * @param id of UserPremiumItem that should be deleted.
      * @return Response 200 OK
      */
     @DELETE

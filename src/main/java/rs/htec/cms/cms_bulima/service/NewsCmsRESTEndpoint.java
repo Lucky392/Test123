@@ -151,7 +151,6 @@ public class NewsCmsRESTEndpoint {
 //        GenericEntity<List<News>> newsEntity = new GenericEntity<List<News>>(news) {
 //        };
         String countQuery = query.toString().replaceFirst("n", "count(n)");
-        System.out.println(countQuery);
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);

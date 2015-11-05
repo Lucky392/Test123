@@ -106,8 +106,8 @@ public class MatchPlayerStatRESTEndpoint {
      * "id": 523<br/>
      * }<br/>
      * 
-     * @param token is a header parameter for checking permission
-     * @param id of MatchPlayerStat that should be returned
+     * @param token - header parameter for checking permission
+     * @param id - of MatchPlayerStat that should be returned
      * @return MatchPlayerStat
      * @throws DataNotFoundException if MatchPlayerStat for id does not exist
      */

@@ -201,7 +201,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountPrize(@HeaderParam("authorization") String token){
         em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From QuestionOfTheDayPrize ip";

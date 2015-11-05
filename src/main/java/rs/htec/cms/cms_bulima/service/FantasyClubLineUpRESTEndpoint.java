@@ -6,7 +6,6 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
-import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
@@ -21,9 +20,7 @@ import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
-import rs.htec.cms.cms_bulima.domain.Formation;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
-import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.LineUpDifference;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
@@ -35,7 +32,8 @@ import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
  */
 @Path("/lineup")
 public class FantasyClubLineUpRESTEndpoint {
-    
+    // to-do: javaDoc
+      
     @InjectParam
     RestHelperClass helper;
     

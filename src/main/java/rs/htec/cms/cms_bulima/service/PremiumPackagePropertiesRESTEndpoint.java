@@ -268,7 +268,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "errorCode": 400<br/> }
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
-     * "errorMessage": "News at index 15 does not exits",<br/>
+     * "errorMessage": "Premium package properies at index 15 does not exits",<br/>
      * "errorCode": 404<br/> }
      */
     @PUT
@@ -286,7 +286,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
                 throw new InputValidationException("Validation failed");
             }
         } else {
-            throw new DataNotFoundException("Premium action at index" + premiumPackageProperty.getId() + " does not exits");
+            throw new DataNotFoundException("Premium package properies at index" + premiumPackageProperty.getId() + " does not exits");
         }
 
         return Response.ok().build();
@@ -316,7 +316,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token) {
+    public Response getCountPackageProperties(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumPackageProperties ip";

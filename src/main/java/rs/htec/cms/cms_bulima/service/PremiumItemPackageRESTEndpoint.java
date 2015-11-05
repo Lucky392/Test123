@@ -79,8 +79,8 @@ public class PremiumItemPackageRESTEndpoint {
      * "2014-01-01 00:00:00.0" <br/>}<br/>]
      *
      * @param token is a header parameter for checking permission
-     * @param page number of page at which we search for News
-     * @param limit number of News method returns
+     * @param page number of page at which we search for PremiumItemPackage
+     * @param limit number of PremiumItemPackage method returns
      * @param orderingColumn column name for ordering, if you put "-" before
      * column name, that mean DESC ordering.
      * @param search word for searching name and title
@@ -302,7 +302,7 @@ public class PremiumItemPackageRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token) {
+    public Response getCountItemPackage(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumItemPackage ip";

@@ -169,7 +169,7 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/slider/{id} This method find news with defined
+     * API for method: .../rest/slider/{id} This method find slider with defined
      * id. Id is retrieved from URL. If slider content with that index does not
      * exist method throws exception. Otherwise method remove that slider
      * content.
@@ -237,7 +237,7 @@ public class SliderContentCmsRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountSlider(@HeaderParam("authorization") String token){
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From SliderContent ip";

@@ -64,8 +64,8 @@ public class PremiumPackageRESTEndpoint {
      * "Premium-Account - Halbserie",<br/> "id": 9<br/> } ]
      *
      * @param token is a header parameter for checking permission
-     * @param page number of page at which we search for News
-     * @param limit number of News method returns
+     * @param page number of page at which we search for Package
+     * @param limit number of Package method returns
      * @param search word for searching name, title and premiumStatusDuration
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -233,7 +233,7 @@ public class PremiumPackageRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token){
+    public Response getCountPackage(@HeaderParam("authorization") String token){
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumPackage ip";

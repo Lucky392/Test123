@@ -86,6 +86,15 @@ public class FantasyClubRESTEndpoint {
         }
     }
     
+    /**
+     * Updates FantasyClub.
+     * 
+     * @param token header parameter for checking permission
+     * @param fantasyClub FantasyClub with changes that should be made
+     * @return 200 OK
+     * @throws InputValidationException if values in FantasyClub are invalid
+     * @throws DataNotFoundException if id of FantasyClub doesn't exist in DB
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateFantasyClub(@HeaderParam("authorization") String token, FantasyClub fantasyClub) {

@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.pojo.LoginHistoryPOJO;
  */
 @Path("loginHistory")
 public class LoginHistoryRESTEndpoint {
-
+// methods for this Enpoint shouldn't be used
     @InjectParam
     RestHelperClass helper;
     Date date = new Date(1439762400000l); // treba podesiti trenutni datum

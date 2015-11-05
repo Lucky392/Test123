@@ -156,7 +156,6 @@ public class DashboardRESTEndpoint {
     private HashMap getDashboardFormDB(String day) {
         EntityManager em = helper.getEntityManager();
         String date2 = date.toString();
-        System.out.println("Date" + date);
         switch (day) { // to-do: make this simpler
             case "yesterday":
                 date = new Date(1439762400000l - 86400l);
@@ -168,11 +167,9 @@ public class DashboardRESTEndpoint {
             case "lastMonth":
                 date2 = date2.substring(0, 7);
                 String month = date2.substring(date2.lastIndexOf('-') + 1);
-                System.out.println("mo " + month);
                 String monthBefore = (Integer.parseInt(month) - 1) + "";
                 monthBefore = monthBefore.length() == 1 ? "-0" + monthBefore : "-" + monthBefore;
                 date2 = date2.replaceFirst(("-" + month), monthBefore);
-                System.out.println(date2);
                 break;
         }
 
