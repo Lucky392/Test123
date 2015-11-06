@@ -41,4 +41,8 @@ public class Util {
     public String getUrl() {
         return properties.getProperty("base_url");
     }
+    
+    public String getAssetsUrl(){
+        return properties.getProperty("assets_url");
+    }
 }
