@@ -33,6 +33,7 @@ public class BugReportPOJO {
     private String clubName;
     private BigInteger userId;
     private String urlToUser;
+    private String userEmail;
 
     public BugReportPOJO(BugReport bugReport) {
 //        Properties properties = new Properties();
@@ -55,6 +56,9 @@ public class BugReportPOJO {
         this.userId = bugReport.getUserId();
         if (bugReport.getUserId() != null) {
             this.urlToUser = Util.getInstance().getUrl() + "rest/user/" + bugReport.getUserId();
+        }
+        if (bugReport.getUser() != null){
+            this.userEmail = bugReport.getUser().getEmail();
         }
 
     }
@@ -223,5 +227,13 @@ public class BugReportPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 }

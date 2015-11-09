@@ -42,6 +42,42 @@ public class FantasyClubPOJO {
     private Long captainFantasyPlayerID;
     private Long fantasyManagerID;
     private Long fantasyLeagueID;
+    private String formationName;
+    private String captianName;
+    private String fantasyManagerName;
+    private String fantasyLeagueName;   
+
+    public String getFormationName() {
+        return formationName;
+    }
+
+    public void setFormationName(String formationName) {
+        this.formationName = formationName;
+    }
+
+    public String getCaptianName() {
+        return captianName;
+    }
+
+    public void setCaptianName(String captianName) {
+        this.captianName = captianName;
+    }
+
+    public String getFantasyManagerName() {
+        return fantasyManagerName;
+    }
+
+    public void setFantasyManagerName(String fantasyManagerName) {
+        this.fantasyManagerName = fantasyManagerName;
+    }
+
+    public String getFantasyLeagueName() {
+        return fantasyLeagueName;
+    }
+
+    public void setFantasyLeagueName(String fantasyLeagueName) {
+        this.fantasyLeagueName = fantasyLeagueName;
+    }
 
     public FantasyClubPOJO(FantasyClub club) {
         this.id = club.getId();
@@ -65,6 +101,7 @@ public class FantasyClubPOJO {
         this.isLineUpChangedByCoTrainer = club.getIsLineUpChangedByCoTrainer();
         if (club.getIdActiveFormation() != null) {
             this.formationID = club.getIdActiveFormation().getId();
+            this.formationName = club.getIdActiveFormation().getName();
         }
         if (club.getIdFantasyClubLogo() != null) {
             this.fantasyClubLogoID = club.getIdFantasyClubLogo().getId();
@@ -74,12 +111,15 @@ public class FantasyClubPOJO {
         }
         if (club.getIdCaptain() != null) {
             this.captainFantasyPlayerID = club.getIdCaptain().getId();
+            this.captianName = club.getIdCaptain().getIdLeaguePlayer().getIdPlayer().getFirstName() + " " + club.getIdCaptain().getIdLeaguePlayer().getIdPlayer().getLastName();
         }
         if (club.getIdFantasyManager() != null) {
             this.fantasyManagerID = club.getIdFantasyManager().getId();
+            this.fantasyManagerName = club.getIdFantasyManager().getFirstname() + " " + club.getIdFantasyManager().getLastname();
         }
         if (club.getIdFantasyLeague() != null) {
             this.fantasyLeagueID = club.getIdFantasyLeague().getId();
+            this.fantasyLeagueName = club.getIdFantasyLeague().getName();
         }
     }
 

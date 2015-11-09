@@ -5,11 +5,8 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
-import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
 
 /**
@@ -29,7 +26,9 @@ public class FantasyManagerPOJO {
     private String profilePhotoUrl;
     private long idFavClub;
     private long idUser;
-    private List<Long> fantasyClubList;
+    private String favClubName;
+    private String userEmail;
+//    private List<Long> fantasyClubList;
 
     public FantasyManagerPOJO(FantasyManager fantasyManager) {
         id = fantasyManager.getId();
@@ -40,12 +39,18 @@ public class FantasyManagerPOJO {
         updateTimestamp = fantasyManager.getUpdateTimestamp();
         createDate = fantasyManager.getCreateDate();
         profilePhotoUrl = fantasyManager.getProfilePhotoUrl();
-        idFavClub = fantasyManager.getIdFavClub()==null?0:fantasyManager.getIdFavClub().getId();
-        idUser = fantasyManager.getIdUser().getId();
-        fantasyClubList = new ArrayList<>();
-        for (FantasyClub fc : fantasyManager.getFantasyClubList()) {
-            fantasyClubList.add(fc.getId());
+        if (fantasyManager.getIdFavClub() != null) {
+            idFavClub = fantasyManager.getIdFavClub().getId();
+            favClubName = fantasyManager.getIdFavClub().getMediumName();
         }
+        if (fantasyManager.getIdUser() != null) {
+            idUser = fantasyManager.getIdUser().getId();
+            userEmail = fantasyManager.getIdUser().getEmail();
+        }
+//        fantasyClubList = new ArrayList<>();
+//        for (FantasyClub fc : fantasyManager.getFantasyClubList()) {
+//            fantasyClubList.add(fc.getId());
+//        }
     }
 
     public Long getId() {
@@ -128,14 +133,28 @@ public class FantasyManagerPOJO {
         this.idUser = idUser;
     }
 
-    public List<Long> getFantasyClubList() {
-        return fantasyClubList;
+//    public List<Long> getFantasyClubList() {
+//        return fantasyClubList;
+//    }
+//
+//    public void setFantasyClubList(List<Long> fantasyClubList) {
+//        this.fantasyClubList = fantasyClubList;
+//    }
+//    
+
+    public String getFavClubName() {
+        return favClubName;
     }
 
-    public void setFantasyClubList(List<Long> fantasyClubList) {
-        this.fantasyClubList = fantasyClubList;
+    public void setFavClubName(String favClubName) {
+        this.favClubName = favClubName;
     }
-    
-    
 
+    public String getUserEmail() {
+        return userEmail;
+    }
+
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
 }

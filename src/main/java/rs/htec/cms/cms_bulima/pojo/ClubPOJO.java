@@ -14,7 +14,7 @@ import rs.htec.cms.cms_bulima.helper.Util;
  * @author marko
  */
 public class ClubPOJO {
-    
+
     private long id;
     private String idSport1Team;
     private String mediumName;
@@ -23,8 +23,9 @@ public class ClubPOJO {
     private Date createDate;
     private byte[] logo;
     private String leagueUrl;
-    
-    public ClubPOJO(Club club){
+    private String leagueName;
+
+    public ClubPOJO(Club club) {
         this.id = club.getId();
         this.idSport1Team = club.getIdSport1Team();
         this.mediumName = club.getMediumName();
@@ -32,7 +33,12 @@ public class ClubPOJO {
         this.logoUrl = club.getLogoUrl();
         this.createDate = club.getCreateDate();
         this.logo = club.getLogo();
-        this.leagueUrl = Util.getInstance().getUrl() + "rest/league/" + club.getIdLeague().getId();
+        if (club.getIdLeague() != null) {
+            this.leagueUrl = Util.getInstance().getUrl() + "rest/league/" + club.getIdLeague().getId();
+            if (club.getIdLeague().getIdCompetition() != null){
+                this.leagueName = club.getIdLeague().getIdCompetition().getName();
+            }
+        }
     }
 
     public long getId() {
@@ -98,6 +104,13 @@ public class ClubPOJO {
     public void setLogo(byte[] logo) {
         this.logo = logo;
     }
-    
-    
+
+    public String getLeagueName() {
+        return leagueName;
+    }
+
+    public void setLeagueName(String leagueName) {
+        this.leagueName = leagueName;
+    }
+
 }

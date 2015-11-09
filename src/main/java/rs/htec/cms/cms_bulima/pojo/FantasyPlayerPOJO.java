@@ -24,6 +24,9 @@ public class FantasyPlayerPOJO {
     private String urlToPlaterSlot;
     private String urlToFantasyClub;
     private String urlToLeaguePlayer;
+    private String fantasyClubName;
+    private String leaguePlayerName;
+    private String playerSlotName;
 
     public FantasyPlayerPOJO(FantasyPlayer player) {
         this.id = player.getId();
@@ -34,12 +37,15 @@ public class FantasyPlayerPOJO {
         this.idLeaguePlayer = player.getIdLeaguePlayer().getId();
         if (player.getIdFantasyClub() != null) {
             this.urlToFantasyClub = Util.getInstance().getUrl() + "rest/fantasyClub/" + player.getIdFantasyClub().getId();
+            this.fantasyClubName = player.getIdFantasyClub().getName();
         }
         if (player.getIdLeaguePlayer() != null) {
             this.urlToLeaguePlayer = Util.getInstance().getUrl() + "rest/fantasyLeaguePlayer/" + player.getIdLeaguePlayer().getId();
+            this.leaguePlayerName = player.getIdLeaguePlayer().getIdPlayer().getFirstName() + " " + player.getIdLeaguePlayer().getIdPlayer().getLastName();
         }
         if (player.getIdPlayerSlot() != null) {
             this.urlToPlaterSlot = Util.getInstance().getUrl() + "rest/playerSlot/" + player.getIdPlayerSlot().getId();
+            this.playerSlotName = player.getIdPlayerSlot().getName();
         }
     }
 
@@ -113,5 +119,29 @@ public class FantasyPlayerPOJO {
 
     public void setIdLeaguePlayer(Long idLeaguePlayer) {
         this.idLeaguePlayer = idLeaguePlayer;
+    }
+
+    public String getFantasyClubName() {
+        return fantasyClubName;
+    }
+
+    public void setFantasyClubName(String fantasyClubName) {
+        this.fantasyClubName = fantasyClubName;
+    }
+
+    public String getLeaguePlayerName() {
+        return leaguePlayerName;
+    }
+
+    public void setLeaguePlayerName(String leaguePlayerName) {
+        this.leaguePlayerName = leaguePlayerName;
+    }
+
+    public String getPlayerSlotName() {
+        return playerSlotName;
+    }
+
+    public void setPlayerSlotName(String playerSlotName) {
+        this.playerSlotName = playerSlotName;
     }
 }

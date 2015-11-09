@@ -14,19 +14,23 @@ import rs.htec.cms.cms_bulima.helper.Util;
  * @author marko
  */
 public class LeaguePOJO {
-    
+
     private long id;
     private String idSport1League;
     private String sport;
     private Date createDate;
     private String competitionUrl;
-    
-    public LeaguePOJO(League league){
+    private String competitionName;
+
+    public LeaguePOJO(League league) {
         this.id = league.getId();
         this.idSport1League = league.getIdSport1League();
         this.sport = league.getSport();
         this.createDate = league.getCreateDate();
-        this.competitionUrl = Util.getInstance().getUrl() + "rest/competition/" + league.getIdCompetition().getId();
+        if (league.getIdCompetition() != null) {
+            this.competitionUrl = Util.getInstance().getUrl() + "rest/competition/" + league.getIdCompetition().getId();
+            this.competitionName = league.getIdCompetition().getName();
+        }
     }
 
     public long getId() {
@@ -68,6 +72,13 @@ public class LeaguePOJO {
     public void setCompetitionUrl(String competitionUrl) {
         this.competitionUrl = competitionUrl;
     }
-    
-    
+
+    public String getCompetitionName() {
+        return competitionName;
+    }
+
+    public void setCompetitionName(String competitionName) {
+        this.competitionName = competitionName;
+    }
+
 }
