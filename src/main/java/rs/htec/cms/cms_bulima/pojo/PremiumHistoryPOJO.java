@@ -28,6 +28,12 @@ public class PremiumHistoryPOJO {
     private Long idUser;
     private Long idPremiumAction;
     private Long idPremiumItem;
+    private String reward;
+    private String fantasyManager;
+    private String fantasyClub;
+    private String user;
+    private String premiumAction;
+    private String premiumItem;
 
     public PremiumHistoryPOJO(PremiumHistory premiumHistory) {
         this.id = premiumHistory.getId();
@@ -38,21 +44,27 @@ public class PremiumHistoryPOJO {
         this.updatedPremiumCurrency = premiumHistory.getUpdatedPremiumCurrency();
         if (premiumHistory.getIdReward() != null) {
             this.idReward = premiumHistory.getIdReward().getId();
+            reward = premiumHistory.getIdReward().getName();
         }
         if (premiumHistory.getIdFantasyManager() != null) {
             this.idFantasyManager = premiumHistory.getIdFantasyManager().getId();
+            fantasyManager = premiumHistory.getIdFantasyManager().getUsername();
         }
         if (premiumHistory.getIdFantasyClub() != null) {
             this.idFantasyClub = premiumHistory.getIdFantasyClub().getId();
+            fantasyClub = premiumHistory.getIdFantasyClub().getName();
         }
         if (premiumHistory.getIdUser() != null) {
             this.idUser = premiumHistory.getIdUser().getId();
+            user = premiumHistory.getIdUser().getEmail();
         }
         if (premiumHistory.getIdPremiumAction() != null) {
             this.idPremiumAction = premiumHistory.getIdPremiumAction().getId();
+            premiumAction = premiumHistory.getIdPremiumAction().getName();
         }
         if (premiumHistory.getIdPremiumItem() != null) {
             this.idPremiumItem = premiumHistory.getIdPremiumItem().getId();
+            premiumItem = premiumHistory.getIdPremiumItem().getName();
         }
     }
 
@@ -160,6 +172,54 @@ public class PremiumHistoryPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getFantasyManager() {
+        return fantasyManager;
+    }
+
+    public void setFantasyManager(String fantasyManager) {
+        this.fantasyManager = fantasyManager;
+    }
+
+    public String getFantasyClub() {
+        return fantasyClub;
+    }
+
+    public void setFantasyClub(String fantasyClub) {
+        this.fantasyClub = fantasyClub;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
+    public String getPremiumAction() {
+        return premiumAction;
+    }
+
+    public void setPremiumAction(String premiumAction) {
+        this.premiumAction = premiumAction;
+    }
+
+    public String getPremiumItem() {
+        return premiumItem;
+    }
+
+    public void setPremiumItem(String premiumItem) {
+        this.premiumItem = premiumItem;
+    }
+
+    public String getReward() {
+        return reward;
+    }
+
+    public void setReward(String reward) {
+        this.reward = reward;
     }
 
 }

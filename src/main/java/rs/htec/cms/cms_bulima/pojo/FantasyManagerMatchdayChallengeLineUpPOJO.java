@@ -18,17 +18,23 @@ import rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUpPlayer
 public class FantasyManagerMatchdayChallengeLineUpPOJO {
 
     long id;
-    String ID_FANTASY_MANAGER;
-    String ID_MATCHDAY_CHALLENGE;
-    String formation;
-    Date createDate;
+    private Long IdFantasyManager;
+    private Long IdMatchdayChallenge;
+    private String fantasyManager;
+    private String matchdayChallenge;
+    private String formation;
+    private Date createDate;
 
     public FantasyManagerMatchdayChallengeLineUpPOJO(FantasyManagerMatchdayChallengeLineUp fantasyManagerMatchdayChallengeLineUp) {
         this.id = fantasyManagerMatchdayChallengeLineUp.getId();
-        //TODO:
-        //ADD URL FOR FANTASY MANAGER AND MATCHDAY
-        this.ID_FANTASY_MANAGER = "" + fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager().getId();
-        this.ID_MATCHDAY_CHALLENGE = "" + fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge().getId();
+        if (fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager() != null) {
+            this.IdFantasyManager = fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager().getId();
+            fantasyManager = fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager().getUsername();
+        }
+        if (fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge() != null) {
+            this.IdMatchdayChallenge = fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge().getId();
+            matchdayChallenge = fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge().getMatchdayChallengeTitle();
+        }
         this.formation = fantasyManagerMatchdayChallengeLineUp.getFormation();
         this.createDate = fantasyManagerMatchdayChallengeLineUp.getCreateDate();
     }
@@ -45,22 +51,6 @@ public class FantasyManagerMatchdayChallengeLineUpPOJO {
         this.id = id;
     }
 
-    public String getID_FANTASY_MANAGER() {
-        return ID_FANTASY_MANAGER;
-    }
-
-    public void setID_FANTASY_MANAGER(String ID_FANTASY_MANAGER) {
-        this.ID_FANTASY_MANAGER = ID_FANTASY_MANAGER;
-    }
-
-    public String getID_MATCHDAY_CHALLENGE() {
-        return ID_MATCHDAY_CHALLENGE;
-    }
-
-    public void setID_MATCHDAY_CHALLENGE(String ID_MATCHDAY_CHALLENGE) {
-        this.ID_MATCHDAY_CHALLENGE = ID_MATCHDAY_CHALLENGE;
-    }
-
     public String getFormation() {
         return formation;
     }
@@ -75,6 +65,38 @@ public class FantasyManagerMatchdayChallengeLineUpPOJO {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public Long getIdFantasyManager() {
+        return IdFantasyManager;
+    }
+
+    public void setIdFantasyManager(Long IdFantasyManager) {
+        this.IdFantasyManager = IdFantasyManager;
+    }
+
+    public Long getIdMatchdayChallenge() {
+        return IdMatchdayChallenge;
+    }
+
+    public void setIdMatchdayChallenge(Long IdMatchdayChallenge) {
+        this.IdMatchdayChallenge = IdMatchdayChallenge;
+    }
+
+    public String getFantasyManager() {
+        return fantasyManager;
+    }
+
+    public void setFantasyManager(String fantasyManager) {
+        this.fantasyManager = fantasyManager;
+    }
+
+    public String getMatchdayChallenge() {
+        return matchdayChallenge;
+    }
+
+    public void setMatchdayChallenge(String matchdayChallenge) {
+        this.matchdayChallenge = matchdayChallenge;
     }
     
     

@@ -47,15 +47,20 @@ public class PlayerPOJO {
     private String fullname;
 //    private List<FantasyLeaguePlayer> fantasyLeaguePlayerList;
     private Long idPlayerPosition;
-    private String urlToPlayerPosition;
     private Long idNation;
-    private String urlToNation;
     private Long idSeasonCurrent;
-    private String urlToSeasonCurrent;
     private Long idBlockStartMatchday;
-    private String urlToBlockStartMatchday;
     private Long idClub;
+    private String urlToPlayerPosition;
+    private String urlToNation;
+    private String urlToSeasonCurrent;
+    private String urlToBlockStartMatchday;
     private String urlToClub;
+    private String playerPosition;
+    private String nation;
+    private String seasonCurrent;
+    private String blockStartMatchday;
+    private String club;
 
     public PlayerPOJO(Player player) {
         this.id = player.getId();
@@ -91,24 +96,30 @@ public class PlayerPOJO {
         if (player.getIdPlayerPosition() != null) {
             this.idPlayerPosition = player.getIdPlayerPosition().getId();
             this.urlToPlayerPosition = Util.getInstance().getUrl() + "rest/playerPosition/" + player.getIdPlayerPosition().getId();
+            playerPosition = player.getIdPlayerPosition().getName();
         }
         if (player.getIdNation() != null) {
             this.idNation = player.getIdNation().getId();
             this.urlToNation = Util.getInstance().getUrl() + "rest/nation/" + player.getIdNation().getId();
+            nation = player.getIdNation().getName();
         }
         if (player.getIdSeasonCurrent() != null) {
             this.idSeasonCurrent = player.getIdSeasonCurrent().getId();
             this.urlToSeasonCurrent = Util.getInstance().getUrl() + "rest/season/" + player.getIdSeasonCurrent().getId();
+            seasonCurrent = player.getIdSeasonCurrent().getName();
         }
         if (player.getIdBlockStartMatchday() != null) {
             this.idBlockStartMatchday = player.getIdBlockStartMatchday().getId();
             this.urlToBlockStartMatchday = Util.getInstance().getUrl() + "rest/matchday/" + player.getIdBlockStartMatchday().getId();
+            blockStartMatchday = player.getIdBlockStartMatchday().getIdSport1Matchday();
         }
         if (player.getIdClub() != null) {
             this.idClub = player.getIdClub().getId();
             this.urlToClub = Util.getInstance().getUrl() + "rest/club/" + player.getIdClub().getId();
+            club = player.getIdClub().getMediumName();
         }
     }
+    
 
     public Long getId() {
         return id;
@@ -428,6 +439,46 @@ public class PlayerPOJO {
 
     public void setUrlToClub(String urlToClub) {
         this.urlToClub = urlToClub;
+    }
+
+    public String getPlayerPosition() {
+        return playerPosition;
+    }
+
+    public void setPlayerPosition(String playerPosition) {
+        this.playerPosition = playerPosition;
+    }
+
+    public String getNation() {
+        return nation;
+    }
+
+    public void setNation(String nation) {
+        this.nation = nation;
+    }
+
+    public String getSeasonCurrent() {
+        return seasonCurrent;
+    }
+
+    public void setSeasonCurrent(String seasonCurrent) {
+        this.seasonCurrent = seasonCurrent;
+    }
+
+    public String getBlockStartMatchday() {
+        return blockStartMatchday;
+    }
+
+    public void setBlockStartMatchday(String blockStartMatchday) {
+        this.blockStartMatchday = blockStartMatchday;
+    }
+
+    public String getClub() {
+        return club;
+    }
+
+    public void setClub(String club) {
+        this.club = club;
     }
 
     

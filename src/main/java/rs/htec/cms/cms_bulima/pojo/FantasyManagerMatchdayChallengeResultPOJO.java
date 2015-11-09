@@ -20,6 +20,7 @@ public class FantasyManagerMatchdayChallengeResultPOJO {
     private Date updateAt;
     private Date createDate;
     private Long idMatchdayChallengeLineUp;
+    private String matchdayChallengeLineUp;
 
     public FantasyManagerMatchdayChallengeResultPOJO(FantasyManagerMatchdayChallengeResult fantasyManagerMatchdayChallengeResult) {
         id = fantasyManagerMatchdayChallengeResult.getId();
@@ -27,7 +28,10 @@ public class FantasyManagerMatchdayChallengeResultPOJO {
         isSucceed = fantasyManagerMatchdayChallengeResult.getIsSucceed();
         updateAt = fantasyManagerMatchdayChallengeResult.getUpdateAt();
         createDate = fantasyManagerMatchdayChallengeResult.getCreateDate();
-        idMatchdayChallengeLineUp = fantasyManagerMatchdayChallengeResult.getIdMatchdayChallengeLineUp().getId();
+        if (fantasyManagerMatchdayChallengeResult.getIdMatchdayChallengeLineUp() != null) {
+            idMatchdayChallengeLineUp = fantasyManagerMatchdayChallengeResult.getIdMatchdayChallengeLineUp().getId();
+            matchdayChallengeLineUp = fantasyManagerMatchdayChallengeResult.getIdMatchdayChallengeLineUp().getFormation();
+        }
     }
 
     public Long getId() {
@@ -76,6 +80,14 @@ public class FantasyManagerMatchdayChallengeResultPOJO {
 
     public void setIdMatchdayChallengeLineUp(Long idMatchdayChallengeLineUp) {
         this.idMatchdayChallengeLineUp = idMatchdayChallengeLineUp;
+    }
+
+    public String getMatchdayChallengeLineUp() {
+        return matchdayChallengeLineUp;
+    }
+
+    public void setMatchdayChallengeLineUp(String matchdayChallengeLineUp) {
+        this.matchdayChallengeLineUp = matchdayChallengeLineUp;
     }
     
 }

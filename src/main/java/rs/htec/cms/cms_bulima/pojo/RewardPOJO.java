@@ -26,6 +26,7 @@ public class RewardPOJO {
     private Date createDate;
     private String imageUrl;
     private Long idPremiumItem;
+    private String premiumItemName;
     private String urlToPremiumItem;
 
     public RewardPOJO(Reward reward) {
@@ -42,6 +43,7 @@ public class RewardPOJO {
         this.idPremiumItem = reward.getIdPremiumItem().getId();
         if (reward.getIdPremiumItem() != null) {
             this.urlToPremiumItem = Util.getInstance().getUrl() + "rest/items/" + reward.getIdPremiumItem().getId();
+            premiumItemName = reward.getIdPremiumItem().getName();
         }
     }
 
@@ -139,6 +141,14 @@ public class RewardPOJO {
 
     public void setUrlToPremiumItem(String urlToPremiumItem) {
         this.urlToPremiumItem = urlToPremiumItem;
+    }
+
+    public String getPremiumItemName() {
+        return premiumItemName;
+    }
+
+    public void setPremiumItemName(String premiumItemName) {
+        this.premiumItemName = premiumItemName;
     }
     
 }

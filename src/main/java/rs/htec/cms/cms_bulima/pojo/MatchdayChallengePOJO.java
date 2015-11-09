@@ -13,7 +13,7 @@ import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
  * @author lazar
  */
 public class MatchdayChallengePOJO {
-    
+
     private Long id;
     private String matchdayChallengeTitle;
     private String matchdayChallengeDescription;
@@ -28,6 +28,8 @@ public class MatchdayChallengePOJO {
     private String squad;
     private Long idReward;
     private long idMatchday;
+    String reward;
+    String matchday;
 
     public MatchdayChallengePOJO(MatchdayChallenge matchdayChallenge) {
         id = matchdayChallenge.getId();
@@ -42,8 +44,12 @@ public class MatchdayChallengePOJO {
         target = matchdayChallenge.getTarget();
         subheadline = matchdayChallenge.getSubheadline();
         squad = matchdayChallenge.getSquad();
-        idReward = matchdayChallenge.getIdReward().getId();
+        if (matchdayChallenge.getIdReward() != null) {
+            idReward = matchdayChallenge.getIdReward().getId();
+            reward = matchdayChallenge.getIdReward().getName();
+        }
         idMatchday = matchdayChallenge.getIdMatchday().getId();
+        matchday = matchdayChallenge.getIdMatchday().getIdSport1Matchday();
     }
 
     public Long getId() {
@@ -157,5 +163,5 @@ public class MatchdayChallengePOJO {
     public void setIdMatchday(long idMatchday) {
         this.idMatchday = idMatchday;
     }
-    
+
 }

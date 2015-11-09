@@ -20,6 +20,7 @@ public class LoginHistoryPOJO {
     private String userIP;
     private String platform;
     private Long idUser;
+    private String user;
 
     public LoginHistoryPOJO(LoginHistory lh) {
         this.id = lh.getId();
@@ -29,6 +30,7 @@ public class LoginHistoryPOJO {
         this.platform = lh.getPlatform();
         if (lh.getIdUser() != null){
             this.idUser = lh.getIdUser().getId();
+            user = lh.getIdUser().getEmail();
         }
     }
 
@@ -78,6 +80,14 @@ public class LoginHistoryPOJO {
 
     public void setIdUser(Long idUser) {
         this.idUser = idUser;
+    }
+
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
     }
     
     

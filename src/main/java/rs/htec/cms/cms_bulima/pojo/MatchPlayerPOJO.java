@@ -27,8 +27,10 @@ public class MatchPlayerPOJO {
     private Short extra2;
     private Date createDate;
     private Long idMatch;
-    private String urlToMatch;
     private Long idPlayer;
+    private String match;
+    private String player;
+    private String urlToMatch;
     private String urlToPlayer;
 
     public MatchPlayerPOJO(MatchPlayer player) {
@@ -42,8 +44,10 @@ public class MatchPlayerPOJO {
         this.extra2 = player.getExtra2();
         this.createDate = player.getCreateDate();
         this.idMatch = player.getIdMatch().getId();
+        match = player.getIdMatch().getIdSport1Match();
         this.urlToMatch = Util.getInstance().getUrl() + "rest/match/" + player.getIdMatch().getId();
         this.idPlayer = player.getIdPlayer().getId();
+        this.player = player.getIdPlayer().getFullname();
         this.urlToPlayer = Util.getInstance().getUrl() + "rest/player/" + player.getIdPlayer().getId();
 
     }
@@ -160,5 +164,21 @@ public class MatchPlayerPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getMatch() {
+        return match;
+    }
+
+    public void setMatch(String match) {
+        this.match = match;
+    }
+
+    public String getPlayer() {
+        return player;
+    }
+
+    public void setPlayer(String player) {
+        this.player = player;
     }
 }

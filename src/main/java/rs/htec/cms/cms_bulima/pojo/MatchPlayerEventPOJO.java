@@ -23,6 +23,7 @@ public class MatchPlayerEventPOJO {
     private Date updateAt;
     private Date createDate;
     private String matchPlayerUrl;
+    private String matchPlayer;
     
     public MatchPlayerEventPOJO(MatchPlayerEvent mpe){
         this.id = mpe.getId();
@@ -30,6 +31,7 @@ public class MatchPlayerEventPOJO {
         this.eventTimeMinute = mpe.getEventTimeMinute();
         this.updateAt = mpe.getUpdateAt();
         this.createDate = mpe.getCreateDate();
+        matchPlayer = mpe.getIdMatchPlayer().getIdPlayer().getFullname();
         this.matchPlayerUrl = Util.getInstance().getUrl() + "rest/matchPlayer/" + mpe.getIdMatchPlayer().getId();
     }
 
@@ -89,5 +91,13 @@ public class MatchPlayerEventPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getMatchPlayer() {
+        return matchPlayer;
+    }
+
+    public void setMatchPlayer(String matchPlayer) {
+        this.matchPlayer = matchPlayer;
     }
 }

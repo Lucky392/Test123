@@ -20,8 +20,10 @@ public class SeasonPOJO {
     private String name;
     private Date createDate;
     private Long idFirstMatchday;
+    private String firstMatchdayName;
     private String urlToFirstMatchday;
     private Long idLeague;
+    private String leagueName;
     private String urlToLeague;
 
     public SeasonPOJO(Season season) {
@@ -31,10 +33,12 @@ public class SeasonPOJO {
         this.createDate = season.getCreateDate();
         if (season.getIdFirstMatchday() != null) {
             this.idFirstMatchday = season.getIdFirstMatchday().getId();
+            firstMatchdayName = season.getIdFirstMatchday().getStartDate().getYear() + "/" + season.getIdFirstMatchday().getEndDate().getYear();
             this.urlToFirstMatchday = Util.getInstance().getUrl() + "rest/matchday/" + season.getIdFirstMatchday().getId();
         }
         if (season.getIdLeague() != null) {
             this.idLeague = season.getIdLeague().getId();
+            leagueName = season.getIdLeague().getIdSport1League();
             this.urlToLeague = Util.getInstance().getUrl() + "rest/league/" + season.getIdLeague().getId();
         }
     }
@@ -101,6 +105,22 @@ public class SeasonPOJO {
 
     public void setUrlToLeague(String urlToLeague) {
         this.urlToLeague = urlToLeague;
+    }
+
+    public String getFirstMatchdayName() {
+        return firstMatchdayName;
+    }
+
+    public void setFirstMatchdayName(String firstMatchdayName) {
+        this.firstMatchdayName = firstMatchdayName;
+    }
+
+    public String getLeagueName() {
+        return leagueName;
+    }
+
+    public void setLeagueName(String leagueName) {
+        this.leagueName = leagueName;
     }
 
 }

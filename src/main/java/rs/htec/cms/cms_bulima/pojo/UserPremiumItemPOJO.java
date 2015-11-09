@@ -23,7 +23,25 @@ public class UserPremiumItemPOJO {
     private Date updateTimestamp;
     private Date createDate;
     private Long idUser;
+    private String userName;
     private Long idPremiumItem;
+    private String premiumItemName;
+
+    public String getPremiumItemName() {
+        return premiumItemName;
+    }
+
+    public void setPremiumItemName(String premiumItemName) {
+        this.premiumItemName = premiumItemName;
+    }
+
+    public String getName() {
+        return userName;
+    }
+
+    public void setName(String name) {
+        this.userName = name;
+    }
 
     public UserPremiumItemPOJO(UserPremiumItem item) {
         this.id = item.getId();
@@ -34,9 +52,11 @@ public class UserPremiumItemPOJO {
         this.createDate = item.getCreateDate();
         if (item.getIdUser() != null) {
             this.idUser = item.getIdUser().getId();
+            userName = item.getIdUser().getEmail();
         }
         if (item.getIdPremiumItem() != null) {
             this.idPremiumItem = item.getIdPremiumItem().getId();
+            premiumItemName = item.getIdPremiumItem().getName();
         }
     }
 

@@ -22,21 +22,21 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerPOJO {
     private Date createDate;
     private long idMatchdayChallengePlayer;
     private long idMatchdayChallengeLineUp;
-
-    public FantasyManagerMatchdayChallengeLineUpPlayerPOJO(Long id, Integer slot, Date createDate, long idMatchdayChallengePlayer, long idMatchdayChallengeLineUp) {
-        this.id = id;
-        this.slot = slot;
-        this.createDate = createDate;
-        this.idMatchdayChallengePlayer = idMatchdayChallengePlayer;
-        this.idMatchdayChallengeLineUp = idMatchdayChallengeLineUp;
-    }
+    private String matchdayChallengePlayer;
+    private String matchdayChallengeLineUp;
 
     public FantasyManagerMatchdayChallengeLineUpPlayerPOJO(FantasyManagerMatchdayChallengeLineUpPlayer player) {
         this.id = player.getId();
         this.slot = player.getSlot();
         this.createDate = player.getCreateDate();
-        this.idMatchdayChallengePlayer = player.getIdMatchdayChallengePlayer().getId();
-        this.idMatchdayChallengeLineUp = player.getIdMatchdayChallengeLineUp().getId();
+        if (player.getIdMatchdayChallengeLineUp() != null) {
+            this.idMatchdayChallengeLineUp = player.getIdMatchdayChallengeLineUp().getId();
+            matchdayChallengeLineUp = player.getIdMatchdayChallengeLineUp().getFormation();
+        }
+        if (player.getIdMatchdayChallengePlayer() != null) {
+            this.idMatchdayChallengePlayer = player.getIdMatchdayChallengePlayer().getId();
+            matchdayChallengePlayer = player.getIdMatchdayChallengePlayer().getIdPlayer().getFullname();
+        }
     }
 
     public Long getId() {
@@ -87,6 +87,22 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getMatchdayChallengePlayer() {
+        return matchdayChallengePlayer;
+    }
+
+    public void setMatchdayChallengePlayer(String matchdayChallengePlayer) {
+        this.matchdayChallengePlayer = matchdayChallengePlayer;
+    }
+
+    public String getMatchdayChallengeLineUp() {
+        return matchdayChallengeLineUp;
+    }
+
+    public void setMatchdayChallengeLineUp(String matchdayChallengeLineUp) {
+        this.matchdayChallengeLineUp = matchdayChallengeLineUp;
     }
     
 }

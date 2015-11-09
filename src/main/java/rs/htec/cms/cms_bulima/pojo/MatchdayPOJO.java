@@ -29,6 +29,7 @@ public class MatchdayPOJO {
     private Short isCalculated;
     private Short isCompleted;
     private Long idSeason;
+    private String season;
     private String urlToSeason;
 
     public MatchdayPOJO(Matchday matchdayDb) {
@@ -42,6 +43,7 @@ public class MatchdayPOJO {
         this.isCalculated = matchdayDb.getIsCalculated();
         this.isCompleted = matchdayDb.getIsCompleted();
         this.idSeason = matchdayDb.getIdSeason().getId();
+        season = matchdayDb.getIdSeason().getName();
         this.urlToSeason = Util.getInstance().getUrl() + "rest/season/" + matchdayDb.getIdSeason().getId();
     }
 
@@ -141,6 +143,14 @@ public class MatchdayPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getSeason() {
+        return season;
+    }
+
+    public void setSeason(String season) {
+        this.season = season;
     }
 
 }

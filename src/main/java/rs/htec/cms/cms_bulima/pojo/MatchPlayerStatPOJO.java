@@ -75,6 +75,7 @@ public class MatchPlayerStatPOJO {
     private Date createDate;
     private Double grade;
     private Long idMatchPlayer;
+    private String matchPlayer;
     private String urlToMatchPlayer;
 
     public MatchPlayerStatPOJO(MatchPlayerStat stat) {
@@ -137,6 +138,7 @@ public class MatchPlayerStatPOJO {
         this.grade = stat.getGrade();
         if (stat.getIdMatchPlayer() != null) {
             this.idMatchPlayer = stat.getIdMatchPlayer().getId();
+            matchPlayer = stat.getIdMatchPlayer().getIdPlayer().getFullname();
             this.urlToMatchPlayer = Util.getInstance().getUrl() + "rest/matchPlayer/" + stat.getIdMatchPlayer().getId();
         }
     }
@@ -622,5 +624,15 @@ public class MatchPlayerStatPOJO {
         }
         return pojos;
     }
+
+    public String getMatchPlayer() {
+        return matchPlayer;
+    }
+
+    public void setMatchPlayer(String matchPlayer) {
+        this.matchPlayer = matchPlayer;
+    }
+
+    
 
 }

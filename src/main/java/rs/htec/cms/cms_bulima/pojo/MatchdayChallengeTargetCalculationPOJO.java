@@ -24,6 +24,7 @@ public class MatchdayChallengeTargetCalculationPOJO {
     private Double value;
     private Date updateAt;
     private Date createDate;
+    private String matchdayChallenge;
     private String urlToMatchdayChallenge;
 
     public MatchdayChallengeTargetCalculationPOJO(MatchdayChallengeTargetCalculation mctc) {
@@ -34,6 +35,7 @@ public class MatchdayChallengeTargetCalculationPOJO {
         this.value = mctc.getValue();
         this.updateAt = mctc.getUpdateAt();
         this.createDate = mctc.getCreateDate();
+        matchdayChallenge = mctc.getIdMatchdayChallenge().getMatchdayChallengeTitle();
         this.urlToMatchdayChallenge = Util.getInstance().getUrl() + "rest/matchday_challenge/" + mctc.getIdMatchdayChallenge().getId();
     }
 
@@ -109,6 +111,14 @@ public class MatchdayChallengeTargetCalculationPOJO {
             pojos.add(pojo);
         }
         return pojos;
+    }
+
+    public String getMatchdayChallenge() {
+        return matchdayChallenge;
+    }
+
+    public void setMatchdayChallenge(String matchdayChallenge) {
+        this.matchdayChallenge = matchdayChallenge;
     }
     
     

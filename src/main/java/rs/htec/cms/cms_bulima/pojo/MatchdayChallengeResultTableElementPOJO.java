@@ -23,6 +23,7 @@ public class MatchdayChallengeResultTableElementPOJO {
     private String elementTable;
     private String elementField;
     private Long idMatchdayChallenge;
+    private String matchdayChallenge;
     private String urlToMatchdayChallenge;
 
     public MatchdayChallengeResultTableElementPOJO(MatchdayChallengeResultTableElement element) {
@@ -34,6 +35,7 @@ public class MatchdayChallengeResultTableElementPOJO {
         this.elementField = element.getElementField();
         if (element.getIdMatchdayChallenge() != null) {
             this.idMatchdayChallenge = element.getIdMatchdayChallenge().getId();
+            matchdayChallenge = element.getIdMatchdayChallenge().getMatchdayChallengeTitle();
             this.urlToMatchdayChallenge = Util.getInstance().getUrl() + "rest/matchday_challenge/" + element.getIdMatchdayChallenge().getId();
         }
     }
