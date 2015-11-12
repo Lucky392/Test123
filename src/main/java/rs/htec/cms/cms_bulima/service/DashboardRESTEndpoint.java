@@ -8,7 +8,10 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
@@ -38,7 +41,7 @@ public class DashboardRESTEndpoint {
 
     /**
      * Returns data for Dashboard. Data are summarized by platform [Android,
-     * IOS, Web and Total] for today, yesterday, current month and last month.
+     * IOS, Web and Total] for time periods: today, yesterday, current month and last month.
      * <br/>
      * <br/>
      * Example for JSON response:<br/>
@@ -46,21 +49,25 @@ public class DashboardRESTEndpoint {
      * {<br/>
      * "yesterday": {<br/>
      * "TOTAL": {<br/>
+     * "revenue": 1295.88,<br/>
      * "registrations": 7090,<br/>
      * "payingUsers": 4254,<br/>
      * "activeUsers": 63789<br/>
      * },<br/>
      * "WEB": {<br/>
+     * "revenue": 148.88,<br/>
      * "registrations": 1076,<br/>
      * "payingUsers": 1260,<br/>
      * "activeUsers": 16349<br/>
      * },<br/>
      * "ANDROID": {<br/>
+     * "revenue": 321.51,<br/>
      * "registrations": 4900,<br/>
      * "payingUsers": 1919,<br/>
      * "activeUsers": 30626<br/>
      * },<br/>
      * "IOS": {<br/>
+     * "revenue": 825.49,<br/>
      * "registrations": 1114,<br/>
      * "payingUsers": 1075,<br/>
      * "activeUsers": 16814<br/>
@@ -68,21 +75,25 @@ public class DashboardRESTEndpoint {
      * },<br/>
      * "today": {<br/>
      * "TOTAL": {<br/>
+     * "revenue": 411.46,<br/>
      * "registrations": 1265,<br/>
      * "payingUsers": 4000,<br/>
      * "activeUsers": 49489<br/>
      * },<br/>
      * "WEB": {<br/>
+     * "revenue": 113.89,<br/>
      * "registrations": 421,<br/>
      * "payingUsers": 1894,<br/>
      * "activeUsers": 19740<br/>
      * },<br/>
      * "ANDROID": {<br/>
+     * "revenue": 203.72,<br/>
      * "registrations": 716,<br/>
      * "payingUsers": 1394,<br/>
      * "activeUsers": 19482<br/>
      * },<br/>
      * "IOS": {<br/>
+     * "revenue": 93.85,<br/>
      * "registrations": 128,<br/>
      * "payingUsers": 712,<br/>
      * "activeUsers": 10267<br/>
@@ -90,21 +101,25 @@ public class DashboardRESTEndpoint {
      * },<br/>
      * "lastMonth": {<br/>
      * "TOTAL": {<br/>
+     * "revenue": 11623.15,<br/>
      * "registrations": 373442,<br/>
      * "payingUsers": 25507,<br/>
      * "activeUsers": 423524<br/>
      * },<br/>
      * "WEB": {<br/>
+     * "revenue": 3029.23,<br/>
      * "registrations": 96917,<br/>
      * "payingUsers": 10018,<br/>
      * "activeUsers": 118992<br/>
      * },<br/>
      * "ANDROID": {<br/>
+     * "revenue": 8582.95,<br/>
      * "registrations": 170107,<br/>
      * "payingUsers": 10508,<br/>
      * "activeUsers": 187121<br/>
      * },<br/>
      * "IOS": {<br/>
+     * "revenue": 10.97,<br/>
      * "registrations": 106418,<br/>
      * "payingUsers": 4981,<br/>
      * "activeUsers": 117411<br/>
@@ -112,27 +127,31 @@ public class DashboardRESTEndpoint {
      * },<br/>
      * "thisMonth": {<br/>
      * "TOTAL": {<br/>
+     * "revenue": 22948.87,<br/>
      * "registrations": 380898,<br/>
      * "payingUsers": 59306,<br/>
      * "activeUsers": 816245<br/>
      * },<br/>
      * "WEB": {<br/>
+     * "revenue": 3208.48,<br/>
      * "registrations": 112361,<br/>
      * "payingUsers": 21307,<br/>
      * "activeUsers": 245487<br/>
      * },<br/>
      * "ANDROID": {<br/>
+     * "revenue": 11375.77,<br/>
      * "registrations": 185024,<br/>
      * "payingUsers": 23907,<br/>
      * "activeUsers": 360985<br/>
      * },<br/>
      * "IOS": {<br/>
+     * "revenue": 8364.62,<br/>
      * "registrations": 83513,<br/>
      * "payingUsers": 14092,<br/>
      * "activeUsers": 209773<br/>
      * }<br/>
      * }<br/>
-     * } <br/>
+     * }<br/>
      *
      *
      * @param token - header parameter for checking permission
@@ -172,46 +191,95 @@ public class DashboardRESTEndpoint {
                 date2 = date2.replaceFirst(("-" + month), monthBefore);
                 break;
         }
-
-        StringBuilder query = new StringBuilder("SELECT platform, sum(u.createDate LIKE ('").append(date2).append("%')), sum(u.payingUser=1), count(*) FROM bulima.USER u right join bulima.LOGIN_HISTORY lh on(u.id=lh.ID_USER) where ");
+        // active users, paying users and registrations
+        StringBuilder query = new StringBuilder("SELECT platform, sum(u.createDate LIKE ('").append(date2).append("%')), sum(u.payingUser=1), count(*) FROM bulima.USER u left join bulima.LOGIN_HISTORY lh on(u.id=lh.ID_USER) where ");
 
         query.append(" lh.createDate BETWEEN '");
         appendDateToQuery(query, day);
         query.append(" group by platform");
 
         List<Object[]> list = em.createNativeQuery(query.toString()).getResultList();
-        HashMap results = toMap(list);
+        // revenue
+        List<Double> list2 = getRevenue(day);
+
+        HashMap results = toMap(list, list2);
         return results;
     }
 
+    // retrives revenue made for android, ios, web and total revenue for defined dates
+    List<Double> getRevenue(String day) {
+        EntityManager em = helper.getEntityManager();
+
+        //SELECT comment, sum(sellingPrice) FROM bulima.SALESORDER WHERE authResult = 'AUTHORISED' group by comment AND requestDate between '2015-08-16 00:00:00' AND '2015-08-17 00:00:00';
+        StringBuilder queryRevenue = new StringBuilder("SELECT comment, sum(sellingPrice) FROM bulima.SALESORDER WHERE authResult = 'AUTHORISED' AND requestDate BETWEEN '");
+
+        appendDateToQuery(queryRevenue, day);
+        queryRevenue.append(" group by comment");
+        List<Object[]> list = em.createNativeQuery(queryRevenue.toString()).getResultList();
+        double androidRevenue = 0;
+        double iosRevenue = 0;
+        double webRevenue = 0;
+        double totalRevenue = 0;
+        for (Object[] objects : list) {
+            if (objects[1] == null) {
+                break;
+            }
+            if (objects[0] == null) {
+                objects[0] = "";
+            }
+            switch ((String) objects[0]) {
+                case ("Android"):
+                    androidRevenue += ((BigDecimal) objects[1]).doubleValue();
+                    break;
+                case ("iOS"):
+                    iosRevenue += ((BigDecimal) objects[1]).doubleValue();
+                    break;
+                default:
+                    webRevenue += ((BigDecimal) objects[1]).doubleValue();
+            }
+        }
+        totalRevenue = webRevenue + iosRevenue + androidRevenue;
+        totalRevenue = new BigDecimal(totalRevenue).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        List<Double> revenue = new ArrayList<>();
+        revenue.add(androidRevenue);
+        revenue.add(iosRevenue);
+        revenue.add(webRevenue);
+        revenue.add(totalRevenue);
+
+        return revenue;
+    }
+
     // convert results from DB in formated HashMap
-    private HashMap toMap(List<Object[]> list) {
+    private HashMap toMap(List<Object[]> list, List<Double> listRevenue) {
         HashMap hm = new HashMap();
         long activeUsers = 0;
         long registrations = 0;
         long payingUsers = 0;
+        int i = 0;
         for (Object[] objects : list) {
             HashMap hm2 = new HashMap();
             hm2.put("activeUsers", objects[3]);
             hm2.put("registrations", objects[1]);
             hm2.put("payingUsers", objects[2]);
+            hm2.put("revenue", listRevenue.get(i++));
             hm.put(objects[0], hm2);
 
             activeUsers += (((BigInteger) objects[3]).longValue());
             registrations += (((BigDecimal) objects[1]).longValue());
             payingUsers += (((BigDecimal) objects[2]).longValue());
-
-//            hm.put("revenue", new Double(3434.34)); // to-do
         }
 
         HashMap hm2 = new HashMap();
         hm2.put("activeUsers", activeUsers);
         hm2.put("registrations", registrations);
         hm2.put("payingUsers", payingUsers);
+        hm2.put("revenue", listRevenue.get(i));
         hm.put("TOTAL", hm2);
         return hm;
     }
 
+    // appends condition for date filter
     private void appendDateToQuery(StringBuilder query, String day) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);

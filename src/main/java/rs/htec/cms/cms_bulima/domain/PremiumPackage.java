@@ -52,6 +52,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "PremiumPackage.findByTitle", query = "SELECT p FROM PremiumPackage p WHERE p.title = :title"),
     @NamedQuery(name = "PremiumPackage.findByPremiumStatusDuration", query = "SELECT p FROM PremiumPackage p WHERE p.premiumStatusDuration = :premiumStatusDuration")})
 public class PremiumPackage implements Serializable {
+    @OneToMany(mappedBy = "idPremiumPackage")
+    private List<Salesorder> salesorderList;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -271,6 +273,16 @@ public class PremiumPackage implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.PremiumPackage[ id=" + id + " ]";
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Salesorder> getSalesorderList() {
+        return salesorderList;
+    }
+
+    public void setSalesorderList(List<Salesorder> salesorderList) {
+        this.salesorderList = salesorderList;
     }
     
 }

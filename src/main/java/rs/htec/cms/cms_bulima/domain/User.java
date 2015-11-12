@@ -53,6 +53,8 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "User.findByPayingUser", query = "SELECT u FROM User u WHERE u.payingUser = :payingUser"),
     @NamedQuery(name = "User.findByPremiumStatusActiveTimestamp", query = "SELECT u FROM User u WHERE u.premiumStatusActiveTimestamp = :premiumStatusActiveTimestamp")})
 public class User implements Serializable {
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "idUser")
+    private List<Salesorder> salesorderList;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user")
     private BugReport bugReport;
@@ -321,6 +323,16 @@ public class User implements Serializable {
     @JsonIgnore
     public void setBugReport(BugReport bugReport) {
         this.bugReport = bugReport;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Salesorder> getSalesorderList() {
+        return salesorderList;
+    }
+
+    public void setSalesorderList(List<Salesorder> salesorderList) {
+        this.salesorderList = salesorderList;
     }
 
 }
