@@ -43,7 +43,7 @@ public class NewsCmsRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -53,39 +53,23 @@ public class NewsCmsRESTEndpoint {
      * This method returns JSON list. Default value for page is 1, and for limit
      * is 10. You can put your values for page, limit, orderColumn, searchWord,
      * start and end date, newsType. It produces APPLICATION_JSON media type.
-     * Example for JSON list for 1 page, 2 limit: <br/>
-     * [{<br/>
-     * "idFantasyClub": "null",<br/>
-     * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
-     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
-     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
+     * Example for JSON list for 1 page, 2 limit:<br/> { <br/> "count":
+     * 837536,<br/> "data": [ {<br/>
+     * "newsType": "important",<br/> "newsHeadlineMobile": "NEUER
+     * TRANSFER",<br/>
+     * "newsHeadlineWeb": "bmk.com i so i sk jcpp f.n.y",<br/>
+     * "newsMessageMobile": "Ortag wechselt für 100.000 von FC Test zu
+     * Sport1dssadsdasdsad",<br/>
+     * "newsMessageWeb": "Ortag wechselt für 100.000 von FC Test zu
      * Sport1",<br/>
-     * "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu
-     * Sport1",<br/>
-     * "id": "4",<br/>
-     * "newsDate": "2015-07-20 15:32:35.0",<br/>
-     * "newsType": "transfer",<br/>
-     * "createDate": "2015-07-20 15:32:36.0",<br/>
-     * "idFantasyLeague": "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=7175
-     * ]"<br/>
-     * },<br/>
-     * {<br/>
-     * "idFantasyClub": "rs.htec.cms.cms_bulima.domain.FantasyClub[ id=27483
-     * ]",<br/>
-     * "newsHeadlineMobile": "NEUE AUFSTELLUNG",<br/>
-     * "newsHeadlineWeb": "NEUE AUFSTELLUNG",<br/>
-     * "newsMessageWeb": "System: 4-3-3{@code <br/>}Tor:
-     * Langerak{@code <br/>}Abwehr: Garcia, Schär, Matip,
-     * Felipe{@code <br/>}Mittelfeld: Clemens, Holtby,
-     * Schwegler{@code <br/>}Sturm: Kurányi, Kachunga, Osako",
-     * "newsMessageMobile": "Für den kommenden 2. Spieltag hast du ein
-     * 4-3-3-System mit folgenden Spielern aufgestellt:{@code <br/>}Tor:
-     * Langerak{@code <br/>}Abwehr: Garcia, Schär, Matip,
-     * Felipe{@code <br/>}Mittelfeld: Clemens, Holtby,
-     * Schwegler{@code <br/>}Sturm: Kurányi, Kachunga, Osako",<br/> "id":
-     * "5",<br/> "newsDate": "2015-08-17 14:47:54.0",<br/>
-     * "newsType": "lineup",<br/> "createDate": "2015-07-20 15:33:48.0",<br/>
-     * "idFantasyLeague": "null"<br/> } ] You can also
+     * "createDate": 1437402240000,<br/> "newsDate": 1437402240000,<br/> "id":
+     * 21<br/> },<br/> {<br/>
+     * "newsType": "transfer",<br/> "newsHeadlineMobile": "NEUER TRANSFER",<br/>
+     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/> "newsMessageMobile":
+     * "Díaz wechselt für 1.500.000 von FC Test zu Sport1",<br/>
+     * "newsMessageWeb": "Díaz wechselt für 1.500.000 von FC Test zu
+     * Sport1",<br/> "createDate": 1437402392000,<br/> "newsDate":
+     * 1437402392000,<br/> "id": 25 <br/> }<br/> ]
      *
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for News
@@ -98,8 +82,7 @@ public class NewsCmsRESTEndpoint {
      * @param maxDate is a end date for filtering time in millis
      * @param newsType type of News
      * @return Response 200 OK with JSON body
-     * @throws DataNotFoundException Example for
-     * exception:<br/> {<br/>
+     * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "Requested page does not exist..",<br/>
      * "errorCode": 404<br/> }
      *
