@@ -6,7 +6,9 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
@@ -40,7 +42,7 @@ public class PremiumPackageRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -103,14 +105,58 @@ public class PremiumPackageRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/package/{id} This method return single element of package at index
-     * in JSON. Example for JSON response: { <br/>"imageUrl": "",<br/> "updateTimestamp": null,<br/>
+     * API for method: .../rest/package/nameAndId Returns list of id's and names for all Premium Packages. 
+
+     * Example for response: [ <br/>
+     * {<br/>
+     * "name": "620 Fussi-Taler",<br/>
+     * "id": 15<br/>
+     * },<br/>
+     * {<br/>
+     * "name": "300 Fussi-Taler",<br/>
+     * "id": 16<br/>
+     * },<br/>
+     * {<br/>
+     * "name": "165 Fussi-Taler",<br/>
+     * "id": 17<br/>
+     * },<br/>
+     * {<br/>
+     * "name": "Inhalt",<br/>
+     * "id": 23<br/>
+     * }<br/> ]
+     *
+     * @param token - header parameter for checking permission
+     * @return 200 OK, with list
+     */
+    @GET
+    @Path("/nameAndId")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getPackageNameAndId(@HeaderParam("authorization") String token) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        String query = "SELECT id, name FROM PremiumPackage p";
+        List<Object[]> list = em.createQuery(query).getResultList();
+        List<HashMap> lhm = new ArrayList<>();
+        for (Object[] row : list) {
+            HashMap hm = new HashMap();
+            hm.put("id", (Long) row[0]);
+            hm.put("name", row[1]);
+            lhm.add(hm);
+        }
+        return Response.ok().entity(lhm).build();
+    }
+
+    /**
+     * API for method: .../rest/package/{id} This method return single element
+     * of package at index in JSON. Example for JSON response: {
+     * <br/>"imageUrl": "",<br/> "updateTimestamp": null,<br/>
      * "createDate": 1427204474000,<br/>
      * "platform": "ALL",<br/> "price": 19.99,<br/> "isActive": 1,<br/>
      * "premiumStatusDuration": "season",<br/> "amountPremiumCurrency": 0,<br/>
      * "title": "Saison",<br/> "position": null,<br/> "name": "Premium-Account -
      * Saison-Paket",<br/>
      * "id": 8 <br/>}
+     *
      * @param token is a header parameter for checking permission
      * @param id of premium package we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -127,13 +173,13 @@ public class PremiumPackageRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         PremiumPackage premiumPackage = null;
         try {
-            premiumPackage = (PremiumPackage) em.createNamedQuery("PremiumPackage.findById").setParameter("id", id).getSingleResult();   
+            premiumPackage = (PremiumPackage) em.createNamedQuery("PremiumPackage.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
             throw new DataNotFoundException("Premium package at index " + id + " does not exist..");
         }
         return Response.ok().entity(premiumPackage).build();
     }
-    
+
     /**
      * API for this method is .../rest/package This method recieves JSON object,
      * and put it in the base. Example for JSON that you need to send:
@@ -185,18 +231,20 @@ public class PremiumPackageRESTEndpoint {
 //        helper.removeObject(em, premiumPackage, id);
 //        return Response.ok().build();
 //    }
-
     /**
      * API for this method is .../rest/package This method recieves JSON object,
-     * and update database. Example for JSON that you need to send: <br/>{ <br/>"title":
-     * "Saison",<br/> "updateTimestamp": null,<br/> "createDate": 1427204474000,<br/>
+     * and update database. Example for JSON that you need to send: <br/>{
+     * <br/>"title": "Saison",<br/> "updateTimestamp": null,<br/> "createDate":
+     * 1427204474000,<br/>
      * "imageUrl": "",<br/> "platform": "ALL",<br/> "price": 19.99,<br/>
-     * "amountPremiumCurrency": 0,<br/> "isActive": 1,<br/> "premiumStatusDuration":
-     * "season",<br/> "position": null,<br/> "name": "Premium-Account - Saison-Paket",<br/>
+     * "amountPremiumCurrency": 0,<br/> "isActive": 1,<br/>
+     * "premiumStatusDuration": "season",<br/> "position": null,<br/> "name":
+     * "Premium-Account - Saison-Paket",<br/>
      * "id": 8<br/> }
      *
      * @param token is a header parameter for checking permission
-     * @param premiumPackage is an object that Jackson convert from JSON to object
+     * @param premiumPackage is an object that Jackson convert from JSON to
+     * object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -223,17 +271,18 @@ public class PremiumPackageRESTEndpoint {
         }
         return Response.ok().build();
     }
-    
+
     /**
-     * API for this method: .../rest/package/count
-     * This method return number of all packages in database.
+     * API for this method: .../rest/package/count This method return number of
+     * all packages in database.
+     *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountPackage(@HeaderParam("authorization") String token){
+    public Response getCountPackage(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From PremiumPackage ip";

@@ -95,8 +95,8 @@ public class FantasyClubLineUpRESTEndpoint {
             @PathParam("idMatchday") long idMatchday) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        
-        List<FantasyClubLineUpPlayer> lineUpPlayer = LineUpDifference.getLineUpList(em, idFantasyClub, idMatchday);
+        FantasyClubLineUp lineUp = LineUpDifference.getLineUp(em, idFantasyClub, idMatchday);
+        List<FantasyClubLineUpPlayer> lineUpPlayer = LineUpDifference.getLineUpList(em, lineUp.getId());
         
         List<FantasyClubLineUpPlayerPOJO> lineUpPlayerPOJO = FantasyClubLineUpPlayerPOJO.toFantasyClubLineUpPlayerPOJOList(lineUpPlayer);
         return Response.ok().entity(lineUpPlayerPOJO).build();
@@ -113,17 +113,17 @@ public class FantasyClubLineUpRESTEndpoint {
      * @param idMatchday
      * @return long value for points
      */
-    @GET
-    @Path("points/{idFantasyClub}/{idMatchday}")
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response getPoints(@HeaderParam("authorization") String token, @PathParam("idFantasyClub") long idFantasyClub,
-            @PathParam("idMatchday") long idMatchday) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        long points = LineUpDifference.getBlmPoints(em, idFantasyClub, idMatchday);
-
-        return Response.ok().entity(points).build();
-    }
+//    @GET
+//    @Path("points/{idFantasyClub}/{idMatchday}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getPoints(@HeaderParam("authorization") String token, @PathParam("idFantasyClub") long idFantasyClub,
+//            @PathParam("idMatchday") long idMatchday) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+//        long points = LineUpDifference.getBlmPoints(em, idFantasyClub, idMatchday);
+//
+//        return Response.ok().entity(points).build();
+//    }
 
 //    @GET
 //    @Path("formation/{idFantasyClub}/{idMatchday}")
@@ -161,21 +161,21 @@ public class FantasyClubLineUpRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
 
-        List<FantasyClubLineUpPlayer> lineUpPlayer1 = LineUpDifference.getLineUpList(em, idFantasyClub1, idMatchday1);
-        List<FantasyClubLineUpPlayer> lineUpPlayer2 = LineUpDifference.getLineUpList(em, idFantasyClub2, idMatchday2);
+        
+        FantasyClubLineUp lineUp = LineUpDifference.getLineUp(em, idFantasyClub1, idMatchday1);
+        List<FantasyClubLineUpPlayer> lineUpPlayers1 = LineUpDifference.getLineUpList(em, lineUp.getId());
+        FantasyClubLineUp lineUp2 = LineUpDifference.getLineUp(em, idFantasyClub2, idMatchday2);
+        List<FantasyClubLineUpPlayer> lineUpPlayers2 = LineUpDifference.getLineUpList(em, lineUp2.getId());
 
-        String fDiff = LineUpDifference.returnDifferenceForFormation(lineUpPlayer1.get(0).getIdLineUp().getIdFormation().getName(), lineUpPlayer2.get(0).getIdLineUp().getIdFormation().getName());
-//        LineUpDifference.setFormationDifference(fDiff);
+        String fDiff = LineUpDifference.returnDifferenceForFormation(lineUp.getIdFormation().getName(), lineUp2.getIdFormation().getName());
 
-        List<FantasyClubLineUpPlayerPOJO> lineUpDifference = LineUpDifference.returnDifferencePOJO(lineUpPlayer1, lineUpPlayer2);
+        List<FantasyClubLineUpPlayerPOJO> lineUpDifference = LineUpDifference.returnDifferencePOJO(lineUpPlayers1, lineUpPlayers2);
         //todo points
-//        long points1 = difference.getBlmPoints(idFantasyClub1, idMatchday1);
-//        long points2 = difference.getBlmPoints(idFantasyClub2, idMatchday2);
-//
-//        difference.setBulimaPointDifference(points2 - points1);
+        Long points2 = LineUpDifference.getBlmPoints(em, idFantasyClub2, idMatchday2, lineUp2.getCreateDate());
+        Long points1 = LineUpDifference.getBlmPoints(em, idFantasyClub1, idMatchday1, lineUp.getCreateDate());
+        Long pointsDifference = (points1 != null && points2 != null)?(points2 - points1):null;
 
-//        difference.setLineUpDifference(lineUpDifference);
-        LineUpDifferencePOJO pojo = new LineUpDifferencePOJO(lineUpDifference, fDiff, 10);
+        LineUpDifferencePOJO pojo = new LineUpDifferencePOJO(lineUpDifference, fDiff, pointsDifference);
         return Response.ok().entity(pojo).build();
     }
 

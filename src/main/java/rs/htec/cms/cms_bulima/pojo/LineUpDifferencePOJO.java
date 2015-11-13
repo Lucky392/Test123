@@ -16,12 +16,12 @@ public class LineUpDifferencePOJO {
 
     private List<FantasyClubLineUpPlayerPOJO> playerDifference;
     private String formationDifference;
-    private long bulimaPointDifference;
+    private Long bulimaPointDifference;
 
     public LineUpDifferencePOJO() {
     }
 
-    public LineUpDifferencePOJO(List<FantasyClubLineUpPlayerPOJO> playerDifference, String formationDifference, long bulimaPointDifference) {
+    public LineUpDifferencePOJO(List<FantasyClubLineUpPlayerPOJO> playerDifference, String formationDifference, Long bulimaPointDifference) {
         this.playerDifference = playerDifference;
         this.formationDifference = formationDifference;
         this.bulimaPointDifference = bulimaPointDifference;
@@ -47,7 +47,7 @@ public class LineUpDifferencePOJO {
         return bulimaPointDifference;
     }
 
-    public void setBulimaPointDifference(long bulimaPointDifference) {
+    public void setBulimaPointDifference(Long bulimaPointDifference) {
         this.bulimaPointDifference = bulimaPointDifference;
     }
     

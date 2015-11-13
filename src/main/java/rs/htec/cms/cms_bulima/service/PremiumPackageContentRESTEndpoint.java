@@ -24,6 +24,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.PremiumPackage;
 import rs.htec.cms.cms_bulima.domain.PremiumPackageContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
@@ -41,7 +42,7 @@ public class PremiumPackageContentRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -82,17 +83,20 @@ public class PremiumPackageContentRESTEndpoint {
      * ]<br/>
      * }<br/>
      *
-     * @param token is a header parameter for checking permission
-     * @param page number of page at which we search
-     * @param limit number method returns
-     * @param orderingColumn column name for ordering, if you put "-" before
+     * @param token - header parameter for checking permission
+     * @param page  -number of page at which we search
+     * @param limit - number method returns
+     * @param orderingColumn - column name for ordering, if you put "-" before
      * column name, that mean DESC ordering.
-     * @param minDate is a start date for filtering time in millis
-     * @param maxDate is a end date for filtering time in millis
+     * @param minDate - start date for filtering time in millis
+     * @param maxDate - end date for filtering time in millis
+     * @param packageName - filter based on package name
+     * @param packageId - filter based on package id
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
-     * "errorMessage": "Premium package content for search does not exist..",<br/>
+     * "errorMessage": "Premium package content for search does not
+     * exist..",<br/>
      * "errorCode": 404<br/> }
      *
      */
@@ -101,18 +105,29 @@ public class PremiumPackageContentRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPackageContent(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderingColumn") String orderingColumn,
-            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
+            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("packageName") String packageName,
+            @QueryParam("packageId") String packageId) {
 
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         List<PremiumPackageContent> packageContent;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumPackageContent p ");
-
+        String operator = "WHERE"; 
         if (minDate != 0 && maxDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append("WHERE p.createDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            query.append(operator).append(" p.createDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            operator = "AND";
+        }
+
+        if (packageId != null) {
+            query.append(operator).append(" p.idPremiumPackage=").append(packageId);
+        }
+        
+        if(packageName != null) {
+            PremiumPackage pack = (PremiumPackage) em.createNamedQuery("PremiumPackage.findByName").setParameter("name", packageName).getSingleResult();
+            query.append(operator).append(" p.idPremiumPackage=").append(pack.getId());
         }
 
         if (orderingColumn != null) {
@@ -122,7 +137,6 @@ public class PremiumPackageContentRESTEndpoint {
             query.append(" ORDER BY ").append(orderingColumn);
         }
         packageContent = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        System.out.println(query);
         if (packageContent == null || packageContent.isEmpty()) {
             throw new DataNotFoundException("Premium package content for search does not exist..");
         }

@@ -6,6 +6,8 @@
 package rs.htec.cms.cms_bulima.helper;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -17,7 +19,6 @@ import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.pojo.FantasyClubLineUpPlayerPOJO;
-import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
 
 /**
  *
@@ -28,21 +29,20 @@ public class LineUpDifference {
     @InjectParam
     RestHelperClass helper;
 
-    public static List<FantasyClubLineUpPlayer> getLineUpList(EntityManager em, long idFantasyClub, long idMatchday) {
-        Long lineUpId = null;
+    public static FantasyClubLineUp getLineUp(EntityManager em, long idFantasyClub, long idMatchday) {
+        FantasyClubLineUp lineUp = null;
         try {
-            String query = "SELECT id FROM FantasyClubLineUp f WHERE f.idFantasyClub = " + idFantasyClub + " AND f.idMatchday = " + idMatchday;
-            lineUpId = (Long) em.createQuery(query).getSingleResult();
+            String query = "SELECT f FROM FantasyClubLineUp f WHERE f.idFantasyClub = " + idFantasyClub + " AND f.idMatchday = " + idMatchday;
+            lineUp = (FantasyClubLineUp) em.createQuery(query).getSingleResult();
         } catch (NoResultException e) {
             throw new DataNotFoundException("LineUp with idFantasyClub " + idFantasyClub + " for matchday " + idMatchday + " does not exist..");
         }
-//        long startTime = System.currentTimeMillis();
+        return lineUp;
+    }
+
+    public static List<FantasyClubLineUpPlayer> getLineUpList(EntityManager em, long lineUpId) {
         List<FantasyClubLineUpPlayer> lineUpPlayer = em.createNamedQuery("FantasyClubLineUpPlayer.findByLineUpId").setParameter("idLineUp", lineUpId).getResultList();
 
-//        long stopTime = System.currentTimeMillis();
-//        long elapsedTime = stopTime - startTime;
-//        System.out.println(elapsedTime);
-        //List<LineUpPlayer> lineUpPlayer = toLineUpPlayer(fantasyClubLineUpPlayer);
         if (lineUpPlayer == null || lineUpPlayer.isEmpty()) {
             throw new DataNotFoundException("There is no LineUpPlayers for this search!");
         }
@@ -126,15 +126,15 @@ public class LineUpDifference {
             return "TW";
         }
         position += Long.valueOf(formation[0]);
-        if (playerPosition <= position){
+        if (playerPosition <= position) {
             return "AB";
         }
         position += Long.valueOf(formation[1]);
-        if (playerPosition <= position){
+        if (playerPosition <= position) {
             return "MF";
         }
         position += Long.valueOf(formation[2]);
-        if (playerPosition <= position){
+        if (playerPosition <= position) {
             return "ST";
         }
         return "SUB";
@@ -148,24 +148,28 @@ public class LineUpDifference {
 //        }
 //        return lineUpPlayer;
 //    }
-
-    public static long getBlmPoints(EntityManager em, long idFantasyClub, long idMatchday) {
+    public static Long getBlmPoints(EntityManager em, long idFantasyClub, long idMatchday, Date date) {
         long points = 0;
         try {
+
+            //SELECT sum(mp.blmPoints) FROM bulima.MATCH_PLAYER mp 
+            //LEFT JOIN bulima.FANTASY_LEAGUE_PLAYER flp ON (flp.ID_PLAYER=mp.ID_PLAYER)
+            //LEFT JOIN bulima.FANTASY_CLUB_LINE_UP_PLAYER lup ON(lup.ID_LEAGUE_PLAYER=flp.ID)
+            //LEFT JOIN bulima.FANTASY_CLUB_LINE_UP lu  ON(lu.ID = lup.ID_LINE_UP)
+            //WHERE lu.ID_FANTASY_CLUB=27217 AND lu.ID_MATCHDAY=1 AND mp.ratingAt BETWEEN lu.createDate AND date_add(lu.createDate, interval 7 day);
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             Calendar calendar = Calendar.getInstance();
-            Date date;
-            String q = "SELECT lu.createDate FROM FantasyClubLineUp lu WHERE lu.idFantasyClub = " + idFantasyClub + " AND lu.idMatchday = " + idMatchday;
-            date = (Date) em.createQuery(q).getSingleResult();
             calendar.setTime(date);
-            calendar.add(Calendar.DATE, 7);
+            calendar.add(Calendar.DATE, 4);
 
-            String query = "SELECT SUM(mp.blmPoints) FROM FantasyClubLineUp lu, FantasyClubLineUpPlayer lup, FantasyLeaguePlayer flp, MatchPlayer mp"
-                    + " WHERE lu.id=lup.idLineUp AND flp.id=lup.idLeaguePlayer AND flp.idPlayer=mp.idPlayer"
-                    + " AND lu.idFantasyClub = " + idFantasyClub + " AND lu.idMatchday = " + idMatchday + " AND mp.ratingAt BETWEEN lu.createDate AND '" + sdf.format(calendar.getTime()) + "'";
-            points = (long) em.createQuery(query).getSingleResult();
+            String blmPointsQuery = "SELECT sum(mp.blmPoints) FROM bulima.MATCH_PLAYER mp LEFT JOIN bulima.FANTASY_LEAGUE_PLAYER flp ON (flp.ID_PLAYER=mp.ID_PLAYER)"
+                    + " LEFT JOIN bulima.FANTASY_CLUB_LINE_UP_PLAYER lup ON(lup.ID_LEAGUE_PLAYER=flp.ID) LEFT JOIN bulima.FANTASY_CLUB_LINE_UP lu ON(lu.ID = lup.ID_LINE_UP)"
+                    + "WHERE lu.ID_FANTASY_CLUB=" + idFantasyClub + " AND lu.ID_MATCHDAY=" + idMatchday + " AND mp.ratingAt BETWEEN lu.createDate AND '" + sdf.format(calendar.getTime()) + "'";
+            //points = ((BigDecimal) em.createNativeQuery(blmPointsQuery).getSingleResult()).longValue();
+            points = ((BigDecimal) em.createNativeQuery(blmPointsQuery).getSingleResult()).longValue();
         } catch (Exception e) {
-            throw new DataNotFoundException("LineUp with idFantasyClub " + idFantasyClub + " for matchday " + idMatchday + " does not exist.." + e.getMessage());
+            return null;
+//            throw new DataNotFoundException("No bulima points data for FantasyClub with id " + idFantasyClub + ", and Matchday with id " + idMatchday);
         }
 
         return points;
