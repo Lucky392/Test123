@@ -25,8 +25,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -116,8 +114,6 @@ public class FantasyClubLineUp implements Serializable {
         this.credit = credit;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public List<FantasyClubLineUpPlayer> getFantasyClubLineUpPlayerList() {
         return fantasyClubLineUpPlayerList;
     }
@@ -126,8 +122,6 @@ public class FantasyClubLineUp implements Serializable {
         this.fantasyClubLineUpPlayerList = fantasyClubLineUpPlayerList;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public Matchday getIdMatchday() {
         return idMatchday;
     }
@@ -136,8 +130,6 @@ public class FantasyClubLineUp implements Serializable {
         this.idMatchday = idMatchday;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyClub getIdFantasyClub() {
         return idFantasyClub;
     }
@@ -146,8 +138,6 @@ public class FantasyClubLineUp implements Serializable {
         this.idFantasyClub = idFantasyClub;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public Formation getIdFormation() {
         return idFormation;
     }
@@ -156,8 +146,6 @@ public class FantasyClubLineUp implements Serializable {
         this.idFormation = idFormation;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }

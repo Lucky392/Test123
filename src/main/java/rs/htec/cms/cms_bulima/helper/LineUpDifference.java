@@ -5,15 +5,18 @@
  */
 package rs.htec.cms.cms_bulima.helper;
 
+import com.sun.jersey.api.core.InjectParam;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.pojo.FantasyClubLineUpPlayerPOJO;
 import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
 
 /**
@@ -22,59 +25,31 @@ import rs.htec.cms.cms_bulima.pojo.LineUpPlayerPOJO;
  */
 public class LineUpDifference {
 
+    @InjectParam
     RestHelperClass helper;
-    private List<LineUpPlayerPOJO> lineUpDifference;
-    private String formationDifference;
-    private long bulimaPointDifference;
 
-    public LineUpDifference() {
-        helper = new RestHelperClass();
-    }
-
-    public List<LineUpPlayerPOJO> getLineUpDifference() {
-        return lineUpDifference;
-    }
-
-    public void setLineUpDifference(List<LineUpPlayerPOJO> lineUpDifference) {
-        this.lineUpDifference = lineUpDifference;
-    }
-
-    public String getFormationDifference() {
-        return formationDifference;
-    }
-
-    public void setFormationDifference(String formationDifference) {
-        this.formationDifference = formationDifference;
-    }
-
-    public long getBulimaPointDifference() {
-        return bulimaPointDifference;
-    }
-
-    public void setBulimaPointDifference(long bulimaPointDifference) {
-        this.bulimaPointDifference = bulimaPointDifference;
-    }
-
-    public List<FantasyClubLineUpPlayer> getLineUpList(long idFantasyClub, long idMatchday) {
-        EntityManager em = helper.getEntityManager();
-        FantasyClubLineUp lineUp = null;
+    public static List<FantasyClubLineUpPlayer> getLineUpList(EntityManager em, long idFantasyClub, long idMatchday) {
+        Long lineUpId = null;
         try {
-            String query = "SELECT f FROM FantasyClubLineUp f WHERE f.idFantasyClub = " + idFantasyClub + " AND f.idMatchday = " + idMatchday;
-            lineUp = (FantasyClubLineUp) em.createQuery(query).getSingleResult();
-        } catch (Exception e) {
+            String query = "SELECT id FROM FantasyClubLineUp f WHERE f.idFantasyClub = " + idFantasyClub + " AND f.idMatchday = " + idMatchday;
+            lineUpId = (Long) em.createQuery(query).getSingleResult();
+        } catch (NoResultException e) {
             throw new DataNotFoundException("LineUp with idFantasyClub " + idFantasyClub + " for matchday " + idMatchday + " does not exist..");
         }
-        List<FantasyClubLineUpPlayer> lineUpPlayer = em.createNamedQuery("FantasyClubLineUpPlayer.findByLineUpId").setParameter("idLineUp", lineUp.getId()).getResultList();
+//        long startTime = System.currentTimeMillis();
+        List<FantasyClubLineUpPlayer> lineUpPlayer = em.createNamedQuery("FantasyClubLineUpPlayer.findByLineUpId").setParameter("idLineUp", lineUpId).getResultList();
+
+//        long stopTime = System.currentTimeMillis();
+//        long elapsedTime = stopTime - startTime;
+//        System.out.println(elapsedTime);
         //List<LineUpPlayer> lineUpPlayer = toLineUpPlayer(fantasyClubLineUpPlayer);
         if (lineUpPlayer == null || lineUpPlayer.isEmpty()) {
-            throw new DataNotFoundException("There is no line up players for this search!");
+            throw new DataNotFoundException("There is no LineUpPlayers for this search!");
         }
-
         return lineUpPlayer;
     }
 
-    public String getFormation(long idFantasyClub, long idMatchday) {
-        EntityManager em = helper.getEntityManager();
+    public static String getFormation(EntityManager em, long idFantasyClub, long idMatchday) {
         String formation = null;
         try {
             String query = "SELECT f.idFormation.name FROM FantasyClubLineUp f WHERE f.idFantasyClub = " + idFantasyClub + " AND f.idMatchday = " + idMatchday;
@@ -85,19 +60,19 @@ public class LineUpDifference {
         return formation;
     }
 
-    public String returnDifferenceForFormation(String formation1, String formation2) {
-        return (formation1.equals(formation2)) ? "Formations are same: " + formation1 : formation2;
+    public static String returnDifferenceForFormation(String formation1, String formation2) {
+        return (formation1.equals(formation2)) ? "Formations are same: " + formation1 : "Formations are different, frst formation: " + formation1 + ", second: " + formation2;
     }
 
-    public long getCount(List<FantasyClubLineUpPlayer> lineUp) {
+    public static long getCount(List<FantasyClubLineUpPlayer> lineUp) {
         return lineUp.size();
     }
 
-    public boolean areEqual(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
+    public static boolean areEqual(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
         return lineUp.equals(lineUpHistory);
     }
 
-    public List<FantasyClubLineUpPlayer> returnDifference(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
+    public static List<FantasyClubLineUpPlayer> returnDifference(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
         List<FantasyClubLineUpPlayer> difference = new ArrayList<>();
         for (FantasyClubLineUpPlayer lineUpHistoryPlayer : lineUpHistory) {
             boolean find = false;
@@ -117,31 +92,29 @@ public class LineUpDifference {
         return difference;
     }
 
-    public List<LineUpPlayerPOJO> returnDifferencePOJO(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
-        List<LineUpPlayerPOJO> difference = new ArrayList<>();
+    public static List<FantasyClubLineUpPlayerPOJO> returnDifferencePOJO(List<FantasyClubLineUpPlayer> lineUp, List<FantasyClubLineUpPlayer> lineUpHistory) {
+        List<FantasyClubLineUpPlayerPOJO> difference = new ArrayList<>();
         for (FantasyClubLineUpPlayer lineUpHistoryPlayer : lineUpHistory) {
             boolean found = false;
             for (FantasyClubLineUpPlayer lineUpPlayer : lineUp) {
                 if (lineUpHistoryPlayer.getIdPlayerSlot().equals(lineUpPlayer.getIdPlayerSlot())) {
                     found = true;
                     if (!lineUpHistoryPlayer.getIdLeaguePlayer().equals(lineUpPlayer.getIdLeaguePlayer()) || !lineUpHistoryPlayer.getIsCaptain().equals(lineUpPlayer.getIsCaptain())) {
-                        String position = getPositionNameForPlayer(lineUpHistoryPlayer);
-                        LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), position);
+                        FantasyClubLineUpPlayerPOJO player = new FantasyClubLineUpPlayerPOJO(lineUpHistoryPlayer);
                         difference.add(player);
                     }
                     break;
                 }
             }
             if (!found) {
-                String position = getPositionNameForPlayer(lineUpHistoryPlayer);
-                LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), position);
+                FantasyClubLineUpPlayerPOJO player = new FantasyClubLineUpPlayerPOJO(lineUpHistoryPlayer);
                 difference.add(player);
             }
         }
         return difference;
     }
 
-    private String getPositionNameForPlayer(FantasyClubLineUpPlayer player) {
+    private static String getPositionNameForPlayer(FantasyClubLineUpPlayer player) {
         if (player == null) {
             return null;
         }
@@ -167,17 +140,16 @@ public class LineUpDifference {
         return "SUB";
     }
 
-    public List<LineUpPlayerPOJO> toLineUpPlayerPOJO(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayer) {
-        List<LineUpPlayerPOJO> lineUpPlayer = null;
-        for (FantasyClubLineUpPlayer lineUpHistoryPlayer : fantasyClubLineUpPlayer) {
-            LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), getPositionNameForPlayer(lineUpHistoryPlayer));
-            lineUpPlayer.add(player);
-        }
-        return lineUpPlayer;
-    }
+//    public List<LineUpPlayerPOJO> toLineUpPlayerPOJO(List<FantasyClubLineUpPlayer> fantasyClubLineUpPlayer) {
+//        List<LineUpPlayerPOJO> lineUpPlayer = null;
+//        for (FantasyClubLineUpPlayer lineUpHistoryPlayer : fantasyClubLineUpPlayer) {
+//            LineUpPlayerPOJO player = new LineUpPlayerPOJO(lineUpHistoryPlayer.getId(), lineUpHistoryPlayer.getIsCaptain(), lineUpHistoryPlayer.getIdPlayerSlot().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getId(), lineUpHistoryPlayer.getIdLeaguePlayer().getIdPlayer().getFullname(), lineUpHistoryPlayer.getIdLineUp().getId(), getPositionNameForPlayer(lineUpHistoryPlayer));
+//            lineUpPlayer.add(player);
+//        }
+//        return lineUpPlayer;
+//    }
 
-    public long getBlmPoints(long idFantasyClub, long idMatchday) {
-        EntityManager em = helper.getEntityManager();
+    public static long getBlmPoints(EntityManager em, long idFantasyClub, long idMatchday) {
         long points = 0;
         try {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");

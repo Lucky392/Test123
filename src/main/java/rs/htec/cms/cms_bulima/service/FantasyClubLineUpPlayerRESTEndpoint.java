@@ -27,16 +27,31 @@ import rs.htec.cms.cms_bulima.pojo.FantasyClubLineUpPlayerPOJO;
  */
 @Path("/lineupPlayer")
 public class FantasyClubLineUpPlayerRESTEndpoint {
- 
+
     @InjectParam
     RestHelperClass helper;
-    
+
     /**
-     * API for method: .../rest/lineupPlayer/{id} This method return single element 
-     * of lineupPlayer with defined id in JSON. 
-     * 
-     * Example for JSON response: 
-     * 
+     * API for method: .../rest/lineupPlayer/{id} This method return single
+     * element of lineupPlayer with defined id in JSON.
+     *
+     * Example for JSON response: <br/>
+     * {<br/>
+     * "createDate": 1437439301000,<br/>
+     * "idLeaguePlayer": 93488,<br/>
+     * "idPlayerSlot": 3,<br/>
+     * "isCaptain": 0,<br/>
+     * "idLineUp": 23,<br/>
+     * "urlToLineUp":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/23",<br/>
+     * "urlToPlayerSlot":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/3",<br/>
+     * "leaguePlayerName": "Hiroki Sakai",<br/>
+     * "urlToLeaguePlayer":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/93488",<br/>
+     * "id": 34<br/>
+     * }<br/>
+     *
      * @param token header parameter for checking permission
      * @param id of LineUpPlayer
      * @return 200 OK with LineUpPlayer in JSON format
@@ -50,13 +65,13 @@ public class FantasyClubLineUpPlayerRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         FantasyClubLineUpPlayerPOJO pojo = null;
         try {
-            FantasyClubLineUpPlayer fantasyClubLineUpPlayer = (FantasyClubLineUpPlayer) em.createNamedQuery("FantasyClubLineUpPlayer.findById").setParameter("id", id).getSingleResult();   
+            FantasyClubLineUpPlayer fantasyClubLineUpPlayer = (FantasyClubLineUpPlayer) em.createNamedQuery("FantasyClubLineUpPlayer.findById").setParameter("id", id).getSingleResult();
             pojo = new FantasyClubLineUpPlayerPOJO(fantasyClubLineUpPlayer);
         } catch (Exception e) {
             throw new DataNotFoundException("Fantasy Club Line Up Player at index " + id + " does not exist..");
         }
-        
+
         return Response.ok().entity(pojo).build();
     }
-    
+
 }

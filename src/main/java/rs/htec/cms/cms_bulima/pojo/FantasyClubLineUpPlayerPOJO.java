@@ -5,7 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.helper.Util;
 
@@ -22,6 +24,7 @@ public class FantasyClubLineUpPlayerPOJO {
     private String urlToPlayerSlot;
     private Long idLeaguePlayer;
     private String urlToLeaguePlayer;
+    private String leaguePlayerName;
     private Long idLineUp;
     private String urlToLineUp;
 
@@ -36,6 +39,7 @@ public class FantasyClubLineUpPlayerPOJO {
         if (player.getIdLeaguePlayer() != null) {
             this.idLeaguePlayer = player.getIdLeaguePlayer().getId();
             this.urlToLeaguePlayer = Util.getInstance().getUrl() + "rest/fantasyLeaguePlayer/" + player.getIdLeaguePlayer().getId();
+            this.leaguePlayerName = player.getIdLeaguePlayer().getIdPlayer().getFullname();
         }
         if (player.getIdLineUp() != null) {
             this.idLineUp = player.getIdLineUp().getId();
@@ -113,6 +117,24 @@ public class FantasyClubLineUpPlayerPOJO {
 
     public void setUrlToLineUp(String urlToLineUp) {
         this.urlToLineUp = urlToLineUp;
+    }
+
+    public String getLeaguePlayerName() {
+        return leaguePlayerName;
+    }
+
+    public void setLeaguePlayerName(String leaguePlayerName) {
+        this.leaguePlayerName = leaguePlayerName;
+    }
+    
+        public static List<FantasyClubLineUpPlayerPOJO> toFantasyClubLineUpPlayerPOJOList (List<FantasyClubLineUpPlayer> list) {
+        FantasyClubLineUpPlayerPOJO pojo;
+        List<FantasyClubLineUpPlayerPOJO> pojos = new ArrayList<>();
+        for (FantasyClubLineUpPlayer player : list) {
+            pojo = new FantasyClubLineUpPlayerPOJO(player);
+            pojos.add(pojo);
+        }
+        return pojos;
     }
 
 }

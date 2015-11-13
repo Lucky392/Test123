@@ -5,6 +5,8 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.List;
+
 /**
  *
  * @author stefan
