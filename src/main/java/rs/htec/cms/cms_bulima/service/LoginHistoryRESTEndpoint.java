@@ -23,7 +23,6 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.LoginHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
-import rs.htec.cms.cms_bulima.helper.Dashboard;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.pojo.LoginHistoryPOJO;
 
@@ -33,7 +32,7 @@ import rs.htec.cms.cms_bulima.pojo.LoginHistoryPOJO;
  */
 @Path("loginHistory")
 public class LoginHistoryRESTEndpoint {
-// methods for this Enpoint shouldn't be used
+// methods for this Enpoint shouldn't be used!
     @InjectParam
     RestHelperClass helper;
     Date date = new Date(1439762400000l); // treba podesiti trenutni datum
@@ -198,24 +197,24 @@ public class LoginHistoryRESTEndpoint {
         }
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path("/dashboard")
-    public Response getDashboard(@HeaderParam("authorization") String token, @DefaultValue("all") @QueryParam("platform") String platform) {
-        EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-
-        Dashboard dashboard = new Dashboard();
-        if ("all".equals(platform)) {
-            dashboard.instantiateFullDashboard();
-        } else {
-            if ("total".equals(platform)) {
-                platform = null;
-            }
-            dashboard.instantiateDashboard(platform);
-        }
-        return Response.ok().entity(dashboard).build();
-    }
+//    @GET
+//    @Produces(MediaType.APPLICATION_JSON)
+//    @Path("/dashboard")
+//    public Response getDashboard(@HeaderParam("authorization") String token, @DefaultValue("all") @QueryParam("platform") String platform) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+//
+//        Dashboard dashboard = new Dashboard();
+//        if ("all".equals(platform)) {
+//            dashboard.instantiateFullDashboard();
+//        } else {
+//            if ("total".equals(platform)) {
+//                platform = null;
+//            }
+//            dashboard.instantiateDashboard(platform);
+//        }
+//        return Response.ok().entity(dashboard).build();
+//    }
     
     @GET
     @Produces(MediaType.APPLICATION_JSON)

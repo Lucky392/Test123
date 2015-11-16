@@ -35,7 +35,7 @@ import rs.htec.cms.cms_bulima.pojo.LineUpDifferencePOJO;
 @Path("/lineup")
 public class FantasyClubLineUpRESTEndpoint {
 
-    // to-do: javaDoc
+    // to-do:
     // update when lineuphistory is available  
     @InjectParam
     RestHelperClass helper;
@@ -97,22 +97,22 @@ public class FantasyClubLineUpRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         FantasyClubLineUp lineUp = LineUpDifference.getLineUp(em, idFantasyClub, idMatchday);
         List<FantasyClubLineUpPlayer> lineUpPlayer = LineUpDifference.getLineUpList(em, lineUp.getId());
-        
+
         List<FantasyClubLineUpPlayerPOJO> lineUpPlayerPOJO = FantasyClubLineUpPlayerPOJO.toFantasyClubLineUpPlayerPOJOList(lineUpPlayer);
         return Response.ok().entity(lineUpPlayerPOJO).build();
     }
 
-    /**
-     * API for method: .../rest/lineup/points/{idFantasyClub}/{idMatchday} This
-     * method return bulima points of lineup for defined club and matchday.
-     *
-     * Example for JSON response: 20
-     *
-     * @param token
-     * @param idFantasyClub
-     * @param idMatchday
-     * @return long value for points
-     */
+//    /**
+//     * API for method: .../rest/lineup/points/{idFantasyClub}/{idMatchday} This
+//     * method return bulima points of lineup for defined club and matchday.
+//     *
+//     * Example for JSON response: 20
+//     *
+//     * @param token
+//     * @param idFantasyClub
+//     * @param idMatchday
+//     * @return long value for points
+//     */
 //    @GET
 //    @Path("points/{idFantasyClub}/{idMatchday}")
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -124,7 +124,7 @@ public class FantasyClubLineUpRESTEndpoint {
 //
 //        return Response.ok().entity(points).build();
 //    }
-
+//
 //    @GET
 //    @Path("formation/{idFantasyClub}/{idMatchday}")
 //    @Produces(MediaType.APPLICATION_JSON)
@@ -139,18 +139,72 @@ public class FantasyClubLineUpRESTEndpoint {
 //        return Response.ok().entity(f1).build();
 //    }
     /**
-     * THIS METHOD SHOULD BE CHANGED WHEN DB UPDATES, IT SHOULD USE @PathParam
+     * API for method:
+     * .../rest/lineup/difference?idFantasyClub1=value&idFantasyClub2=value&idMatchday1=value&idMatchday2=value
+     * This method return difference for two lineups [defined club and match
+     * day].
+     *<br/>
+     * Example for JSON response (for API
+     * .../rest/lineup/difference?idFantasyClub1=27217&idFantasyClub2=27217&idMatchday1=1&idMatchday2=2):
+     * {<br/>
+     * "playerDifference": [<br/>
+     * {<br/>
+     * "leaguePlayerName": "Manuel Riemann",<br/>
+     * "urlToLeaguePlayer":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/1575121",<br/>
+     * "urlToLineUp":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1909",<br/>
+     * "urlToPlayerSlot":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/1",<br/>
+     * "createDate": 1438393876000,<br/>
+     * "idLeaguePlayer": 1575121,<br/>
+     * "idPlayerSlot": 1,<br/>
+     * "isCaptain": 0,<br/>
+     * "idLineUp": 1909,<br/>
+     * "id": 14356<br/>
+     * },<br/>
+     * {<br/>
+     * "leaguePlayerName": "Florian Ruck",<br/>
+     * "urlToLeaguePlayer":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/1575291",<br/>
+     * "urlToLineUp":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1909",<br/>
+     * "urlToPlayerSlot":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/5",<br/>
+     * "createDate": 1438393876000,<br/>
+     * "idLeaguePlayer": 1575291,<br/>
+     * "idPlayerSlot": 5,<br/>
+     * "isCaptain": 0,<br/>
+     * "idLineUp": 1909,<br/>
+     * "id": 14349<br/>
+     * },<br/>
+     * {<br/>
+     * "leaguePlayerName": "Marcel Sabitzer",<br/>
+     * "urlToLeaguePlayer":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/1575281",<br/>
+     * "urlToLineUp":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1909",<br/>
+     * "urlToPlayerSlot":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/9",<br/>
+     * "createDate": 1438393876000,<br/>
+     * "idLeaguePlayer": 1575281,<br/>
+     * "idPlayerSlot": 9,<br/>
+     * "isCaptain": 1,<br/>
+     * "idLineUp": 1909,<br/>
+     * "id": 14353<br/>
+     * }<br/>
+     * ],<br/>
+     * "formationDifference": "Formations are different, frst formation: 3-4-3,
+     * second: 4-3-3",<br/>
+     * "bulimaPointDifference": -6<br/>
+     * }<br/>
      *
-     * API for method: .../rest/lineup/formation/{idFantasyClub}/{idMatchday}
-     * This method return formation of lineup for defined club and matchday.
      *
-     * Example for JSON response: 3-4-3
-     *
-     * @param token
-     * @param idFantasyClub1
-     * @param idFantasyClub2
-     * @param idMatchday1
-     * @param idMatchday2
+     * @param token - header parameter for checking permission
+     * @param idFantasyClub1 - id for first fantasy club
+     * @param idFantasyClub2 - id for second fantasy club
+     * @param idMatchday1 - id for first match day
+     * @param idMatchday2 - id for second match day
      * @return formation in String
      */
     @GET
@@ -161,7 +215,6 @@ public class FantasyClubLineUpRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
 
-        
         FantasyClubLineUp lineUp = LineUpDifference.getLineUp(em, idFantasyClub1, idMatchday1);
         List<FantasyClubLineUpPlayer> lineUpPlayers1 = LineUpDifference.getLineUpList(em, lineUp.getId());
         FantasyClubLineUp lineUp2 = LineUpDifference.getLineUp(em, idFantasyClub2, idMatchday2);
@@ -170,10 +223,9 @@ public class FantasyClubLineUpRESTEndpoint {
         String fDiff = LineUpDifference.returnDifferenceForFormation(lineUp.getIdFormation().getName(), lineUp2.getIdFormation().getName());
 
         List<FantasyClubLineUpPlayerPOJO> lineUpDifference = LineUpDifference.returnDifferencePOJO(lineUpPlayers1, lineUpPlayers2);
-        //todo points
         Long points2 = LineUpDifference.getBlmPoints(em, idFantasyClub2, idMatchday2, lineUp2.getCreateDate());
         Long points1 = LineUpDifference.getBlmPoints(em, idFantasyClub1, idMatchday1, lineUp.getCreateDate());
-        Long pointsDifference = (points1 != null && points2 != null)?(points2 - points1):null;
+        Long pointsDifference = (points1 != null && points2 != null) ? (points2 - points1) : null;
 
         LineUpDifferencePOJO pojo = new LineUpDifferencePOJO(lineUpDifference, fDiff, pointsDifference);
         return Response.ok().entity(pojo).build();

@@ -67,7 +67,7 @@
     <properties>
       <!--localhost:3306-->
       <!--bulima-cms-devel.htec.co.rs:13306-->
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/bulima?zeroDateTimeBehavior=convertToNull"/>
+      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://bulima-cms-devel.htec.co.rs:13306/bulima?zeroDateTimeBehavior=convertToNull"/>
       <property name="javax.persistence.jdbc.user" value="cmsdeveldb"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="XPrxo2v4Zr"/>
