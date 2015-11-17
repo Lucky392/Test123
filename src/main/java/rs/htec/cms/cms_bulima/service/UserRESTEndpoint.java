@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -72,6 +73,19 @@ public class UserRESTEndpoint {
             throw new DataNotFoundException("User with id " + id + " does not exist..");
         }
         return Response.ok().entity(user).build();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsers(@HeaderParam("authorization") String token) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<User> users = em.createNamedQuery("User.findAll").getResultList();
+        if (users != null) {
+            return Response.ok().entity(users).build();
+        } else {
+            throw new DataNotFoundException("There is no users!");
+        }
     }
 
     @PUT
