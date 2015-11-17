@@ -9,18 +9,21 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.User;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
@@ -77,12 +80,19 @@ public class UserRESTEndpoint {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsers(@HeaderParam("authorization") String token) {
+    public Response getUsers(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        List<User> users = em.createNamedQuery("User.findAll").getResultList();
+        String query = "SELECT u FROM User u";
+        List<User> users = em.createQuery(query).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        String countQuery = query.replaceFirst("u", "count(u)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(users);
         if (users != null) {
-            return Response.ok().entity(users).build();
+            return Response.ok().entity(go).build();
         } else {
             throw new DataNotFoundException("There is no users!");
         }
