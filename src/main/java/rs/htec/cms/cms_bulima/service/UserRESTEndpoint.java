@@ -98,16 +98,15 @@ public class UserRESTEndpoint {
             query.append(" WHERE u.email='").append(email).append("'");
         }
         List<User> users = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        if (users == null || users.isEmpty()) {
+            throw new DataNotFoundException("There is no users!");
+        }
         String countQuery = query.toString().replaceFirst("u", "count(u)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(users);
-        if (users != null) {
-            return Response.ok().entity(go).build();
-        } else {
-            throw new DataNotFoundException("There is no users!");
-        }
+        return Response.ok().entity(go).build();
     }
 
     @PUT
