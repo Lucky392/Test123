@@ -1,0 +1,9 @@
+<div class="modal-header">Registration form</div>
+<div class="modal-body">
+    <form ng-submit="rg.onSubmit()" name="rg.form1"novalidate>
+        <formly-form model="rg.user" fields="rg.userFields">
+            <button type="submit" class="btn btn-primary submit-button" ng-disabled="rg.form1.$invalid">Register</button>
+            <button type="button" class="btn btn-default" ng-click="rg.options.resetModel()">Reset</button>
+        </formly-form>
+    </form>
+</div>

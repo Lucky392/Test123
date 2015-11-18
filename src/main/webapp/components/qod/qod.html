@@ -1,0 +1,120 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-1">
+            <h1>QotD</h1>
+        </div>
+        <div class="col-md-7 searchBox">
+            <div class="input-group">
+                <input type="text" name="search" ng-model="search" ng-click="selectText($event)" class="form-control"
+                       placeholder="Search QOD">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" ng-click="searchQOD()" ng-disabled="downloading">
+                        Search
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-3">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-10">
+                        <p class="input-group">
+                            <input type="text" class="form-control" max-date="ctrl.maxStartDate"  datetime-picker="dd/MM/yyyy HH:mm" ng-model="ctrl.dates.startDate" is-open="ctrl.open.startDate" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="ctrl.openCalendar($event, 'startDate')"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3">
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-sm-10">
+                        <p class="input-group">
+                            <input type="text" class="form-control" min-date="ctrl.minDate" max-date="ctrl.maxDate" datetime-picker="dd/MM/yyyy HH:mm" ng-model="ctrl.dates.endDate" is-open="ctrl.open.endDate" />
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="ctrl.openCalendar($event, 'endDate')"><i class="glyphicon glyphicon-calendar"></i></button>
+                            </span>
+                        </p>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <!--<div class="n_button col-md-3" ng-options="type for type in QODTypeList">-->
+            <!-- -->
+        <!--</div>-->
+        <button class="btn btn-success n_button col-md-3" ng-disabled="downloading" ng-click="showFilteredQOD()">Show
+        </button>
+        <a type="button" class="btn btn-info n_button col-md-3" ng-disabled="downloading" ui-sref="createQOD">Add
+            QOD</a>
+    </div>
+
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>Question</th>
+                <th>Date</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <h3 ng-bind="message"></h3>
+            <tr class="info" ng-repeat="qod in QODList">
+                <td><a ui-sref="singleQOD({id:'{{qod.id}}'})" ng-bind="qod.question"></a></td>
+                <td ng-bind="qod.date  | date: 'dd-MM-yyyy HH:mm:ss'"></td>
+                <td ui-sref-active="is-active">
+                    <a class="btn btn-success" ui-sref="editQOD({id:'{{qod.id}}'})">Edit</a>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" ng-click="openDialogBox(qod.id, qod.question)">Delete</button>
+                </td>
+            </tr>
+        </table>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <uib-pagination total-items="bigTotalItems" items-per-page="limitPage" ng-change="pageChange()"
+                                ng-model="bigCurrentPage" max-size="maxSize" class="pagination-md" boundary-links="true"
+                                rotate="false" num-pages="numPages"></uib-pagination>
+            </div>
+            <pre class="col-md-2 col-md-offset-5">Page: {{bigCurrentPage}} / {{numPages}}</pre>
+        </div>
+    </div>
+</div>
+
+
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete selected piece of QOD</h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind="data.question"></p>
+        Question:<p ng-bind="data.name"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>
+<script type="text/ng-template" id="directive.html">
+    <pre>{{ datepickerVm | json}} </pre>
+    <p class="input-group" style="margin-bottom:15px;" ng-click="datepickerVm.togglePopup($event, null)" >
+        <input type="text" class="form-control"
+               ng-model="datepickerVm.selectedDate"
+               is-open="datepickerVm.isDatePickerOpen"
+               datepicker-popup="{{ 'MMM-dd-yyyy' }}"
+               datepicker-options="datepickerVm.dateOptions"
+               ng-change="datepickerVm.onChange()" ng-disabled="true"
+               style="background-color:#ffffff; cursor: default;" />
+        <span class="input-group-btn">
+            <button type="button" class="btn btn-default" ng-click="datepickerVm.togglePopup($event, null)">
+                <i class="glyphicon glyphicon-calendar"></i>
+            </button>
+        </span>
+    </p>
+</script>

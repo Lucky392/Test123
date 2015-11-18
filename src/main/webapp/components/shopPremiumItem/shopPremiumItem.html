@@ -1,0 +1,51 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-3">
+            <h1>Shop</h1>
+            <h2>Premium Item</h2>
+        </div>
+        <div class="col-md-7 searchBox">
+            <div class="input-group">
+                <input type="text" name="search" ng-model="search" ng-click="selectText($event)" class="form-control"
+                       placeholder="Search Premium Item">
+                <span class="input-group-btn">
+                    <button class="btn btn-success" type="button" ng-click="searchNews()" ng-disabled="downloading">
+                        Search
+                    </button>
+                </span>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <a type="button" class="btn btn-info n_button col-md-3" ng-disabled="downloading" ui-sref="createShopPremiumItem">Add Item</a>
+    </div>
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>Shop Name</th>
+                <th>Description</th>
+                <th>Create Date</th>
+                <th>Update Date</th>
+                <th>Edit</th>
+            </tr>
+            <tr class="info" ng-repeat="item in itemsPremiumList">
+                <td><a ui-sref="singleShopPremiumItem({id:'{{item.id}}'})" ng-bind="item.shopName"></a></td>
+                <td ng-bind="item.description"></td>
+                <td ng-bind="item.createDate  | date: 'dd-MM-yyyy HH:mm:ss'"></td>
+                <td ng-bind="item.updateTimestamp  | date: 'dd-MM-yyyy HH:mm:ss'"></td>
+                <td ui-sref-active="is-active">
+                    <a class="btn btn-success" ui-sref="editShopPremiumItem({id:'{{item.id}}'})">Edit</a>
+                </td>
+
+            </tr>
+        </table>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <uib-pagination total-items="bigTotalItems" items-per-page="limitPage" ng-change="pageChange()"
+                                ng-model="bigCurrentPage" max-size="maxSize" class="pagination-md" boundary-links="true"
+                                rotate="false" num-pages="numPages"></uib-pagination>
+            </div>
+            <pre class="col-md-2 col-md-offset-5">Page: {{bigCurrentPage}} / {{numPages}}</pre>
+        </div>
+    </div>
+</div>

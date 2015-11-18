@@ -1,0 +1,21 @@
+<div class="row modal-header">
+    <h1>Edit-Shop Premium Package Content</h1>
+    <a class="btn btn-default" ui-sref="shopPremiumPackage">Back</a>
+</div>
+<div class="row modal-body">
+    <form class="col-md-offset-2 col-md-8"  name="eppc.form1">
+        <formly-form model="eppc.premiumPackageContent" fields="eppc.premiumPackageContentFields">
+            <button type="button" class="btn btn-primary submit-button" ng-click="change()">SAVE</button>
+        </formly-form>
+    </form>
+</div>
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Premium Item Package</h3>
+        <p ng-bind="data.question"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>

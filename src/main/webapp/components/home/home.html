@@ -1,0 +1,63 @@
+<div class="row home">
+    <div class="col-md-3 cms">
+        <h2 class="text-center">CMS</h2>
+        <nav>
+            <ul class="nav nav-pills nav-stacked">
+                <!--<li><a class="text-danger" ui-sref="cmsUser">CMS_USERS</a></li>-->
+                <li><a ui-sref="news">News</a></li>
+                <li><a ui-sref="slider">Home Slider</a></li>
+                <!--<li><a ui-sref="qod">QotD</a></li>-->
+                <li class="dd_btn">
+                    <span uib-dropdown on-toggle="toggled(open)">
+                        <a href id="simple-dropdown" uib-dropdown-toggle>QotD</a>
+                          <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
+                              <li><a ui-sref="qod">Question of the day</a></li>
+                              <li><a ui-sref="qodprize">Question of the day prize</a></li>
+                          </ul>
+                     </span>
+                </li>
+                <li class="dd_btn">
+                    <span uib-dropdown on-toggle="toggled(open)">
+                        <a href id="simple-dropdown" uib-dropdown-toggle>SHOP PREMIUM ITEMS</a>
+                          <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
+                              <li><a ui-sref="shopPremiumItem">Premium Item</a></li>
+                              <li><a ui-sref="shopPremiumItemPackage">Premium Item Package</a></li>
+                              <li><a ui-sref="shopPremiumAction">Premium Action</a></li>
+                          </ul>
+                     </span>
+                </li>
+                <li class="dd_btn">
+                    <span uib-dropdown on-toggle="toggled(open)">
+                        <a href id="simple-dropdown" uib-dropdown-toggle>SHOP PREMIUM PACKAGE</a>
+                          <ul class="uib-dropdown-menu" aria-labelledby="simple-dropdown">
+                              <li><a ui-sref="shopPremiumPackage">Shop Premium Package</a></li>
+                              <li><a ui-sref="shopPremiumPackageContent">Shop Premium Package Content</a></li>
+                              <li><a ui-sref="shopPremiumPackageProperties">Shop Premium Package Properties</a></li>
+                          </ul>
+                     </span>
+                </li>
+                <li><a ui-sref="playerUsers">Player Users</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="col-md-3 support">
+        <h2 class="text-center">SUPORT</h2>
+        <nav>
+            <ul class="nav nav-pills nav-stacked">
+                <li><a href="">AUCTIONS</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="col-md-3 statistics">
+        <h2 class="text-center">STATISTICS</h2>
+    </div>
+    <div class="col-md-3 statistics">
+        <h3 class="text-center">ADMINISTRATION</h3>
+        <nav>
+            <ul class="nav nav-pills nav-stacked">
+                <li><a ui-sref="cmsUser">CMS_User</a></li>
+                <li><a ui-sref="role">Roles</a></li>
+            </ul>
+        </nav>
+    </div>
+</div>

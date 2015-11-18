@@ -1,0 +1,56 @@
+<div class=" head">
+    <div class="row">
+        <div class="col-md-10">
+             <h1>QOD Prize</h1>
+        </div>
+    <div/>
+    <div class="row">
+        <div class="col-md-10">
+             <a type="button" class="btn btn-info n_button" ng-disabled="downloading" ui-sref="createQODP">Add QOD Prize</a>
+        </div>
+    </div>
+        <div class="content">
+            <table class="table table-hover">
+                <tr>
+                    <th>Name</th>
+                    <th>Prize money</th>
+                    <th>Date</th>
+                    <th>Edit</th>
+                    <th>Delete</th>
+                </tr>
+                <tr class="info" ng-repeat="qodp in QODPrizeList">
+                    <td><a ui-sref="singleQODP({id:'{{qodp.id}}'})" ng-bind="qodp.name"></a></td>
+                    <td ng-bind="qodp.prizeMoney"></td>
+                    <td ng-bind="qodp.createDate  | date: 'dd-MM-yyyy HH:mm:ss'"></td>
+                    <td ui-sref-active="is-active">
+                        <a class="btn btn-success" ui-sref="editQODP({id:'{{qodp.id}}'})">Edit</a>
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-danger" ng-click="openDialogBox(qodp.id, qodp.name)">Delete</button>
+                    </td>
+                </tr>
+            </table>
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <uib-pagination total-items="bigTotalItems" items-per-page="limitPage" ng-change="pageChange()"
+                                    ng-model="bigCurrentPage" max-size="maxSize" class="pagination-md" boundary-links="true"
+                                    rotate="false" num-pages="numPages"></uib-pagination>
+                </div>
+                <pre class="col-md-2 col-md-offset-5">Page: {{bigCurrentPage}} / {{numPages}}</pre>
+            </div>
+        </div>
+    </div>
+</div>
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete selected</h3>
+    </div>
+    <div class="modal-body">
+        Name:<p ng-bind="data.name"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>

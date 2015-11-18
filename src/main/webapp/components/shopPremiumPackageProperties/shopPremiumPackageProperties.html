@@ -1,0 +1,65 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-3">
+            <h1>Shop</h1>
+            <h2>Premium Package</h2>
+            <h3>Properties</h3>
+        </div>
+        <div class="col-md-7 searchBox">
+
+        </div>
+    </div>
+    <div class="row">
+        <a type="button" class="btn btn-info n_button col-md-3" ng-disabled="downloading" ui-sref="createShopPremiumPackageProperties">Add Item</a>
+    </div>
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>Preview</th>
+                <th>Premium Package Succesor</th>
+                <th>Premium Package Upgrade</th>
+                <th>For non playing users</th>
+                <th>For playing user</th>
+                <th>Create date</th>
+                <th>Update date</th>
+                <th>Edit</th>
+            </tr>
+            <tr class="info" ng-repeat="item in itemsPackageProperties">
+                <td><a ui-sref="singleShopPremiumPackageProperties({id:'{{item.id}}'})">Preview</a></td>
+                <td ng-bind="item.premiumPackageSuccessor"></td>
+                <td ng-bind="item.premiumPackageUpgrade"></td>
+                <td ng-bind="item.forNonPayingUsers"></td>
+                <td ng-bind="item.forPayingUsers"></td>
+                <td ng-bind="item.createDate  | date: 'dd-MM-yyyy HH:mm:ss'"></td>
+                <td ng-bind="item.updateTimestamp  | date: 'dd-MM-yyyy HH:mm:ss'"></td>
+                <td ui-sref-active="is-active">
+                    <a class="btn btn-success" ui-sref="editShopPremiumPackageProperties({id:'{{item.id}}'})">Edit</a>
+                </td>
+            </tr>
+        </table>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <uib-pagination total-items="bigTotalItems" items-per-page="limitPage" ng-change="pageChange()"
+                                ng-model="bigCurrentPage" max-size="maxSize" class="pagination-md" boundary-links="true"
+                                rotate="false" num-pages="numPages"></uib-pagination>
+            </div>
+            <pre class="col-md-2 col-md-offset-5">Page: {{bigCurrentPage}} / {{numPages}}</pre>
+        </div>
+    </div>
+</div>
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete selected piece of news</h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind="data.question"></p>
+        Name:<p ng-bind="data.name"></p>
+        Type:<p ng-bind="data.type"></p>
+        Date:<p ng-bind="data.date | date: 'dd-MM-yyyy HH:mm:ss'"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>

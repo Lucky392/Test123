@@ -1,0 +1,68 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-1">
+            <h1>Slider</h1>
+        </div>
+        <div class="col-md-7 searchBox">
+        </div>
+    </div>
+
+    <div class="row">
+        <a type="button" class="btn btn-info n_button col-md-3" ng-disabled="downloading" ui-sref="createSlider">Add Slider</a>
+    </div>
+
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>Preview</th>
+                <th>Img</th>
+                <th>msec</th>
+                <th>Start showing </th>
+                <th>Stop showing </th>
+                <th>Text</th>
+                <th>Redirect URL</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr class="info" ng-repeat="slider in slidersList">
+                <td><a ui-sref="singleSlider({id:'{{slider.id}}'})">Preview</a></td>
+                <td><img class="slider_img" ng-src="{{slider.contentUrl}}" alt=""/></td>
+                <td ng-bind="slider.showForMsec"></td>
+                <td ng-bind="slider.startShowingAt  | date: 'dd/MM/yyyy HH:mm:ss'"></td>
+                <td ng-bind="slider.stopShowingAt  | date: 'dd/MM/yyyy HH:mm:ss'"></td>
+                <td ng-bind="slider.text"></td>
+                <td ng-bind="slider.redirectUrl"></td>
+                <td ui-sref-active="is-active">
+                    <a class="btn btn-success" ui-sref="editSlider({id:'{{slider.id}}'})">Edit</a>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger"
+                            ng-click="openDialogBox(slider.id)">Delete
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <uib-pagination total-items="bigTotalItems" items-per-page="limitPage" ng-change="pageChange()"
+                                ng-model="bigCurrentPage" max-size="maxSize" class="pagination-md" boundary-links="true"
+                                rotate="false" num-pages="numPages"></uib-pagination>
+            </div>
+            <pre class="col-md-2 col-md-offset-5">Page: {{bigCurrentPage}} / {{numPages}}</pre>
+        </div>
+    </div>
+</div>
+
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete selected slider</h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind="data.question"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>

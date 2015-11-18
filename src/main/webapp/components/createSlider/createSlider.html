@@ -1,0 +1,59 @@
+<div class="row modal-header">
+    <h1>Create Slider</h1>
+    <a class="btn btn-default" ui-sref="slider">Back</a>
+</div>
+<div class="row">
+    <div class="col-md-3 col-md-offset-3">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <label>Start Showing</label>
+                    <p class="input-group">
+                        <input type="text" class="form-control" datetime-picker="dd/MM/yyyy HH:mm" ng-model="cs.dates.startDate" is-open="cs.open.startDate"/>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default" ng-click="cs.openCalendar($event, 'startDate')"><i class="fa fa-calendar"></i></button>
+                            </span>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-3">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <div class="col-sm-10">
+                    <label>Stop Showing</label>
+                    <p class="input-group">
+                        <input type="text" class="form-control" min-date="cs.minDate" max-date="cs.maxDate" datetime-picker="dd/MM/yyyy HH:mm" ng-model="cs.dates.endDate" is-open="cs.open.endDate"/>
+                            <span class="input-group-btn">
+                                <button type="button" class="btn btn-default"
+                                        ng-click="cs.openCalendar($event, 'endDate')"><i class="fa fa-calendar"></i>
+                                </button>
+                            </span>
+                    </p>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row modal-body">
+    <form class="col-md-offset-2 col-md-8" ng-submit="cs.onSubmit()" name="cs.form1" novalidate>
+        <upload-button class="btn btn-upload btn-warning"   required="true"  enctype="multipart/form-data" url="http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/uploadFile?imageLocationFolder=1"  accept="acceptTypes" multiple="allowMultiple" on-success="onGlobalSuccess(response)" on-upload="onUpload(files)" param="file" on-error="onError(response)" on-complete="onComplete(response)"">{{btn_title}}</upload-button>
+        <p>{{complete}}</p>
+        <formly-form model=" cs.slider" fields="cs.sliderFields">
+            <button type="button" class="btn btn-primary submit-button" ng-click="add()" ng-disabled="cs.form1.$invalid">SAVE</button>
+        </formly-form>
+    </form>
+</div>
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Slider</h3>
+        <p ng-bind="data.question"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>
+
+

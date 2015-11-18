@@ -1,64 +1,30 @@
 <!DOCTYPE html>
-<html lang="en">
+<!--[if lt IE 7]>      <html lang="en" ng-app="adminPanel" class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html lang="en" ng-app="adminPanel" class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html lang="en" ng-app="adminPanel" class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!-->
+<html lang="en" ng-app="adminPanel" class="no-js">
+<!--<![endif]-->
 
-    <head>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>My AngularJS App</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="styles/e6cc23b7.main.css">
+</head>
 
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="">
-        <meta name="author" content="">
-
-        <title>Creative - Start Bootstrap Theme</title>
-
-        <!-- Bootstrap Core CSS -->
-        <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css">
-
-        <!-- Custom Fonts -->
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css" type="text/css">
-z
-        <!-- Plugin CSS -->
-        <link rel="stylesheet" href="css/animate.min.css" type="text/css">
-
-        <!-- Custom CSS -->
-        <link rel="stylesheet" href="css/creative.css" type="text/css">
-        <link rel="stylesheet" href="css/main.css" type="text/css">
-    </head>
-
-    <body id="page-top">
-
-        <div class="col-md-4"></div>
-        <div id="index-body" class="col-md-4">
-
-            <section class="login-form">
-                <form >
-                    <img src="img/cmsImage.jpg" class="img-responsive" alt="" />
-                    <input name="username" id="username" required class="form-control input-lg" placeholder="Username"/>
-                    <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Password" required="" />
-                    <button id="logIn" type="button" class="btn btn-lg btn-primary btn-block">Log In</button>
-                </form>
-
-            </section>
-
-        </div>
-        <div class="col-md-4"></div>
-        <!-- jQuery -->
-        <script src="js/jquery.js"></script>
-
-        <!-- Bootstrap Core JavaScript -->
-        <script src="js/bootstrap.min.js"></script>
-
-        <!-- Plugin JavaScript -->
-        <script src="js/jquery.easing.min.js"></script>
-        <script src="js/jquery.fittext.js"></script>
-        <script src="js/wow.min.js"></script>
-
-        <!-- Custom Theme JavaScript -->
-        <script src="js/creative.js"></script>
-        <script src="js/main.js"></script>
-
-    </body>
+<body>
+    <!--[if lt IE 7]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+  <![endif]-->
+    <div class="container" ui-view="login">
+        <div ui-view="header"></div>
+        <div ui-view="app"></div>
+    </div>
+    <script src="scripts/cec77aaf.vendor.js"></script>
+    <script src="scripts/3b50324f.scripts.js"></script>
+</body>
 
 </html>

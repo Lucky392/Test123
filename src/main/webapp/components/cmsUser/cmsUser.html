@@ -1,0 +1,50 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-1">
+            <h2>CMS_Users</h2>
+        </div>
+    </div>
+    <div class="row">
+        <a type="button" class="btn btn-info n_button col-md-3" ng-disabled="downloading" ui-sref="createCmsUser">Add CMS_User</a>
+    </div>
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>Username</th>
+                <th>Password</th>
+                <th>Role(Permissions)</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr class="info" ng-repeat="cmsuser in cmsUserList">
+                <td ng-bind="cmsuser.userName"></td>
+                <td ng-bind="cmsuser.password"></td>
+                <td >
+                    <a ui-sref="singleRole({id:'{{cmsuser.idRole.id}}'})" ng-bind="cmsuser.idRole.name"></a>
+                </td>
+                <td ui-sref-active="is-active">
+                    <a class="btn btn-success"  disabled="disabled">Edit</a>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" ng-click="openDialogBox()" disabled="disabled">Delete</button>
+                </td>
+            </tr>
+        </table>
+
+</div>
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete selected piece of news</h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind="data.question"></p>
+        Name:<p ng-bind="data.name"></p>
+        Type:<p ng-bind="data.type"></p>
+        Date:<p ng-bind="data.date | date: 'dd-MM-yyyy HH:mm:ss'"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>
