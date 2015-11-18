@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
@@ -20,6 +21,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Auction;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.AuctionPOJO;
 
 /**
  *
@@ -75,7 +77,11 @@ public class AuctionsRESTEndpoint {
         if (auctions.isEmpty()) {
             throw new DataNotFoundException("There is no Auction for this Club!");
         } else {
-            return Response.ok().entity(auctions).build();
+            List<AuctionPOJO> pojos = new ArrayList<>();
+            for (Auction a : auctions) {
+                pojos.add(new AuctionPOJO(a));
+            }
+            return Response.ok().entity(pojos).build();
         }
     }
 
