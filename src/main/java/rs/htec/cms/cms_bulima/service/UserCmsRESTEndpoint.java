@@ -179,7 +179,7 @@ public class UserCmsRESTEndpoint {
     public Response updateUser(@HeaderParam("authorization") String token, CmsUser user) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.EDIT, token);
-        if (validator.checkLenght(user.getUserName(), 255, true) && validator.checkLenght(user.getPassword(), 255, true)) {
+        if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {
             CmsUser oldUser = em.find(CmsUser.class, user.getId());
             if (oldUser != null) {
                 helper.mergeObject(em, user);
