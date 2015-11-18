@@ -78,15 +78,27 @@ public class UserRESTEndpoint {
         return Response.ok().entity(user).build();
     }
 
+    /**
+     * Returns Users for defined search.
+     * 
+     * @param token - header parameter for checking permission
+     * @param page
+     * @param limit
+     * @param email - of User we are searching for
+     * @return User
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
-            @DefaultValue("10") @QueryParam("limit") int limit) {
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("email") String email) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        String query = "SELECT u FROM User u";
-        List<User> users = em.createQuery(query).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        String countQuery = query.replaceFirst("u", "count(u)");
+        StringBuilder query = new StringBuilder("SELECT u FROM User u");
+        if (email != null) {
+            query.append(" WHERE u.email='").append(email).append("'");
+        }
+        List<User> users = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        String countQuery = query.toString().replaceFirst("u", "count(u)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);

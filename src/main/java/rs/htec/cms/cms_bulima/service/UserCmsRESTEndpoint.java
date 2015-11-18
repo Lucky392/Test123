@@ -166,7 +166,7 @@ public class UserCmsRESTEndpoint {
     public Response createUser(@HeaderParam("authorization") String token, CmsUser user) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token);
-        if (validator.checkLenght(user.getUserName(), 255, true) && validator.checkLenght(user.getPassword(), 255, true)) {
+        if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {
             helper.persistObject(em, user);
             return Response.status(Response.Status.CREATED).build();
         } else {
