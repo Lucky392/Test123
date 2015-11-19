@@ -40,27 +40,39 @@ public class FantasyClubRESTEndpoint {
     Validator validator;
 
     /**
-     * API for this method: .../rest/fantasyClub/{id} This method returns
-     * JSON list of Fantasy Clubs for one Fantasy Manager. It produces
+     * API for this method: .../rest/fantasyClub/manager/{id} This method
+     * returns JSON list of Fantasy Clubs for one Fantasy Manager. It produces
      * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
-     * "lastLogin": "2014-08-04 14:36:54.0",<br/> "totalBLMPoints": "0",<br/>
-     * "auctionList": "[]",<br/> "changeLineUpTimestamp": "null",<br/>
-     * "activity": "removed",<br/> "firstLogin": "2014-08-04 14:36:54.0",<br/>
-     * "isLeagueFounder": "0",<br/>
-     * "lastLoginWith": "null",<br/> "isLineUpChangedByCoTrainer": "0",<br/>
-     * "sportDirectorActiveTimestamp": "null",<br/> "bidList": "[]",<br/>
-     * "idFantasyClubLogo": "293",<br/> "lastQuestionAnswered": "null",<br/>
-     * "id": "55",<br/>
-     * "credit": "40000000",<br/> "amountSubstituteBench": "0",<br/>
-     * "idActiveFormation": "1",<br/> "createDate": "2014-08-04
-     * 14:36:54.0",<br/> "idEmblem": "303",<br/>
-     * "fantasyPlayerList": "[]",<br/> "idCaptain": "null",<br/>
-     * "fantasyClubCreditHistoryList": "[]",<br/> "idFantasyManager": "56",<br/>
-     * "updateTimestamp": "2015-08-01 02:30:34.0",<br/> "questionRightAnswered":
-     * "0",<br/>
-     * "newsList": "[]",<br/> "amountCoTrainer": "0",<br/> "name": "ASV Inter
-     * Lupfer 1920",<br/> "amountSubstituteBenchSlots": "0",<br/>
-     * "idFantasyLeague": "null"<br/> } ]
+     * "createDate": 1407155814000,<br/>
+     * "activity": "removed",<br/>
+     * "lastLoginWith": null,<br/>
+     * "credit": 40000000,<br/>
+     * "updateTimestamp": 1438389034000,<br/>
+     * "totalBLMPoints": 0,<br/>
+     * "changeLineUpTimestamp": null,<br/>
+     * "isLeagueFounder": 0,<br/>
+     * "amountSubstituteBench": 0,<br/>
+     * "amountCoTrainer": 0,<br/>
+     * "lastLogin": 1407155814000,<br/>
+     * "firstLogin": 1407155814000,<br/>
+     * "sportDirectorActiveTimestamp": null,<br/>
+     * "lastQuestionAnswered": null,<br/>
+     * "questionRightAnswered": 0,<br/>
+     * "amountSubstituteBenchSlots": 0,<br/>
+     * "isLineUpChangedByCoTrainer": 0,<br/>
+     * "fantasyLeagueName": null,<br/>
+     * "fantasyLeagueID": null,<br/>
+     * "fantasyManagerName": "sefesfes null",<br/>
+     * "fantasyManagerID": 56,<br/>
+     * "captainFantasyPlayerID": null,<br/>
+     * "fantasyClubLogoID": 293,<br/>
+     * "formationName": "4-4-2",<br/>
+     * "captianName": null,<br/>
+     * "formationID": 1,<br/>
+     * "emblemID": 303,<br/>
+     * "name": "ASV Inter Lupfer 1920",<br/>
+     * "id": 55<br/>
+     * }<br/> ]
      *
      * @param token is a header parameter for checking permission
      * @param id is id of Fantasy Manager
@@ -70,13 +82,13 @@ public class FantasyClubRESTEndpoint {
      * "errorCode": 404 <br/>}
      */
     @GET
-    @Path("/{id}")
+    @Path("/manager/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getFantasyClubByManagerId(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClub> fc;
-        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f JOIN f.idFantasyManager u WHERE u.id = ");
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f WHERE f.idFantasyManager.id = ");
         query.append(id);
         fc = em.createQuery(query.toString()).getResultList();
         if (fc.isEmpty()) {
@@ -85,10 +97,88 @@ public class FantasyClubRESTEndpoint {
             return Response.ok().entity(FantasyClubPOJO.toFantasyCLubPOJOList(fc)).build();
         }
     }
-    
+
+    /**
+     * API for this method: .../rest/fantasyClub/{id} This method returns
+     * FantasyClub for defined id. It produces APPLICATION_JSON media type.
+     * Example for JSON response:
+     * <br/>
+     * {<br/>
+     * "createDate": 1407155814000,<br/>
+     * "activity": "removed",<br/>
+     * "lastLoginWith": null,<br/>
+     * "credit": 40000000,<br/>
+     * "updateTimestamp": 1438389034000,<br/>
+     * "totalBLMPoints": 0,<br/>
+     * "changeLineUpTimestamp": null,<br/>
+     * "isLeagueFounder": 0,<br/>
+     * "amountSubstituteBench": 0,<br/>
+     * "amountCoTrainer": 0,<br/>
+     * "lastLogin": 1407155814000,<br/>
+     * "firstLogin": 1407155814000,<br/>
+     * "sportDirectorActiveTimestamp": null,<br/>
+     * "lastQuestionAnswered": null,<br/>
+     * "questionRightAnswered": 0,<br/>
+     * "amountSubstituteBenchSlots": 0,<br/>
+     * "isLineUpChangedByCoTrainer": 0,<br/>
+     * "fantasyLeagueName": null,<br/>
+     * "fantasyLeagueID": null,<br/>
+     * "fantasyManagerName": "sefesfes null",<br/>
+     * "fantasyManagerID": 56,<br/>
+     * "captainFantasyPlayerID": null,<br/>
+     * "fantasyClubLogoID": 293,<br/>
+     * "formationName": "4-4-2",<br/>
+     * "captianName": null,<br/>
+     * "formationID": 1,<br/>
+     * "emblemID": 303,<br/>
+     * "name": "ASV Inter Lupfer 1920",<br/>
+     * "id": 55<br/>
+     * }<br/>
+     *
+     * @param token is a header parameter for checking permission
+     * @param id is id of Fantasy Club
+     * @return Response 200 OK with JSON body
+     * @throws DataNotFoundException Example for exception: <br/>{<br/>
+     * "errorMessage": "There is no Fantasy Club for this id!",<br/>
+     * "errorCode": 404 <br/>}
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFantasyClubById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        FantasyClub fc;
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f WHERE f.id = ");
+        query.append(id);
+        fc = (FantasyClub) em.createQuery(query.toString()).getSingleResult();
+        if (fc == null) {
+            throw new DataNotFoundException("There is no Fantasy Club for this id!");
+        } else {
+            FantasyClubPOJO pojo = new FantasyClubPOJO(fc);
+            return Response.ok().entity(pojo).build();
+        }
+    }
+
     /**
      * Updates FantasyClub.
-     * 
+     * <br/>
+     * Example for body: {<br/>
+     * "activity": "removed",<br/>
+     * "lastLoginWith": "WEB",<br/>
+     * "credit": 18039000,<br/>
+     * "totalBLMPoints": 0,<br/>
+     * "changeLineUpTimestamp": null,<br/>
+     * "isLeagueFounder": 0,<br/>
+     * "amountSubstituteBench": 0,<br/>
+     * "amountCoTrainer": 0,<br/>
+     * "sportDirectorActiveTimestamp": null,<br/>
+     * "questionRightAnswered": 0,<br/>
+     * "isLineUpChangedByCoTrainer": 0,<br/>
+     * "name": "3.FC Uckermark",<br/>
+     * "id": 1000<br/>
+     * }<br/>
+     *
      * @param token header parameter for checking permission
      * @param fantasyClub FantasyClub with changes that should be made
      * @return 200 OK
@@ -106,6 +196,12 @@ public class FantasyClubRESTEndpoint {
                     && validator.checkLenght(fantasyClub.getActivity(), 255, true)
                     && validator.checkLenght(fantasyClub.getLastLoginWith(), 255, true)) {
                 fantasyClub.setCreateDate(oldFC.getCreateDate());
+                fantasyClub.setAmountSubstituteBenchSlots(oldFC.getAmountSubstituteBenchSlots());
+                fantasyClub.setIdFantasyManager(oldFC.getIdFantasyManager());
+                fantasyClub.setLastLogin(oldFC.getLastLogin());
+                fantasyClub.setFirstLogin(oldFC.getFirstLogin());
+                fantasyClub.setLastQuestionAnswered(oldFC.getLastQuestionAnswered());
+
                 helper.mergeObject(em, fantasyClub);
             } else {
                 throw new InputValidationException("Validation failed");
@@ -115,5 +211,5 @@ public class FantasyClubRESTEndpoint {
         }
         return Response.ok().build();
     }
-    
+
 }
