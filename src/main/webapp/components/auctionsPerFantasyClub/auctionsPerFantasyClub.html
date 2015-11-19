@@ -1,0 +1,54 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-3">
+            <h2>Auctions per fantasy club</h2>
+            <h3 ng-bind="userEmail"></h3>
+        </div>
+        <div class="col-md-7 searchBox">
+        </div>
+    </div>
+    <div class="row">
+        <a type="button" class="btn btn-info n_button col-md-3" ui-sref="gameUsers">Users</a>
+    </div>
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>Fan.Player</th>
+                <th>Fan.Club Seller</th>
+                <th>Fan.League</th>
+                <th>Start price</th>
+                <th>Auctions Start</th>
+                <th>Auctions End</th>
+                <th>Create Date</th>
+                <th>Edit</th>
+                <th>Delete</th>
+            </tr>
+            <tr class="info" ng-repeat="auction in auctionsList">
+                <td ng-bind="auction.fantasyLeaguePlayer"></td>
+                <td ng-bind="auction.fantasyClubSeller"></td>
+                <td ng-bind="auction.fantasyLeague"></td>
+                <td ng-bind="auction.startPrice"></td>
+                <td ng-bind="auction.auctionStartTimestamp  | date: 'dd/MM/yyyy HH:mm:ss'"></td>
+                <td ng-bind="auction.auctionFinishedTimestamp  | date: 'dd/MM/yyyy HH:mm:ss'"></td>
+                <td ng-bind="auction.createDate  | date: 'dd/MM/yyyy HH:mm:ss'"></td>
+                <td ui-sref-active="is-active"> <a class="btn btn-success" disabled="disabled" ui-sref="editNews({id:'{{news.id}}'})">Edit</a> </td>
+                <td> <button type="button" class="btn btn-danger" disabled="disabled" ng-click="">Delete</button></td>
+            </tr>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<!--<script type="text/ng-template" id="myModalContent.html">-->
+    <!--<div class="modal-header">-->
+        <!--<h3 class="modal-title">Delete selected slider</h3>-->
+    <!--</div>-->
+    <!--<div class="modal-body">-->
+        <!--<p ng-bind="data.question"></p>-->
+    <!--</div>-->
+    <!--<div class="modal-footer">-->
+        <!--<button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>-->
+        <!--<button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>-->
+    <!--</div>-->
+<!--</script>-->

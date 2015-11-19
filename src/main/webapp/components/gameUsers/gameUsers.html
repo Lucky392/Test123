@@ -1,0 +1,69 @@
+<div class="head">
+    <div class="row">
+        <div class="col-md-1">
+            <h1>Users</h1>
+        </div>
+        <div class="col-md-7 searchBox">
+            <div class="input-group">
+                <input type="text" name="search" ng-model="search" ng-click="selectText($event)" class="form-control" placeholder="Search Users per email">
+            <span class="input-group-btn">
+                <button class="btn btn-success" type="button" ng-click="searchUsers()" ng-disabled="downloading">Search</button>
+            </span>
+            </div>
+        </div>
+    </div>
+
+    <!--<div class="row">-->
+        <!--<a type="button" class="btn btn-info n_button col-md-3" ng-disabled="downloading" ui-sref="createSlider">Add Slider</a>-->
+    <!--</div>-->
+
+    <div class="content">
+        <table class="table table-hover">
+            <tr>
+                <th>E-Mail</th>
+                <th>Fantasy Menagers</th>
+                <th>Paying User</th>
+                <th>Amount Premium Currency</th>
+                <th>Create Date </th>
+                <th>Enable</th>
+                <th>Delete</th>
+            </tr>
+            <h3 ng-bind="message"></h3>
+            <tr class="info" ng-repeat="player in playerList">
+                <td><a ui-sref="singleGameUser({id:'{{player.id}}'})" ng-bind="player.email"></a></td>
+                <td><a class="btn btn-success" ui-sref="fantasyManagersPerUser({email:'{{player.email}}'})">Managers</a></td>
+                <td ng-bind="player.payingUser"></td>
+                <td ng-bind="player.amountPremiumCurrency"></td>
+                <td ng-bind="player.createDate  | date: 'dd/MM/yyyy HH:mm:ss'"></td>
+                <td ui-sref-active="is-active">
+                    <a class="btn btn-success" disabled="disabled" ui-sref="editUser({id:'{{}}'})">Edit</a>
+                </td>
+                <td>
+                    <button type="button" class="btn btn-danger" disabled="disabled" ng-click="openDialogBox(slider.id)">Delete</button>
+                </td>
+            </tr>
+        </table>
+        <div class="row">
+            <div class="col-md-10 col-md-offset-1">
+                <uib-pagination total-items="bigTotalItems" items-per-page="limitPage" ng-change="pageChange()"
+                                ng-model="bigCurrentPage" max-size="maxSize" class="pagination-md" boundary-links="true"
+                                rotate="false" num-pages="numPages"></uib-pagination>
+            </div>
+            <pre class="col-md-2 col-md-offset-5">Page: {{bigCurrentPage}} / {{numPages}}</pre>
+        </div>
+    </div>
+</div>
+
+<!--da li je ovo ok ovako ili da napravim poseban html ????????????????????-->
+<script type="text/ng-template" id="myModalContent.html">
+    <div class="modal-header">
+        <h3 class="modal-title">Delete selected slider</h3>
+    </div>
+    <div class="modal-body">
+        <p ng-bind="data.question"></p>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-primary" type="button" ng-click="$close('ok clicked')">{{data.okText}}</button>
+        <button class="btn btn-warning" type="button" ng-click="$dismiss('cancel clicked')">{{data.cancelText}}</button>
+    </div>
+</script>
