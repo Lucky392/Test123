@@ -143,8 +143,6 @@ public class Bid implements Serializable {
         this.createDate = createDate;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public Auction getIdAuction() {
         return idAuction;
     }
@@ -153,8 +151,6 @@ public class Bid implements Serializable {
         this.idAuction = idAuction;
     }
 
-    @XmlTransient
-    @JsonIgnore
     public FantasyClub getIdFantasyClubBidder() {
         return idFantasyClubBidder;
     }

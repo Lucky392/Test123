@@ -5,6 +5,7 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,7 +20,7 @@ import rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory;
 @XmlRootElement
 public class AuctionPOJO {
 
-    private List<FantasyClubCreditHistory> fantasyClubCreditHistoryList;
+//    private List<FantasyClubCreditHistory> fantasyClubCreditHistoryList;
     private Long id;
     private int startPrice;
     private short isFair;
@@ -33,10 +34,10 @@ public class AuctionPOJO {
     private String fantasyClubSeller;
     private long idFantasyLeaguePlayer;
     private String fantasyLeaguePlayer;
-    private List<Bid> bidList;
+//    private List<Bid> bidList;
 
     public AuctionPOJO(Auction auction) {
-        fantasyClubCreditHistoryList = auction.getFantasyClubCreditHistoryList();
+//        fantasyClubCreditHistoryList = auction.getFantasyClubCreditHistoryList();
         id = auction.getId();
         startPrice = auction.getStartPrice();
         isFair = auction.getIsFair();
@@ -44,23 +45,28 @@ public class AuctionPOJO {
         auctionEndTimestamp = auction.getAuctionEndTimestamp();
         auctionFinishedTimestamp = auction.getAuctionFinishedTimestamp();
         createDate = auction.getCreateDate();
-        idFantasyLeague = auction.getIdFantasyLeague().getId();
-        fantasyLeague = auction.getIdFantasyLeague().getName();
-        idFantasyClubSeller = auction.getIdFantasyClubSeller().getId();
-        fantasyClubSeller = auction.getIdFantasyClubSeller().getName();
-        idFantasyLeaguePlayer = auction.getIdFantasyLeaguePlayer().getId();
-        fantasyLeaguePlayer = auction.getIdFantasyLeaguePlayer().getIdPlayer().getFullname();
-        bidList = auction.getBidList();
+        if (auction.getIdFantasyLeague() != null) {
+            idFantasyLeague = auction.getIdFantasyLeague().getId();
+            fantasyLeague = auction.getIdFantasyLeague().getName();
+        }
+        if (auction.getIdFantasyClubSeller() != null) {
+            idFantasyClubSeller = auction.getIdFantasyClubSeller().getId();
+            fantasyClubSeller = auction.getIdFantasyClubSeller().getName();
+        }
+        if (auction.getIdFantasyLeaguePlayer() != null) {
+            idFantasyLeaguePlayer = auction.getIdFantasyLeaguePlayer().getId();
+            fantasyLeaguePlayer = auction.getIdFantasyLeaguePlayer().getIdPlayer().getFullname();
+        }
+//        bidList = auction.getBidList();
     }
 
-    public List<FantasyClubCreditHistory> getFantasyClubCreditHistoryList() {
-        return fantasyClubCreditHistoryList;
-    }
-
-    public void setFantasyClubCreditHistoryList(List<FantasyClubCreditHistory> fantasyClubCreditHistoryList) {
-        this.fantasyClubCreditHistoryList = fantasyClubCreditHistoryList;
-    }
-
+//    public List<FantasyClubCreditHistory> getFantasyClubCreditHistoryList() {
+//        return fantasyClubCreditHistoryList;
+//    }
+//
+//    public void setFantasyClubCreditHistoryList(List<FantasyClubCreditHistory> fantasyClubCreditHistoryList) {
+//        this.fantasyClubCreditHistoryList = fantasyClubCreditHistoryList;
+//    }
     public Long getId() {
         return id;
     }
@@ -165,12 +171,22 @@ public class AuctionPOJO {
         this.fantasyLeaguePlayer = fantasyLeaguePlayer;
     }
 
-    public List<Bid> getBidList() {
-        return bidList;
+//    public List<Bid> getBidList() {
+//        return bidList;
+//    }
+//
+//    public void setBidList(List<Bid> bidList) {
+//        this.bidList = bidList;
+//    }
+    
+    public static List<AuctionPOJO> toAuctionPOJOList (List<Auction> list) {
+        AuctionPOJO pojo;
+        List<AuctionPOJO> pojos = new ArrayList<>();
+        for (Auction auction : list) {
+            pojo = new AuctionPOJO(auction);
+            pojos.add(pojo);
+        }
+        return pojos;
     }
-
-    public void setBidList(List<Bid> bidList) {
-        this.bidList = bidList;
-    }
-
+    
 }
