@@ -9,12 +9,14 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -22,6 +24,8 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.exception.MethodNotAllowedException;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.FantasyClubPOJO;
@@ -75,6 +79,11 @@ public class FantasyClubRESTEndpoint {
      * }<br/> ]
      *
      * @param token is a header parameter for checking permission
+     * @param page
+     * @param limit
+     * @param fantasyManagerID
+     * @param fantasyLeagueID
+     * @param name
      * @param id is id of Fantasy Manager
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for exception: <br/>{<br/>
@@ -82,19 +91,41 @@ public class FantasyClubRESTEndpoint {
      * "errorCode": 404 <br/>}
      */
     @GET
-    @Path("/manager/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyClubByManagerId(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getFantasyClubs(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("fantasyManagerID") long fantasyManagerID, @QueryParam("fantasyLeagueID") long fantasyLeagueID, @QueryParam("name") String name) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyClub> fc;
-        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f WHERE f.idFantasyManager.id = ");
-        query.append(id);
-        fc = em.createQuery(query.toString()).getResultList();
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f ");
+        if (fantasyManagerID != 0) {
+            query.append("WHERE f.idFantasyManager.id = ")
+                    .append(fantasyManagerID);
+        }
+        if (fantasyLeagueID != 0) {
+            query.append(fantasyManagerID != 0 ? " AND" : "WHERE")
+                    .append(" f.idFantasyLeague.id = ")
+                    .append(fantasyLeagueID);
+        }
+        if (name != null) {
+            query.append(fantasyManagerID != 0 || fantasyLeagueID != 0 ? " AND" : "WHERE")
+                    .append(" f.name LIKE '%")
+                    .append(name)
+                    .append("%'");
+        }
+        if (fantasyManagerID == 0 && fantasyLeagueID == 0 && name == null) {
+            throw new MethodNotAllowedException("Method not allowed, you need to use some query params!");
+        }
+        fc = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (fc.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
         } else {
-            return Response.ok().entity(FantasyClubPOJO.toFantasyCLubPOJOList(fc)).build();
+            String countQuery = query.toString().replaceFirst("f", "count(f)");
+            long count = (long) em.createQuery(countQuery).getSingleResult();
+            GetObject go = new GetObject();
+            go.setCount(count);
+            go.setData(FantasyClubPOJO.toFantasyCLubPOJOList(fc));
+            return Response.ok().entity(go).build();
         }
     }
 

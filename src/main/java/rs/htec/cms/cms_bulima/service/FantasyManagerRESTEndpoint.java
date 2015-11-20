@@ -7,18 +7,23 @@ package rs.htec.cms.cms_bulima.service;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.MethodNotAllowedException;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.FantasyManagerPOJO;
 
 /**
  *
@@ -34,9 +39,9 @@ public class FantasyManagerRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/managers/{email} This method
-     * returns JSON list of Fantasy Managers for one user. It produces
-     * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
+     * API for this method: .../rest/managers/{email} This method returns JSON
+     * list of Fantasy Managers for one user. It produces APPLICATION_JSON media
+     * type. Example for JSON list: <br/>[ {<br/>
      * "idUser": "1",<br/> "firstname": "Wilhelm",<br/> "fantasyClubList":
      * "[1]",<br/>
      * "idFavClub": "null",<br/> "id": "1",<br/> "secondLeague": "0",<br/>
@@ -53,26 +58,47 @@ public class FantasyManagerRESTEndpoint {
      * "profilePhotoUrl": "null"<br/> } ]
      *
      * @param token is a header parameter for checking permission
-     * @param email is email for what user you want Fantasy Managers
+     * @param page
+     * @param limit
+     * @param userID
+     * @param username
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "There is no Fantasy Managers for this user!",<br/>
      * "errorCode": 404<br/> }
      */
     @GET
-    @Path("/{email}") // users/{id}/managers
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyManager(@HeaderParam("authorization") String token, @PathParam("email") String email) {
+    public Response getFantasyManager(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("userID") long userID, @QueryParam("username") String username) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<FantasyManager> fm;
-        StringBuilder query = new StringBuilder("SELECT f FROM FantasyManager f JOIN f.idUser u WHERE u.email = ");
-        query.append("'").append(email).append("'");
-        fm = em.createQuery(query.toString()).getResultList();
+        StringBuilder query = new StringBuilder("SELECT f FROM FantasyManager f ");
+        if (userID != 0) {
+            query.append("WHERE f.idUser.id = ")
+                    .append(userID);
+        }
+        if (username != null) {
+            query.append(userID != 0 ? " AND" : "WHERE")
+                    .append(" f.username = '")
+                    .append(username)
+                    .append("'");
+        }
+        //method not allowed if there is no query params!!!
+        if (userID == 0 && username == null) {
+            throw new MethodNotAllowedException("Method not allowed, you need to use some query params!");
+        }
+        fm = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (fm.isEmpty()) {
             throw new DataNotFoundException("There is no Fantasy Managers for this user!");
         } else {
-            return Response.ok().entity(fm).build();
+            String countQuery = query.toString().replaceFirst("f", "count(f)");
+            long count = (long) em.createQuery(countQuery).getSingleResult();
+            GetObject go = new GetObject();
+            go.setCount(count);
+            go.setData(FantasyManagerPOJO.toFantasyManagerPOJO(fm));
+            return Response.ok().entity(go).build();
         }
     }
 

@@ -5,9 +5,12 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import javax.xml.bind.annotation.XmlRootElement;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
+import rs.htec.cms.cms_bulima.domain.Match;
 
 /**
  *
@@ -156,5 +159,15 @@ public class FantasyManagerPOJO {
 
     public void setUserEmail(String userEmail) {
         this.userEmail = userEmail;
+    }
+    
+    public static List<FantasyManagerPOJO> toFantasyManagerPOJO(List<FantasyManager> managers){
+        FantasyManagerPOJO pojo;
+        List<FantasyManagerPOJO> pojos = new ArrayList<>();
+        for (FantasyManager manager : managers) {
+            pojo = new FantasyManagerPOJO(manager);
+            pojos.add(pojo);
+        }
+        return pojos;
     }
 }
