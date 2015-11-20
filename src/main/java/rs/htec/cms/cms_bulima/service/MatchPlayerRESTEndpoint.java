@@ -32,7 +32,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchPlayerPOJO;
  *
  * @author stefan
  */
-@Path("/matchPlayer")
+@Path("/matchPlayers")
 public class MatchPlayerRESTEndpoint {
 
     @InjectParam
@@ -54,8 +54,8 @@ public class MatchPlayerRESTEndpoint {
      *  "extra1": 0,<br/>
      *  "extra2": 0,<br/>
      *  "idMatch": 2,<br/>
-     *  "urlToPlayer": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/player/4463",<br/>
-     *  "urlToMatch": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/match/2",<br/>
+     *  "urlToPlayer": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/players/4463",<br/>
+     *  "urlToMatch": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matches/2",<br/>
      *  "id": 34<br/>
      *}<br/>
      * 
@@ -100,8 +100,8 @@ public class MatchPlayerRESTEndpoint {
      *  "extra1": 0,<br/>
      *  "extra2": 0,<br/>
      *  "idMatch": 2,<br/>
-     *  "urlToPlayer": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/player/4463",<br/>
-     *  "urlToMatch": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/match/2",<br/>
+     *  "urlToPlayer": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/players/4463",<br/>
+     *  "urlToMatch": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matches/2",<br/>
      *  "id": 34<br/>
      *},<br/>
      *{
@@ -115,8 +115,8 @@ public class MatchPlayerRESTEndpoint {
      * "extra1": 0,<br/>
      * "extra2": 0,<br/>
      * "idMatch": 1,<br/>
-     * "urlToPlayer": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/player/4619",<br/>
-     * "urlToMatch": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/match/1",<br/>
+     * "urlToPlayer": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/players/4619",<br/>
+     * "urlToMatch": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matches/1",<br/>
      * "id": 10<br/>
     *}<br/>
      *],<br/>

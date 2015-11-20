@@ -38,7 +38,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchdayChallengeTargetCalculationPOJO;
  *
  * @author marko
  */
-@Path("/targetCalculation")
+@Path("/targetCalculations")
 public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
 
     @InjectParam
@@ -51,20 +51,20 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
 
     /**
      * API for method:
-     * .../rest/targetCalculation?page=VALUE&limit=VALUE&search=VALUE&minUpdateDate=VALUE&maxUpdateDate=VALUE&matchdayChallengeID=VALUE
+     * .../rest/targetCalculations?page=VALUE&limit=VALUE&search=VALUE&minUpdateDate=VALUE&maxUpdateDate=VALUE&matchdayChallengeID=VALUE
      * This method returns JSON list and count number. Default value for page is
      * 1, and for limit is 10. There is a possibility for search by
      * calculationSql and matchdayChallenge. Filtering by updateAt. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:
      * <br/>{<br/>
      * "count": 18,<br/> "data": [ {<br/> "urlToMatchdayChallenge":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenge/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenges/1",<br/>
      * "createDate": 1437421634000,<br/> "updateAt": null,<br/>
      * "calculationSql": null,<br/>
      * "operation": ">=",<br/> "calculationType": null,<br/> "value": 20,<br/>
      * "id": 1<br/> },<br/> {<br/>
      * "urlToMatchdayChallenge":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenge/2",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenges/2",<br/>
      * "createDate": 1437421641000,<br/> "updateAt": null,<br/>
      * "calculationSql": null,<br/>
      * "operation": ">=",<br/> "calculationType": null,<br/> "value": 4,<br/>
@@ -127,7 +127,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/targetCalculation/{id} This method
+     * API for this method is .../rest/targetCalculations/{id} This method
      * recieves JSON object, and put it in the base. Example for JSON that you
      * need to send:<br/> {<br/> "calculationSql": null,<br/> "operation":
      * ">=",<br/>
@@ -168,7 +168,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/targetCalculation This method recieves
+     * API for this method is .../rest/targetCalculations This method recieves
      * JSON object, and update database. Example for JSON that you need to send: <br/>
      * {<br/> "calculationSql": "SUM(match_shotsTotal)",<br/> "calculationType":
      * "SUM(match_foulsSuffered)",<br/> "id": 6 <br/>}

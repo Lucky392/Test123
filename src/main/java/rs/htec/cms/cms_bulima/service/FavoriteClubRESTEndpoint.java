@@ -30,7 +30,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author lazar
  */
-@Path("favorite_club")
+@Path("favorite_clubs")
 public class FavoriteClubRESTEndpoint {
     
     @InjectParam

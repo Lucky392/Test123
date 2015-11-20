@@ -26,7 +26,7 @@ import rs.htec.cms.cms_bulima.pojo.FantasyPlayerPOJO;
  *
  * @author stefan
  */
-@Path("/fantasyPlayer")
+@Path("/fantasyPlayers")
 public class FantasyPlayerRESTEndpoint {
 
     @InjectParam
@@ -42,11 +42,11 @@ public class FantasyPlayerRESTEndpoint {
      * "idLeaguePlayer": 6205,<br/>
      * "idPlayerSlot": 8,<br/>
      * "urlToLeaguePlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/leaguePlayer/6205",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/leaguePlayers/6205",<br/>
      * "urlToPlaterSlot":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/8",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlots/8",<br/>
      * "urlToFantasyClub":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyClub/27",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyClubs/27",<br/>
      * "id": 4<br/>
      * }<br/>
      *

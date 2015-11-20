@@ -29,7 +29,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchPlayerEventPOJO;
  *
  * @author marko
  */
-@Path("matchPlayerEvent")
+@Path("matchPlayerEvents")
 public class MatchPlayerEventRESTEndpoint {
 
     @InjectParam
@@ -37,7 +37,7 @@ public class MatchPlayerEventRESTEndpoint {
 
     /**
      * API for method:
-     * .../rest/matchPlayerEvent?page=VALUE&limit=VALUE&type=VALUE&min=VALUE&matchPlayerID=VALUE
+     * .../rest/matchPlayerEvents?page=VALUE&limit=VALUE&type=VALUE&min=VALUE&matchPlayerID=VALUE
      * This method returns JSON list and count number. Default value for page is
      * 1, and for limit is 10. There is a possibility for search by
      * eventTimeMinute and matchPlayer. Filtering by type. It produces
@@ -104,7 +104,7 @@ public class MatchPlayerEventRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/matchPlayerEvent/types This method return list
+     * API for method: .../rest/matchPlayerEvents/types This method return list
      * of types in JSON. Example for JSON:<br/> [<br/> "soccer_match_playing_lineup",<br/>
      * "soccer_match_playing_bench",<br/> "soccer_match_goal_left-foot",<br/>
      * "soccer_match_card_yellow",<br/> "soccer_match_goal_own-goal",<br/>

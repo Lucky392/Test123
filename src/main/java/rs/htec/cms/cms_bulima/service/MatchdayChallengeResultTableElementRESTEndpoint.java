@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchdayChallengeResultTableElementPOJO;
  *
  * @author stefan
  */
-@Path("/matchdayChallengeResultTableElement")
+@Path("/matchdayChallengeResultTableElements")
 public class MatchdayChallengeResultTableElementRESTEndpoint {
 
     @InjectParam
@@ -48,15 +48,15 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
      * "elementTable": "",<br/>
      * "elementField": "player_firstName;player_lastName",<br/>
      * "urlToMatchdayChallenge":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenge/6",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenges/6",<br/>
      * "elementName": "Spieler",<br/>
      * "elementType": "",<br/>
      * "id": 17<br/>
      * }<br/>
      *
      *
-     * @param token - header parameter for checking permission
-     * @param id - of MatchdayChallengeResultTableElement that should be
+     * @param token header parameter for checking permission
+     * @param id of MatchdayChallengeResultTableElement that should be
      * returned
      * @return MatchdayChallengeResultTableElement
      * @throws DataNotFoundException if there is no
@@ -81,14 +81,14 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
     /**
      * Returns MatchdayChallengeResultTableElement list
      *
-     * @param token - header parameter for checking permission
-     * @param page - number of page for searched results
-     * @param limit - number of matchPlayerStats that are returned in body
-     * @param orderBy - column name (if there is '-' before colum name, results
+     * @param token header parameter for checking permission
+     * @param page number of page for searched results
+     * @param limit number of matchPlayerStats that are returned in body
+     * @param orderBy column name (if there is '-' before colum name, results
      * will be sorted in descending order)
-     * @param elementName - filter for elementName (for example in URL:
+     * @param elementName filter for elementName (for example in URL:
      * elementName=Spieler)
-     * @param idMatchdayChallenge - filter for MatchdayChallenge by id
+     * @param idMatchdayChallenge filter for MatchdayChallenge by id
      * @return status 200 OK and list of MatchdayChallengeResultTableElement
      * @throws DataNotFoundException if there is no result for search
      */
@@ -153,8 +153,8 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
      * "id": 4<br/>
      * }<br/>
      *
-     * @param token - header parameter for checking permission
-     * @param matchdayChallengeResultTableElement -
+     * @param token header parameter for checking permission
+     * @param matchdayChallengeResultTableElement
      * MatchdayChallengeResultTableElement in body in JSON
      * @return response OK (200) if MatchdayChallengeResultTableElement is
      * updated

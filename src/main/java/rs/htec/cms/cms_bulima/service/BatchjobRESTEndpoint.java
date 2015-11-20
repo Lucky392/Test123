@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author marko
  */
-@Path("batchjob")
+@Path("batchjobs")
 public class BatchjobRESTEndpoint {
 
     @InjectParam
@@ -43,7 +43,7 @@ public class BatchjobRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method: .../rest/batchjob?page=VALUE&limit=VALUE&search=VALUE
+     * API for method: .../rest/batchjobs?page=VALUE&limit=VALUE&search=VALUE
      * This method returns JSON list, and count number. Default value for page
      * is 1, and for limit is 10. There is a possibility for search by jobName.
      * It produces APPLICATION_JSON media type. Example for JSON list for 1
@@ -91,7 +91,7 @@ public class BatchjobRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/batchjob This method recieves JSON
+     * API for this method is .../rest/batchjobs This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
      * <br/>{<br/>
      * "jobName": "dailyJob",<br/> "cronExpression": "30 00 6 ? * *",<br/>
@@ -120,7 +120,7 @@ public class BatchjobRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/batchjob This method recieves JSON
+     * API for this method is .../rest/batchjobs This method recieves JSON
      * object, and update database. Example for JSON that you need to send: <br/>{<br/>
      * "jobName": "dailyJob",<br/> "cronExpression": "30 00 6 ? * *",<br/>
      * "defaultCronExpression": "30 00 6 ? * *",<br/> "enabled": 0,<br/> "id": 10 <br/>}

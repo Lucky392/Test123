@@ -24,7 +24,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author stefan
  */
-@Path("/manager")
+@Path("/managers")
 public class FantasyManagerRESTEndpoint {
 
     RestHelperClass helper;
@@ -34,7 +34,7 @@ public class FantasyManagerRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/manager/{email} This method
+     * API for this method: .../rest/managers/{email} This method
      * returns JSON list of Fantasy Managers for one user. It produces
      * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
      * "idUser": "1",<br/> "firstname": "Wilhelm",<br/> "fantasyClubList":
@@ -60,7 +60,7 @@ public class FantasyManagerRESTEndpoint {
      * "errorCode": 404<br/> }
      */
     @GET
-    @Path("/{email}")
+    @Path("/{email}") // users/{id}/managers
     @Produces(MediaType.APPLICATION_JSON)
     public Response getFantasyManager(@HeaderParam("authorization") String token, @PathParam("email") String email) {
         EntityManager em = helper.getEntityManager();

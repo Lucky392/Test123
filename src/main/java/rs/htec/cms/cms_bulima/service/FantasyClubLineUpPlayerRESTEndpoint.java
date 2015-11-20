@@ -25,14 +25,14 @@ import rs.htec.cms.cms_bulima.pojo.FantasyClubLineUpPlayerPOJO;
  *
  * @author stefan
  */
-@Path("/lineupPlayer")
+@Path("/lineupPlayers")
 public class FantasyClubLineUpPlayerRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/lineupPlayer/{id} This method return single
+     * API for method: .../rest/lineupPlayers/{id} This method return single
      * element of lineupPlayer with defined id in JSON.
      *
      * Example for JSON response: <br/>

@@ -32,7 +32,7 @@ import rs.htec.cms.cms_bulima.pojo.LineUpDifferencePOJO;
  *
  * @author stefan
  */
-@Path("/lineup")
+@Path("/lineups")
 public class FantasyClubLineUpRESTEndpoint {
 
     // to-do:
@@ -44,7 +44,7 @@ public class FantasyClubLineUpRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method: .../rest/lineup/{idFantasyClub}/{idMatchday} This method
+     * API for method: .../rest/lineups/{idFantasyClub}/{idMatchday} This method
      * return list of Fantasy Club lineup players for defined club and matchday
      * in JSON.
      *
@@ -57,12 +57,12 @@ public class FantasyClubLineUpRESTEndpoint {
      * "isCaptain": 0,<br/>
      * "idLineUp": 1,<br/>
      * "urlToLineUp":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineups/1",<br/>
      * "urlToPlayerSlot":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlots/1",<br/>
      * "leaguePlayerName": "Fabian Giefer",<br/>
      * "urlToLeaguePlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/6337",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayers/6337",<br/>
      * "id": 7<br/>
      * },<br/>
      * {<br/>
@@ -72,12 +72,12 @@ public class FantasyClubLineUpRESTEndpoint {
      * "isCaptain": 0,<br/>
      * "idLineUp": 1,<br/>
      * "urlToLineUp":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineups/1",<br/>
      * "urlToPlayerSlot":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/13",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlots/13",<br/>
      * "leaguePlayerName": "Todor Nedelev",<br/>
      * "urlToLeaguePlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/6374",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayers/6374",<br/>
      * "id": 12<br/>
      * }<br/>
      * ]<br/>
@@ -140,7 +140,7 @@ public class FantasyClubLineUpRESTEndpoint {
 //    }
     /**
      * API for method:
-     * .../rest/lineup/difference?idFantasyClub1=value&idFantasyClub2=value&idMatchday1=value&idMatchday2=value
+     * .../rest/lineups/difference?idFantasyClub1=value&idFantasyClub2=value&idMatchday1=value&idMatchday2=value
      * This method return difference for two lineups [defined club and match
      * day].
      *<br/>
@@ -151,11 +151,11 @@ public class FantasyClubLineUpRESTEndpoint {
      * {<br/>
      * "leaguePlayerName": "Manuel Riemann",<br/>
      * "urlToLeaguePlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/1575121",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayers/1575121",<br/>
      * "urlToLineUp":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1909",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineups/1909",<br/>
      * "urlToPlayerSlot":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlots/1",<br/>
      * "createDate": 1438393876000,<br/>
      * "idLeaguePlayer": 1575121,<br/>
      * "idPlayerSlot": 1,<br/>
@@ -166,11 +166,11 @@ public class FantasyClubLineUpRESTEndpoint {
      * {<br/>
      * "leaguePlayerName": "Florian Ruck",<br/>
      * "urlToLeaguePlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/1575291",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayers/1575291",<br/>
      * "urlToLineUp":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1909",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineups/1909",<br/>
      * "urlToPlayerSlot":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/5",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlots/5",<br/>
      * "createDate": 1438393876000,<br/>
      * "idLeaguePlayer": 1575291,<br/>
      * "idPlayerSlot": 5,<br/>
@@ -181,11 +181,11 @@ public class FantasyClubLineUpRESTEndpoint {
      * {<br/>
      * "leaguePlayerName": "Marcel Sabitzer",<br/>
      * "urlToLeaguePlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayer/1575281",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeaguePlayers/1575281",<br/>
      * "urlToLineUp":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineup/1909",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/lineups/1909",<br/>
      * "urlToPlayerSlot":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlot/9",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerSlots/9",<br/>
      * "createDate": 1438393876000,<br/>
      * "idLeaguePlayer": 1575281,<br/>
      * "idPlayerSlot": 9,<br/>
@@ -200,11 +200,11 @@ public class FantasyClubLineUpRESTEndpoint {
      * }<br/>
      *
      *
-     * @param token - header parameter for checking permission
-     * @param idFantasyClub1 - id for first fantasy club
-     * @param idFantasyClub2 - id for second fantasy club
-     * @param idMatchday1 - id for first match day
-     * @param idMatchday2 - id for second match day
+     * @param token header parameter for checking permission
+     * @param idFantasyClub1 id for first fantasy club
+     * @param idFantasyClub2 id for second fantasy club
+     * @param idMatchday1 id for first match day
+     * @param idMatchday2 id for second match day
      * @return formation in String
      */
     @GET
@@ -232,7 +232,7 @@ public class FantasyClubLineUpRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/lineup/{id} This method return single element of
+     * API for method: .../rest/lineups/{id} This method return single element of
      * Fantasy Club lineup with defined id in JSON.
      *
      * Example for JSON response: <br/>
@@ -246,14 +246,14 @@ public class FantasyClubLineUpRESTEndpoint {
      * "idFormation": 1,<br/>
      * "formationName": "4-4-2",<br/>
      * "urlToFantasyClub":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyClub/4623",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyClubs/4623",<br/>
      * "fantasyLeagueName": "Pep Ära",<br/>
      * "fantasyClubName": "Klaro", "urlToFantasyLeague":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeague/820",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeagues/820",<br/>
      * "urlToFormation":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/formation/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/formations/1",<br/>
      * "urlToMatchday":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/70",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchdays/70",<br/>
      * "id": 35<br/>
      * }<br/>
      *

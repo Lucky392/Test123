@@ -27,14 +27,14 @@ import rs.htec.cms.cms_bulima.pojo.AuctionPOJO;
  *
  * @author stefan
  */
-@Path("/auction")
+@Path("/auctions")
 public class AuctionsRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for this method: .../rest/auction/{id} This method returns
+     * API for this method: .../rest/auctions/{id} This method returns
      * JSON list of Auction for one Fantasy Club. It produces APPLICATION_JSON
      * media type. Example for JSON list: <br/>[ {
      * <br/>"startPrice": "100000",<br/> "idFantasyClubSeller": "27434",<br/>

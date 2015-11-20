@@ -39,7 +39,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchdayChallengePOJO;
  *
  * @author lazar
  */
-@Path("/matchday_challenge")
+@Path("/matchday_challenges")
 public class MatchdayChallengeRESTEndpoint {
 
     @InjectParam

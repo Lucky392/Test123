@@ -153,7 +153,7 @@ public class DashboardRESTEndpoint {
      * }<br/>
      *
      *
-     * @param token - header parameter for checking permission
+     * @param token header parameter for checking permission
      * @return 200 OK
      */
     @GET

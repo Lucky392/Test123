@@ -26,7 +26,7 @@ import rs.htec.cms.cms_bulima.pojo.LeaguePOJO;
  *
  * @author marko
  */
-@Path("/league")
+@Path("/leagues")
 public class LeagueRESTEndpoint {
 
     @InjectParam
@@ -35,7 +35,7 @@ public class LeagueRESTEndpoint {
     /**
      * API for method: .../rest/league/{id} This method return single element of
      * club at index in JSON. Example for JSON response: <br/> {<br/> "competitionUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/competition/2",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/competitions/2",<br/>
      * "createDate": 1406914139000,<br/> "idSport1League": "3",<br/> "sport": "soccer",<br/>
      * "id": 2<br/> }
      *

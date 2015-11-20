@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchPlayerStatPOJO;
  *
  * @author stefan
  */
-@Path("/matchPlayerStat")
+@Path("/matchPlayerStats")
 public class MatchPlayerStatRESTEndpoint {
 
     @InjectParam
@@ -101,7 +101,7 @@ public class MatchPlayerStatRESTEndpoint {
      * "grade": 3.3,<br/>
      * "yCoordinate": null,<br/>
      * "urlToMatchPlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchPlayer/523",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchPlayers/523",<br/>
      * "xCoordinate": null,<br/>
      * "id": 523<br/>
      * }<br/>
@@ -193,20 +193,20 @@ public class MatchPlayerStatRESTEndpoint {
      * "grade": 3.3,<br/>
      * "yCoordinate": null,<br/>
      * "urlToMatchPlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchPlayer/523",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchPlayers/523",<br/>
      * "xCoordinate": null,<br/>
      * "id": 523<br/>
      * }<br/>
      * ]<br/>
      * }<br/>
      *
-     * @param token - header parameter for checking permission
-     * @param page - number of page for searched results
-     * @param limit - number of matchPlayerStats that are returned in body
-     * @param orderBy - column name (if there is - before colum name, results will be sorted in descending order)
-     * @param minDate - filters result form defined date
-     * @param maxDate - filters result to defined date
-     * @param idMatchPlayer - filters results base on defined id for MatchPlayer
+     * @param token header parameter for checking permission
+     * @param page number of page for searched results
+     * @param limit number of matchPlayerStats that are returned in body
+     * @param orderBy column name (if there is - before colum name, results will be sorted in descending order)
+     * @param minDate filters result form defined date
+     * @param maxDate filters result to defined date
+     * @param idMatchPlayer filters results base on defined id for MatchPlayer
      * @return list of MatchPlayerStat
      * @throws DataNotFoundException if MatchPlayerStat does not exist for
      * search

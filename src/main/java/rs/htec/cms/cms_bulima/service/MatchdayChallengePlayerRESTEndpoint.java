@@ -37,7 +37,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author lazar
  */
-@Path("/MatchdayChallengePlayer")
+@Path("/MatchdayChallengePlayers")
 public class MatchdayChallengePlayerRESTEndpoint {
 
     @InjectParam

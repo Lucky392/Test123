@@ -30,7 +30,7 @@ import rs.htec.cms.cms_bulima.pojo.FantasyClubPOJO;
  *
  * @author stefan
  */
-@Path("/fantasyClub")
+@Path("/fantasyClubs")
 public class FantasyClubRESTEndpoint {
 
     @InjectParam
@@ -40,7 +40,7 @@ public class FantasyClubRESTEndpoint {
     Validator validator;
 
     /**
-     * API for this method: .../rest/fantasyClub/manager/{id} This method
+     * API for this method: .../rest/fantasyClubs/manager/{id} This method
      * returns JSON list of Fantasy Clubs for one Fantasy Manager. It produces
      * APPLICATION_JSON media type. Example for JSON list: <br/>[ {<br/>
      * "createDate": 1407155814000,<br/>
@@ -99,7 +99,7 @@ public class FantasyClubRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/fantasyClub/{id} This method returns
+     * API for this method: .../rest/fantasyClubs/{id} This method returns
      * FantasyClub for defined id. It produces APPLICATION_JSON media type.
      * Example for JSON response:
      * <br/>

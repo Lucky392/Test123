@@ -39,7 +39,7 @@ import rs.htec.cms.cms_bulima.pojo.FantasyManagerMatchdayChallengeLineUpPOJO;
  *
  * @author lazar
  */
-@Path("/FantasyManagerMatchdayChallengeLineUp")
+@Path("/FantasyManagerMatchdayChallengeLineUps")
 public class FantasyManagerMatchdayChallengeLineUpRESTEndpoint {
 
     @InjectParam
@@ -172,7 +172,7 @@ public class FantasyManagerMatchdayChallengeLineUpRESTEndpoint {
     }
     
     /**
-     * API for method: .../rest/FantasyManagerMatchdayChallengeLineUp/{id} This method find
+     * API for method: .../rest/FantasyManagerMatchdayChallengeLineUps/{id} This method find
      * FantasyManagerMatchdayChallengeLineUp with defined id. Id is retrieved from URL. If
      * FantasyManagerMatchdayChallengeLineUp with that index does not exist method throws exception.
      * Otherwise method remove that FantasyManagerMatchdayChallengeLineUp.

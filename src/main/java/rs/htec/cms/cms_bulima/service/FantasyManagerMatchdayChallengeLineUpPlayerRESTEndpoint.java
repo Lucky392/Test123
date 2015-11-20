@@ -35,7 +35,7 @@ import rs.htec.cms.cms_bulima.pojo.FantasyManagerMatchdayChallengeLineUpPlayerPO
  *
  * @author lazar
  */
-@Path("/challengeLineUpPlayer")
+@Path("/challengeLineUpPlayers")
 public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{ 
     
     @InjectParam

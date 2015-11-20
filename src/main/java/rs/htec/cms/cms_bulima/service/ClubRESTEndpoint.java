@@ -26,14 +26,14 @@ import rs.htec.cms.cms_bulima.pojo.ClubPOJO;
  *
  * @author marko
  */
-@Path("/club")
+@Path("/clubs")
 public class ClubRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/club/{id} This method return single element of
+     * API for method: .../rest/clubs/{id} This method return single element of
      * club at index in JSON. Example for JSON response:<br/> { <br/>"createDate":
      * 1388530800000,<br/> "shortName": "FCK",<br/> "leagueUrl":
      * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/league/2",<br/>

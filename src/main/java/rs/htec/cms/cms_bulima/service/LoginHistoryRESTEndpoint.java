@@ -30,7 +30,7 @@ import rs.htec.cms.cms_bulima.pojo.LoginHistoryPOJO;
  *
  * @author marko
  */
-@Path("loginHistory")
+@Path("loginHistories")
 public class LoginHistoryRESTEndpoint {
 // methods for this Enpoint shouldn't be used!
     @InjectParam

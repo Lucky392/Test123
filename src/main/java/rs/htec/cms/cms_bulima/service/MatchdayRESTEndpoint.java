@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchdayPOJO;
  *
  * @author stefan
  */
-@Path("/matchday")
+@Path("/matchdays")
 public class MatchdayRESTEndpoint {
 
     @InjectParam
@@ -55,7 +55,7 @@ public class MatchdayRESTEndpoint {
      * "isCompleted": 0,<br/>
      * "idSeason": 4,<br/>
      * "urlToSeason":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/4",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/seasons/4",<br/>
      * "id": 3<br/>
      * }<br/>
      *
@@ -100,7 +100,7 @@ public class MatchdayRESTEndpoint {
      * "isCompleted": 1,<br/>
      * "idSeason": 4,<br/>
      * "urlToSeason":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/4",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/seasons/4",<br/>
      * "id": 1<br/>
      * },<br/>
      * {<br/>
@@ -114,7 +114,7 @@ public class MatchdayRESTEndpoint {
      * "isCompleted": 1,<br/>
      * "idSeason": 4,<br/>
      * "urlToSeason":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/4",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/seasons/4",<br/>
      * "id": 2<br/>
      * }<br/>
      * ],<br/>

@@ -30,7 +30,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author stefan
  */
-@Path("/user")
+@Path("/users")
 public class UserRESTEndpoint {
 
     @InjectParam
@@ -81,10 +81,10 @@ public class UserRESTEndpoint {
     /**
      * Returns Users for defined search.
      * 
-     * @param token - header parameter for checking permission
+     * @param token header parameter for checking permission
      * @param page
      * @param limit
-     * @param email - of User we are searching for
+     * @param email of User we are searching for
      * @return User
      */
     @GET

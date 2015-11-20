@@ -25,14 +25,14 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author marko
  */
-@Path("/bid")
+@Path("/bids")
 public class BidRESTEndPoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for this method: .../rest/bid/{id} This method returns
+     * API for this method: .../rest/bids/{id} This method returns
      * JSON list of Bids for one Fantasy Club. It produces APPLICATION_JSON
      * media type. Example for JSON list: <br/>[ {<br/>
      * "bidManagerPrice": "0",<br/> "idAuction": "1203343",<br/> "bidManager":
@@ -74,7 +74,7 @@ public class BidRESTEndPoint {
     }
 
     /**
-     * API for this method: .../rest/bid/auction/{id} This method
+     * API for this method: .../rest/bids/auction/{id} This method
      * returns JSON list of Bids for one Auction. It produces APPLICATION_JSON
      * media type. Example for JSON list: <br/>[ {<br/>
      * "bidManagerPrice": "0",<br/> "idAuction": "2137720",<br/> "bidManager":

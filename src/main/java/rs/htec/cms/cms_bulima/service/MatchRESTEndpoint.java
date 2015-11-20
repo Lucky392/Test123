@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.pojo.MatchPOJO;
  *
  * @author marko
  */
-@Path("/match")
+@Path("/matches")
 public class MatchRESTEndpoint {
 
     @InjectParam
@@ -44,11 +44,11 @@ public class MatchRESTEndpoint {
      * Example for json response:<br/>
      * {<br/>
      * "matchdayUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchdays/1",<br/>
      * "clubGuesUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/3",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/3",<br/>
      * "clubHomeUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/93",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/93",<br/>
      * "clubGuestName": "1. FC Kaiserslautern",<br/> "clubHomeName": "MSV
      * Duisburg",<br/>
      * "createDate": 1437385012000,<br/> "updateAt": 1438071030000,<br/>
@@ -88,11 +88,11 @@ public class MatchRESTEndpoint {
      * matchdayID. Filtering by startDate. It produces APPLICATION_JSON media
      * type. Example for JSON list for 1 page, 2 limit:<br/> { <br/>"count":
      * 612,<br/> "data": [ {<br/> "matchdayUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchdays/1",<br/>
      * "clubGuesUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/3",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/3",<br/>
      * "clubHomeUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/93",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/93",<br/>
      * "clubGuestName": "1. FC Kaiserslautern",<br/> "clubHomeName": "MSV
      * Duisburg",<br/>
      * "createDate": 1437385012000,<br/> "updateAt": 1438071030000,<br/>
@@ -100,11 +100,11 @@ public class MatchRESTEndpoint {
      * 1,<br/> "guestScore": 3,<br/>
      * "startTime": 1437762600000,<br/> "id": 1<br/> },<br/> {<br/>
      * "matchdayUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchdays/1",<br/>
      * "clubGuesUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/59",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/59",<br/>
      * "clubHomeUrl":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/58",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/58",<br/>
      * "clubGuestName": "Karlsruher SC",<br/> "clubHomeName": "SpVgg Greuther
      * Fürth",<br/>
      * "createDate": 1437385012000,<br/> "updateAt": 1438071038000,<br/>

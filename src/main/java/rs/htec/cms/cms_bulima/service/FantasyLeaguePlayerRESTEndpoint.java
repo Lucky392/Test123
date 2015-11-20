@@ -26,7 +26,7 @@ import rs.htec.cms.cms_bulima.pojo.FantasyLeaguePlayerPOJO;
  *
  * @author stefan
  */
-@Path("/fantasyLeaguePlayer")
+@Path("/fantasyLeaguePlayers")
 public class FantasyLeaguePlayerRESTEndpoint {
 
     @InjectParam
@@ -37,9 +37,9 @@ public class FantasyLeaguePlayerRESTEndpoint {
      * <br/>
      * {<br/>
      * "urlToFantasyLeague":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeague/2",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/fantasyLeagues/2",<br/>
      * "urlToPlayer":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/player/3677",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/players/3677",<br/>
      * "createDate": 1437385460000,<br/>
      * "idPlayer": 3677,<br/>
      * "idFantasyLeague": 2,<br/>
@@ -48,8 +48,8 @@ public class FantasyLeaguePlayerRESTEndpoint {
      * "id": 4<br/>
      * }<br/>
      *
-     * @param token - header parameter for checking permission
-     * @param id - id of FantasyLeaguePlayer that should be returned
+     * @param token header parameter for checking permission
+     * @param id id of FantasyLeaguePlayer that should be returned
      * @return FantasyLeaguePlayer in JSON for defined id
      * @throws DataNotFoundException if there is no FantasyLeaguePlayer with id
      */

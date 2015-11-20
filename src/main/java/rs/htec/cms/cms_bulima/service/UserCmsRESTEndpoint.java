@@ -7,6 +7,8 @@ package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -24,6 +26,7 @@ import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.helper.Password;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.CmsUserPojo;
@@ -34,7 +37,7 @@ import rs.htec.cms.cms_bulima.token.Base64Token;
  *
  * @author lazar
  */
-@Path("/cmsUser")
+@Path("/cmsUsers")
 public class UserCmsRESTEndpoint {
 
     AbstractTokenCreator tokenHelper;
@@ -50,7 +53,7 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/cmsUser This method return list of users in
+     * API for this method: .../rest/cmsUsers This method return list of users in
      * JSON object. Example for JSON: <br/>[ {<br/>
      * "idRole": {<br/> "name": "admin",<br/> "id": 1 <br/>}, <br/>"userName":
      * "name", <br/>"token": "TOKEN",<br/> "password": "pass",<br/> "id":
@@ -69,11 +72,15 @@ public class UserCmsRESTEndpoint {
         if (users == null || users.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");
         }
+        // should be cripted
+        for (CmsUser user : users) {
+            user.setPassword("******");
+        }
         return Response.ok().entity(users).build();
     }
 
     /**
-     * API for method: .../rest/cmsUser/login Method that accepts HTTP Basic
+     * API for method: .../rest/cmsUsers/login Method that accepts HTTP Basic
      * authentication from HTTP header, checks in the database whether the user
      * exists and if so, returns custom token that in future calls should be put
      * in the authorization parameter of the HTTP header and returns all User
@@ -106,14 +113,28 @@ public class UserCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             userPass = tokenHelper.decodeBasicAuth(authorization);
-
+            
+//            String pass = "";
+//            try {
+//                pass = Password.getSaltedHash(userPass[1]);
+//            } catch (Exception ex) {
+//                Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+            
             CmsUser user = (CmsUser) em
-                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName AND u.password = :password")
+                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
                     .setParameter("userName", userPass[0])
-                    .setParameter("password", userPass[1])
                     .getSingleResult();
+            
+            boolean pass =false;
+            try {
+                pass = Password.check(userPass[1], user.getPassword());
+            } catch (Exception ex) {
+                Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
 
-            if (user.getToken() == null || user.getToken().equals("")) {
+            if (pass && (user.getToken() == null || user.getToken().equals(""))) {
                 user.setToken(tokenHelper.createToken(user.getId()));
                 helper.mergeObject(em, user);
             }
@@ -133,7 +154,7 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/cmsUser/logout The method, which receives
+     * API for method: .../rest/cmsUsers/logout The method, which receives
      * authorization parameter from the HTTP header, it checks whether the user
      * logged in, and if so, logging it out.
      *
@@ -151,7 +172,7 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/cmsUser This method recieves JSON object, and
+     * API for this method: .../rest/cmsUsers This method recieves JSON object, and
      * put him in the base.
      *
      * @param token is a header parameter for checking permission
@@ -166,7 +187,20 @@ public class UserCmsRESTEndpoint {
     public Response createUser(@HeaderParam("authorization") String token, CmsUser user) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token);
+        CmsUser userDb = (CmsUser) em
+                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
+                    .setParameter("userName", user.getUserName())
+                    .getSingleResult();
+        if (userDb != null) {
+            throw new InputValidationException("User with username '" + user.getUserName() + "' already exist");
+        }
         if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {
+            try {
+                String pass = Password.getSaltedHash(user.getPassword());
+                user.setPassword(pass);
+            } catch (Exception ex) {
+                Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+            }
             helper.persistObject(em, user);
             return Response.status(Response.Status.CREATED).build();
         } else {

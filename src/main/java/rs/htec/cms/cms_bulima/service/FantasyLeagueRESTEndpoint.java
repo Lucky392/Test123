@@ -25,14 +25,14 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author marko
  */
-@Path("/fantasyLeague")
+@Path("/fantasyLeagues")
 public class FantasyLeagueRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/fantasyLeague/{id} This method return single
+     * API for method: .../rest/fantasyLeagues/{id} This method return single
      * element of club at index in JSON. Example for JSON response:<br/> {<br/> "logo":
      * "",<br/> "createDate": 1406902029000,<br/> "startDate": 1406902029000,<br/>
      * "numMembers": 1,<br/> "activity": "sehr aktiv",<br/> "leaguehash":

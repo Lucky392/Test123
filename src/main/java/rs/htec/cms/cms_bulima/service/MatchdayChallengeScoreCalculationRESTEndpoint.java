@@ -36,7 +36,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author marko
  */
-@Path("matchdayChallengeScoreCalculation")
+@Path("matchdayChallengeScoreCalculations")
 public class MatchdayChallengeScoreCalculationRESTEndpoint {
 
     @InjectParam

@@ -40,7 +40,7 @@ import rs.htec.cms.cms_bulima.pojo.BugReportPOJO;
  * Provides methods for edit, view, search and filter.
  *
  */
-@Path("/bugReport")
+@Path("/bugReports")
 public class BugReportRESTEndpoint {
     
     @InjectParam
@@ -69,8 +69,8 @@ public class BugReportRESTEndpoint {
      *}<br/>
      * 
      * 
-     * @param token - header parameter for checking permission
-     * @param id - of BugReport that should be returned
+     * @param token header parameter for checking permission
+     * @param id of BugReport that should be returned
      * @return BugReport
      * @throws DataNotFoundException if BugReport with defined id doesn't exist
      */
@@ -138,16 +138,16 @@ public class BugReportRESTEndpoint {
      *}<br/>
      * 
      * 
-     * @param token - header parameter for checking permission
-     * @param page - number of page for searched results
-     * @param limit - number of matchPlayerStats that are returned in body
-     * @param orderBy - column name (if there is '-' before colum name, results will be sorted in descending order)
-     * @param search - words in description and clubName
-     * @param minDate - filters result form defined date
-     * @param maxDate - filters result to defined date
-     * @param errorType - filter for errorTupe
-     * @param origin - filter for origin that have bug
-     * @param system - of the origin
+     * @param token header parameter for checking permission
+     * @param page number of page for searched results
+     * @param limit number of matchPlayerStats that are returned in body
+     * @param orderBy column name (if there is '-' before colum name, results will be sorted in descending order)
+     * @param search words in description and clubName
+     * @param minDate filters result form defined date
+     * @param maxDate filters result to defined date
+     * @param errorType filter for errorTupe
+     * @param origin filter for origin that have bug
+     * @param system of the origin
      * @return list of BugReports
      * @throws DataNotFoundException if there is no result for query
      */
@@ -264,7 +264,7 @@ public class BugReportRESTEndpoint {
      *  "353918058050135"<br/>
      * ]<br/>
      * 
-     * @param token - header parameter for checking permission
+     * @param token header parameter for checking permission
      * @return list of origins
      */
     @GET
@@ -300,8 +300,8 @@ public class BugReportRESTEndpoint {
      * "id": 7<br/>
      *}<br/>
      * 
-     * @param token - header parameter for checking permission
-     * @param bugReport - in body in JSON
+     * @param token header parameter for checking permission
+     * @param bugReport in body in JSON
      * @return response OK (200) if Bug report is updated
      * @throws DataNotFoundException if BugReport requested for update doesn't exist
      * @throws InputValidationException if BugReport object is not valid
