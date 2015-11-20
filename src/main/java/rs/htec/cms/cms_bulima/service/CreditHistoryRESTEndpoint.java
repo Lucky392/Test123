@@ -31,7 +31,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author stefan
  */
-@Path("/creditHistory")
+@Path("/creditHistories")
 public class CreditHistoryRESTEndpoint {
 
     @InjectParam
@@ -41,7 +41,7 @@ public class CreditHistoryRESTEndpoint {
     Validator validator;
 
     /**
-     * API for this method: .../rest/creditHistory/{id} This method returns JSON
+     * API for this method: .../rest/creditHistories/{id} This method returns JSON
      * list of Credit History for one Fantasy Club. It produces APPLICATION_JSON
      * media type. Example for JSON list: <br/> [ {
      * <br/> "updatedCredit": "16502803",<br/> "idFantasyClub": "100",<br/>

@@ -34,7 +34,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author marko
  */
-@Path("batchjobStep")
+@Path("batchjobSteps")
 public class BatchjobStepRESTEndpoint {
 
     @InjectParam
@@ -45,7 +45,7 @@ public class BatchjobStepRESTEndpoint {
 
     /**
      * API for method:
-     * .../rest/batchjobStep?page=VALUE&limit=VALUE&search=VALUE&idBatchjob=VALUE
+     * .../rest/batchjobSteps?page=VALUE&limit=VALUE&search=VALUE&idBatchjob=VALUE
      * This method returns JSON list, and count number. Default value for page
      * is 1, and for limit is 10. There is a possibility for search by
      * searchName, and by batchjobID. It produces APPLICATION_JSON media type.
@@ -102,7 +102,7 @@ public class BatchjobStepRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/batchjobStep This method recieves JSON
+     * API for this method is .../rest/batchjobSteps This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
      * <br/>{ "stepName": "FinishAuctionsBatchJob",<br/> "idBatchjob": {
      * <br/>"jobName": "dailyJob",<br/> "cronExpression": "30 30 2 ? * *",<br/>
@@ -130,7 +130,7 @@ public class BatchjobStepRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/batchjobStep This method recieves JSON
+     * API for this method is .../rest/batchjobSteps This method recieves JSON
      * object, and update database. Example for JSON that you need to send: <br/>{<br/>
      * "stepName": "UpdateUnqualifiedFantasyClubBatchJob",<br/> "idBatchjob": {<br/>
      * "jobName": "dailyJob",<br/> "cronExpression": "30 30 2 ? * *",<br/>
