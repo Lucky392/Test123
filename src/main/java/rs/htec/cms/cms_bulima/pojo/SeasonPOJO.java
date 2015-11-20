@@ -34,12 +34,12 @@ public class SeasonPOJO {
         if (season.getIdFirstMatchday() != null) {
             this.idFirstMatchday = season.getIdFirstMatchday().getId();
             firstMatchdayName = season.getIdFirstMatchday().getStartDate().getYear() + "/" + season.getIdFirstMatchday().getEndDate().getYear();
-            this.urlToFirstMatchday = Util.getInstance().getUrl() + "rest/matchday/" + season.getIdFirstMatchday().getId();
+            this.urlToFirstMatchday = Util.getInstance().getUrl() + "rest/matchdays/" + season.getIdFirstMatchday().getId();
         }
         if (season.getIdLeague() != null) {
             this.idLeague = season.getIdLeague().getId();
             leagueName = season.getIdLeague().getIdSport1League();
-            this.urlToLeague = Util.getInstance().getUrl() + "rest/league/" + season.getIdLeague().getId();
+            this.urlToLeague = Util.getInstance().getUrl() + "rest/leagues/" + season.getIdLeague().getId();
         }
     }
 

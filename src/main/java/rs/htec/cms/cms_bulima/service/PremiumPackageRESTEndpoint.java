@@ -37,7 +37,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author marko
  */
-@Path("/package")
+@Path("/packages")
 public class PremiumPackageRESTEndpoint {
 
     @InjectParam
@@ -47,7 +47,7 @@ public class PremiumPackageRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method: .../rest/package?page=VALUE&limit=VALUE&search=VALUE This
+     * API for method: .../rest/packages?page=VALUE&limit=VALUE&search=VALUE This
      * method returns JSON list. Default value for page is 1, and for limit is
      * 10. You can put your values for page, limit and search. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:
@@ -105,7 +105,7 @@ public class PremiumPackageRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/package/nameAndId Returns list of id's and names for all Premium Packages. 
+     * API for method: .../rest/packages/nameAndId Returns list of id's and names for all Premium Packages. 
 
      * Example for response: [ <br/>
      * {<br/>
@@ -147,7 +147,7 @@ public class PremiumPackageRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/package/{id} This method return single element
+     * API for method: .../rest/packages/{id} This method return single element
      * of package at index in JSON. Example for JSON response: {
      * <br/>"imageUrl": "",<br/> "updateTimestamp": null,<br/>
      * "createDate": 1427204474000,<br/>
@@ -181,7 +181,7 @@ public class PremiumPackageRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/package This method recieves JSON object,
+     * API for this method is .../rest/packages This method recieves JSON object,
      * and put it in the base. Example for JSON that you need to send:
      * <br/>{<br/>
      * "imageUrl": "",<br/> "updateTimestamp": null,<br/> "platform":
@@ -214,7 +214,7 @@ public class PremiumPackageRESTEndpoint {
     }
 
 //    /**
-//     * API for method: .../rest/package/{id} This method find package with
+//     * API for method: .../rest/packages/{id} This method find package with
 //     * defined id. Id is retrieved from URL. If Item with that index does not
 //     * exist method throws exception. Otherwise method remove that package.
 //     *
@@ -232,7 +232,7 @@ public class PremiumPackageRESTEndpoint {
 //        return Response.ok().build();
 //    }
     /**
-     * API for this method is .../rest/package This method recieves JSON object,
+     * API for this method is .../rest/packages This method recieves JSON object,
      * and update database. Example for JSON that you need to send: <br/>{
      * <br/>"title": "Saison",<br/> "updateTimestamp": null,<br/> "createDate":
      * 1427204474000,<br/>
@@ -273,7 +273,7 @@ public class PremiumPackageRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/package/count This method return number of
+     * API for this method: .../rest/packages/count This method return number of
      * all packages in database.
      *
      * @param token is a header parameter for checking permission

@@ -56,7 +56,7 @@ public class PremiumPackageContentPOJO {
         }
         if (content.getIdPremiumPackage() != null) {
             this.idPremiumPackage = content.getIdPremiumPackage().getId();
-            urlToPremiumPackage = Util.getInstance().getUrl() + "rest/package/" + content.getIdPremiumPackage().getId();
+            urlToPremiumPackage = Util.getInstance().getUrl() + "rest/packages/" + content.getIdPremiumPackage().getId();
             premiumPackage = content.getIdPremiumPackage().getName();
         }
     }

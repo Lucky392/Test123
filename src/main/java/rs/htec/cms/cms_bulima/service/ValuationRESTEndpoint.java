@@ -25,7 +25,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author stefan
  */
-@Path("/valuation")
+@Path("/valuations")
 public class ValuationRESTEndpoint {
 
     @InjectParam
@@ -33,7 +33,7 @@ public class ValuationRESTEndpoint {
 
     /**
      * API for this method:
-     * .../rest/valuation/league/{idLeague}/{idMatchday} This method
+     * .../rest/valuations/league/{idLeague}/{idMatchday} This method
      * return JSON list of Valuation for one League in one Matchday.It produces
      * APPLICATION_JSON media type. Example for JSON list:<br/>
      * [ { <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff": "0",<br/>
@@ -85,7 +85,7 @@ public class ValuationRESTEndpoint {
 
     /**
      * API for this method:
-     * .../rest/statistics/valuation/club/{idClub}/{idMatchday} This method
+     * .../rest/statistics/valuations/club/{idClub}/{idMatchday} This method
      * return JSON object of Valuation for one Club in one Matchday.It produces
      * APPLICATION_JSON media type. Example for JSON object:<br/> [ {
      * <br/>"winMatchdays": "0.0",<br/> "blmPointsDiff": "0",<br/> "creditDiff":

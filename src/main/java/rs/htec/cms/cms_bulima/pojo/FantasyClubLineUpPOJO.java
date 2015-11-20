@@ -40,22 +40,22 @@ public class FantasyClubLineUpPOJO {
         this.credit = lineup.getCredit();
         if (lineup.getIdMatchday() != null) {
             this.idMatchday = lineup.getIdMatchday().getId();
-            this.urlToMatchday = Util.getInstance().getUrl() + "rest/matchday/" + lineup.getIdMatchday().getId();
+            this.urlToMatchday = Util.getInstance().getUrl() + "rest/matchdays/" + lineup.getIdMatchday().getId();
         }
         if (lineup.getIdFantasyClub() != null) {
             this.idFantasyClub = lineup.getIdFantasyClub().getId();
             this.fantasyClubName = lineup.getIdFantasyClub().getName();
-            this.urlToFantasyClub = Util.getInstance().getUrl() + "rest/fantasyClub/" + lineup.getIdFantasyClub().getId();
+            this.urlToFantasyClub = Util.getInstance().getUrl() + "rest/fantasyClubs/" + lineup.getIdFantasyClub().getId();
         }
         if (lineup.getIdFormation() != null) {
             this.idFormation = lineup.getIdFormation().getId();
             this.formationName = lineup.getIdFormation().getName();
-            this.urlToFormation = Util.getInstance().getUrl() + "rest/formation/" + lineup.getIdFormation().getId();
+            this.urlToFormation = Util.getInstance().getUrl() + "rest/formations/" + lineup.getIdFormation().getId();
         }
         if (lineup.getIdFantasyLeague() != null) {
             this.idFantasyLeague = lineup.getIdFantasyLeague().getId();
             this.fantasyLeagueName = lineup.getIdFantasyLeague().getName();
-            this.urlToFantasyLeague = Util.getInstance().getUrl() + "rest/fantasyLeague/" + lineup.getIdFantasyLeague().getId();
+            this.urlToFantasyLeague = Util.getInstance().getUrl() + "rest/fantasyLeagues/" + lineup.getIdFantasyLeague().getId();
         }
     }
 

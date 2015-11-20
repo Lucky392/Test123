@@ -25,14 +25,14 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author marko
  */
-@Path("/nation")
+@Path("/nations")
 public class NationRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/nation/{id} This method return single element of
+     * API for method: .../rest/nations/{id} This method return single element of
      * club at index in JSON. Example for JSON response:<br/>{
      * <br/>"createDate": 1388530800000,<br/> "name": "Österreich",<br/> "id": 3
      * <br/> }

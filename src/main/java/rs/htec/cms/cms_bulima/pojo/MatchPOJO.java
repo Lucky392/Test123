@@ -40,11 +40,11 @@ public class MatchPOJO {
         this.createDate = match.getCreateDate();
         this.startTime = match.getStartTime();
         this.isCalculated = match.getIsCalculated();
-        this.clubGuesUrl = Util.getInstance().getUrl() + "rest/club/" + match.getIdGuestClub().getId();
+        this.clubGuesUrl = Util.getInstance().getUrl() + "rest/clubs/" + match.getIdGuestClub().getId();
         this.clubGuestName = match.getIdGuestClub().getMediumName();
-        this.clubHomeUrl = Util.getInstance().getUrl() + "rest/club/" + match.getIdHomeClub().getId();
+        this.clubHomeUrl = Util.getInstance().getUrl() + "rest/clubs/" + match.getIdHomeClub().getId();
         this.clubHomeName = match.getIdHomeClub().getMediumName();
-        this.matchdayUrl = Util.getInstance().getUrl() + "rest/matchday/" + match.getIdMatchday().getId();
+        this.matchdayUrl = Util.getInstance().getUrl() + "rest/matchdays/" + match.getIdMatchday().getId();
     }
 
     public long getId() {

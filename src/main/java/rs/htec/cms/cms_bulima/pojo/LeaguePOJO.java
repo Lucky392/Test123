@@ -28,7 +28,7 @@ public class LeaguePOJO {
         this.sport = league.getSport();
         this.createDate = league.getCreateDate();
         if (league.getIdCompetition() != null) {
-            this.competitionUrl = Util.getInstance().getUrl() + "rest/competition/" + league.getIdCompetition().getId();
+            this.competitionUrl = Util.getInstance().getUrl() + "rest/competitions/" + league.getIdCompetition().getId();
             this.competitionName = league.getIdCompetition().getName();
         }
     }

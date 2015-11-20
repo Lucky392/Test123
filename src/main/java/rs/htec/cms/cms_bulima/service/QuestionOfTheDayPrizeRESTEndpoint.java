@@ -36,7 +36,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author stefan
  */
-@Path("/prize")
+@Path("/prizes")
 public class QuestionOfTheDayPrizeRESTEndpoint {
 
     @InjectParam
@@ -49,7 +49,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
 
 
     /**
-     * API for method: .../rest/prize?page=VALUE&limit=VALUE This method returns JSON
+     * API for method: .../rest/prizes?page=VALUE&limit=VALUE This method returns JSON
      * list of questions at defined page with defined limit. Default value for page is 1, and for limit
      * is 10.
      * It produces APPLICATION_JSON media type. Example for JSON list for 2 page, 2 limit:
@@ -85,7 +85,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/prize/{id} This method return single element of questionOfTheDayPrize at index
+     * API for method: .../rest/prizes/{id} This method return single element of questionOfTheDayPrize at index
      * in JSON. Example for JSON response: <br/>{<br/> "prizeMoney": "30000",<br/> "name": "Tag 3",<br/> "id":
      * "3",<br/> "createDate": "2014-12-03 17:11:04.0"<br/> }
      * @param token is a header parameter for checking permission
@@ -112,7 +112,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
     
     /**
-     * API for this method is .../rest/prize This method receives JSON object,
+     * API for this method is .../rest/prizes This method receives JSON object,
      * and put it in the base. Example for JSON: {<br/> "prizeMoney":
      * "10000",<br/>
      * "name": "Tag 1" <br/>}
@@ -139,7 +139,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/prize/{id} This method find prize with defined
+     * API for method: .../rest/prizes/{id} This method find prize with defined
      * id. Id is retrieved from URL. If prize with that index does not exist
      * method throws exception. Otherwise method remove that prize.
      *
@@ -158,7 +158,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/prize This method recieves JSON object,
+     * API for this method is .../rest/prizes This method recieves JSON object,
      * and update database. Example for JSON: { <br/>"prizeMoney": "10000",
      * <br/>"name": "Tag 1" <br/>}
      *
@@ -193,7 +193,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     }
     
     /**
-     * API for this method: .../rest/prize/count
+     * API for this method: .../rest/prizes/count
      * This method return number of all prizes in database.
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body

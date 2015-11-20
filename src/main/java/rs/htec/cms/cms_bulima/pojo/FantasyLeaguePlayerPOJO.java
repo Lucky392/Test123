@@ -32,10 +32,10 @@ public class FantasyLeaguePlayerPOJO {
         this.idFantasyLeague = player.getIdFantasyLeague().getId();
         this.idPlayer = player.getIdPlayer().getId();
         if (player.getIdFantasyLeague() != null) {
-            this.urlToFantasyLeague = Util.getInstance().getUrl() + "rest/fantasyLeague/" + player.getIdFantasyLeague().getId();
+            this.urlToFantasyLeague = Util.getInstance().getUrl() + "rest/fantasyLeagues/" + player.getIdFantasyLeague().getId();
         }
         if (player.getIdPlayer() != null) {
-            this.urlToPlayer = Util.getInstance().getUrl() + "rest/player/" + player.getIdPlayer().getId();
+            this.urlToPlayer = Util.getInstance().getUrl() + "rest/players/" + player.getIdPlayer().getId();
         }
     }
 

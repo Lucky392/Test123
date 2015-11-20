@@ -31,7 +31,7 @@ import rs.htec.cms.cms_bulima.pojo.PremiumHistoryPOJO;
  *
  * @author stefan
  */
-@Path("/premiumHistory")
+@Path("/premiumHistories")
 public class PremiumHistoryRESTEndpoint {
 
     @InjectParam
@@ -41,7 +41,7 @@ public class PremiumHistoryRESTEndpoint {
     Validator validator;
 
     /**
-     * API for this method: .../rest/premiumHistory/user/{email} This method
+     * API for this method: .../rest/premiumHistories/user/{email} This method
      * return JSON list of Premium History for one User. It produces
      * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
      * <br/>"idUser": "54483",<br/> "charges": "1",<br/> "idFantasyClub":
@@ -88,7 +88,7 @@ public class PremiumHistoryRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/premiumHistory/club/{idClub} This method
+     * API for this method: .../rest/premiumHistories/club/{idClub} This method
      * return JSON list of Premium History for one Club. It produces
      * APPLICATION_JSON media type. Example for JSON object: <br/>[ {
      * <br/>"idUser": "29867",<br/> "charges": "1",<br/> "idFantasyClub":

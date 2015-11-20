@@ -45,10 +45,10 @@ public class MatchPlayerPOJO {
         this.createDate = player.getCreateDate();
         this.idMatch = player.getIdMatch().getId();
         match = player.getIdMatch().getIdSport1Match();
-        this.urlToMatch = Util.getInstance().getUrl() + "rest/match/" + player.getIdMatch().getId();
+        this.urlToMatch = Util.getInstance().getUrl() + "rest/matches/" + player.getIdMatch().getId();
         this.idPlayer = player.getIdPlayer().getId();
         this.player = player.getIdPlayer().getFullname();
-        this.urlToPlayer = Util.getInstance().getUrl() + "rest/player/" + player.getIdPlayer().getId();
+        this.urlToPlayer = Util.getInstance().getUrl() + "rest/players/" + player.getIdPlayer().getId();
 
     }
 

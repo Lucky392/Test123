@@ -36,7 +36,7 @@ public class MatchdayChallengeTargetCalculationPOJO {
         this.updateAt = mctc.getUpdateAt();
         this.createDate = mctc.getCreateDate();
         matchdayChallenge = mctc.getIdMatchdayChallenge().getMatchdayChallengeTitle();
-        this.urlToMatchdayChallenge = Util.getInstance().getUrl() + "rest/matchday_challenge/" + mctc.getIdMatchdayChallenge().getId();
+        this.urlToMatchdayChallenge = Util.getInstance().getUrl() + "rest/matchday_challenges/" + mctc.getIdMatchdayChallenge().getId();
     }
 
     public long getId() {

@@ -38,7 +38,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author stefan
  */
-@Path("/question")
+@Path("/questions")
 public class QuestionOfTheDayCmsRESTEndpoint {
 
     @InjectParam
@@ -49,7 +49,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
 
     /**
      * API for method:
-     * .../rest/question?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE
+     * .../rest/questions?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE
      * This method returns JSON list of questions.Default value for page is 1,
      * and for limit is 10. You can put your values for page, limit,
      * orderColumn, searchWord, start and end date. It produces APPLICATION_JSON
@@ -131,7 +131,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/question/{id} This method return single element
+     * API for method: .../rest/questions/{id} This method return single element
      * of questionOfTheDay at index in JSON. Example for JSON response:
      * <br/>{<br/>
      * "date": "2015-07-20 00:00:00.0",<br/>
@@ -166,7 +166,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/question This method recieves JSON
+     * API for this method is .../rest/questions This method recieves JSON
      * object, and put it in the base. Example for JSON: {<br/> "date":
      * "2015-07-25T00:00:00.0",<br/> "wrongAnswer3": "Jürgen Kohler",<br/>
      * "question": "Welcher Spieler erfand die \"Schutzschwalbe\"?",<br/>
@@ -198,7 +198,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/question/{id} This method find question with
+     * API for method: .../rest/questions/{id} This method find question with
      * defined id. Id is retrieved from URL. If question with that id does not
      * exist method throws exception. Otherwise method remove that question.
      *
@@ -218,7 +218,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is /rest/question This method recieves JSON object,
+     * API for this method is /rest/questions This method recieves JSON object,
      * and update database. Example for JSON: { <br/>"date":
      * "2015-07-25T00:00:00.0",<br/>
      * "wrongAnswer3": "Jürgen Kohler",<br/> "question": "Welcher Spieler erfand
@@ -259,7 +259,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/question/count This method return number of
+     * API for this method: .../rest/questions/count This method return number of
      * all questions in database.
      *
      * @param token is a header parameter for checking permission

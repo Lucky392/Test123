@@ -35,7 +35,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author lazar
  */
-@Path("/premium_action")
+@Path("/premium_actions")
 public class PremiumActionRESTEndpoint {
     
     @InjectParam
@@ -45,7 +45,7 @@ public class PremiumActionRESTEndpoint {
     Validator validator;
     
     /**
-     * API for method: .../rest/premium_action?page=VALUE&limit=VALUE This
+     * API for method: .../rest/premium_actions?page=VALUE&limit=VALUE This
      * method returns JSON list. Default value for page is 1, and for limit is
      * 10. You can put your values for page, limit. It produces APPLICATION_JSON
      * media type. Example for JSON list for 1 page, 2 limit: <br/>
@@ -90,7 +90,7 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/premium_action/{id} This method return single
+     * API for method: .../rest/premium_actions/{id} This method return single
      * element of premium action at index in JSON. Example for JSON response:
      * {<br/>
      * "createDate": 1418727045000,<br/>
@@ -121,7 +121,7 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/premium_action This method recieves JSON
+     * API for this method is .../rest/premium_actions This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
      * <br/>
      * {<br/>
@@ -150,7 +150,7 @@ public class PremiumActionRESTEndpoint {
     }
 
 //    /**
-//     * API for method: .../rest/premium_action/{id} This method find
+//     * API for method: .../rest/premium_actions/{id} This method find
 //     * premium_action with defined id. Id is retrieved from URL. If Premium
 //     * actions with that index does not exist method throws exception. Otherwise
 //     * method remove that Premium action. If Premium action is used, it can't be
@@ -171,7 +171,7 @@ public class PremiumActionRESTEndpoint {
 //    }
 
     /**
-     * API for this method is .../rest/premium_action This method recieves JSON
+     * API for this method is .../rest/premium_actions This method recieves JSON
      * object, and update database. Example for JSON that you need to send:<br/>
      * {<br/>
      * "name": "bla bla 1123",<br/>
@@ -208,7 +208,7 @@ public class PremiumActionRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/premium_action/count
+     * API for this method: .../rest/premium_actions/count
      * This method return number of all actions in database.
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body

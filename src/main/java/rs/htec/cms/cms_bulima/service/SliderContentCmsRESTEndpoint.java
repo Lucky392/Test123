@@ -36,7 +36,7 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  *
  * @author stefan
  */
-@Path("/slider")
+@Path("/sliders")
 public class SliderContentCmsRESTEndpoint {
 
     @InjectParam
@@ -46,7 +46,7 @@ public class SliderContentCmsRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method: .../rest/slider?page=VALUE&limit=VALUE This method returns JSON
+     * API for method: .../rest/sliders?page=VALUE&limit=VALUE This method returns JSON
      * list of slider content at defined page with defined limit. 
      * Default value for page is 1, and for limit is 10. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
@@ -101,7 +101,7 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/slider/{id} This method return single element of slider at index
+     * API for method: .../rest/sliders/{id} This method return single element of slider at index
      * in JSON. Example for JSON response: <br/>{<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
      * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/>
@@ -137,7 +137,7 @@ public class SliderContentCmsRESTEndpoint {
     }
     
     /**
-     * API for this method is .../rest/slider This method recieves JSON object,
+     * API for this method is .../rest/sliders This method recieves JSON object,
      * and put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
      * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
@@ -169,7 +169,7 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/slider/{id} This method find slider with defined
+     * API for method: .../rest/sliders/{id} This method find slider with defined
      * id. Id is retrieved from URL. If slider content with that index does not
      * exist method throws exception. Otherwise method remove that slider
      * content.
@@ -189,7 +189,7 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/slider This method recieves JSON object,
+     * API for this method is .../rest/sliders This method recieves JSON object,
      * and update database. Example for JSON: <br/>{ "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_jerseys_v04.jpg",<br/>
      * "redirectUrl": "page=shop;sub=nspyre",<br/> "showForMsec": "5000",<br/>
@@ -229,7 +229,7 @@ public class SliderContentCmsRESTEndpoint {
     }
     
     /**
-     * API for this method: .../rest/slider/count
+     * API for this method: .../rest/sliders/count
      * This method return number of all sliders in database.
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body

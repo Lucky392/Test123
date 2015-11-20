@@ -139,7 +139,7 @@ public class MatchPlayerStatPOJO {
         if (stat.getIdMatchPlayer() != null) {
             this.idMatchPlayer = stat.getIdMatchPlayer().getId();
             matchPlayer = stat.getIdMatchPlayer().getIdPlayer().getFullname();
-            this.urlToMatchPlayer = Util.getInstance().getUrl() + "rest/matchPlayer/" + stat.getIdMatchPlayer().getId();
+            this.urlToMatchPlayer = Util.getInstance().getUrl() + "rest/matchPlayers/" + stat.getIdMatchPlayer().getId();
         }
     }
 

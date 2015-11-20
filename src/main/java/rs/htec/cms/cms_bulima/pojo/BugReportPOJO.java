@@ -55,7 +55,7 @@ public class BugReportPOJO {
         this.clubName = bugReport.getClubName();
         this.userId = bugReport.getUserId();
         if (bugReport.getUserId() != null) {
-            this.urlToUser = Util.getInstance().getUrl() + "rest/user/" + bugReport.getUserId();
+            this.urlToUser = Util.getInstance().getUrl() + "rest/users/" + bugReport.getUserId();
         }
         if (bugReport.getUser() != null){
             this.userEmail = bugReport.getUser().getEmail();

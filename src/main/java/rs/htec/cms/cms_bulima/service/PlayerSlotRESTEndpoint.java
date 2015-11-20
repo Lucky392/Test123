@@ -25,7 +25,7 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author stefan
  */
-@Path("/playerSlot")
+@Path("/playerSlots")
 public class PlayerSlotRESTEndpoint {
 
     @InjectParam

@@ -95,27 +95,27 @@ public class PlayerPOJO {
         this.fullname = player.getFullname();
         if (player.getIdPlayerPosition() != null) {
             this.idPlayerPosition = player.getIdPlayerPosition().getId();
-            this.urlToPlayerPosition = Util.getInstance().getUrl() + "rest/playerPosition/" + player.getIdPlayerPosition().getId();
+            this.urlToPlayerPosition = Util.getInstance().getUrl() + "rest/playerPositions/" + player.getIdPlayerPosition().getId();
             playerPosition = player.getIdPlayerPosition().getName();
         }
         if (player.getIdNation() != null) {
             this.idNation = player.getIdNation().getId();
-            this.urlToNation = Util.getInstance().getUrl() + "rest/nation/" + player.getIdNation().getId();
+            this.urlToNation = Util.getInstance().getUrl() + "rest/nations/" + player.getIdNation().getId();
             nation = player.getIdNation().getName();
         }
         if (player.getIdSeasonCurrent() != null) {
             this.idSeasonCurrent = player.getIdSeasonCurrent().getId();
-            this.urlToSeasonCurrent = Util.getInstance().getUrl() + "rest/season/" + player.getIdSeasonCurrent().getId();
+            this.urlToSeasonCurrent = Util.getInstance().getUrl() + "rest/seasons/" + player.getIdSeasonCurrent().getId();
             seasonCurrent = player.getIdSeasonCurrent().getName();
         }
         if (player.getIdBlockStartMatchday() != null) {
             this.idBlockStartMatchday = player.getIdBlockStartMatchday().getId();
-            this.urlToBlockStartMatchday = Util.getInstance().getUrl() + "rest/matchday/" + player.getIdBlockStartMatchday().getId();
+            this.urlToBlockStartMatchday = Util.getInstance().getUrl() + "rest/matchdays/" + player.getIdBlockStartMatchday().getId();
             blockStartMatchday = player.getIdBlockStartMatchday().getIdSport1Matchday();
         }
         if (player.getIdClub() != null) {
             this.idClub = player.getIdClub().getId();
-            this.urlToClub = Util.getInstance().getUrl() + "rest/club/" + player.getIdClub().getId();
+            this.urlToClub = Util.getInstance().getUrl() + "rest/clubs/" + player.getIdClub().getId();
             club = player.getIdClub().getMediumName();
         }
     }

@@ -44,7 +44,7 @@ public class MatchdayPOJO {
         this.isCompleted = matchdayDb.getIsCompleted();
         this.idSeason = matchdayDb.getIdSeason().getId();
         season = matchdayDb.getIdSeason().getName();
-        this.urlToSeason = Util.getInstance().getUrl() + "rest/season/" + matchdayDb.getIdSeason().getId();
+        this.urlToSeason = Util.getInstance().getUrl() + "rest/seasons/" + matchdayDb.getIdSeason().getId();
     }
 
     public Long getId() {

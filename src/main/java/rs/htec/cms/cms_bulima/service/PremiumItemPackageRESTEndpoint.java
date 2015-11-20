@@ -37,7 +37,7 @@ import rs.htec.cms.cms_bulima.pojo.PremiumItemPackagePOJO;
  *
  * @author stefan
  */
-@Path("/itemPackage")
+@Path("/itemPackages")
 public class PremiumItemPackageRESTEndpoint {
 
     @InjectParam
@@ -48,7 +48,7 @@ public class PremiumItemPackageRESTEndpoint {
 
     /**
      * API for method:
-     * .../rest/itemPackage?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE
+     * .../rest/itemPackages?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE
      * This method returns JSON list. Default value for page is 1, and for limit
      * is 10. You can put your values for page, limit, orderColumn, searchWord,
      * start and end date,. It produces APPLICATION_JSON media type. Example for
@@ -141,7 +141,7 @@ public class PremiumItemPackageRESTEndpoint {
     }
     
     /**
-     * API for method: .../rest/itemPackage/{id} This method return single
+     * API for method: .../rest/itemPackages/{id} This method return single
      * element of item package at index in JSON. Example for JSON response:
      * {<br/>
      * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
@@ -178,7 +178,7 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/itemPackage  This method recieves JSON object,
+     * API for this method is .../rest/itemPackages  This method recieves JSON object,
      * and put it in the DB. Example for JSON that you need to send: 
      * {<br/>
      * "updateTimestamp": null,<br/>
@@ -220,7 +220,7 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
 //    /**
-//     * API for method: .../rest/itemPackage/{id} This method find package with
+//     * API for method: .../rest/itemPackages/{id} This method find package with
 //     * defined id. Id is retrieved from URL. If Package with that index does not
 //     * exist method throws exception. Otherwise method remove that Package.
 //     *
@@ -238,7 +238,7 @@ public class PremiumItemPackageRESTEndpoint {
 //        return Response.ok().build();
 //    }
     /**
-     * API for this method is .../rest/itemPackage This method recieves JSON
+     * API for this method is .../rest/itemPackages This method recieves JSON
      * object, and update database. Example for JSON that you need to send:
      *
      * { <br/>
@@ -293,7 +293,7 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/itemPackage/count This method return number
+     * API for this method: .../rest/itemPackages/count This method return number
      * of all item packages in database.
      *
      * @param token is a header parameter for checking permission

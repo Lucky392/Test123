@@ -32,7 +32,7 @@ public class MatchPlayerEventPOJO {
         this.updateAt = mpe.getUpdateAt();
         this.createDate = mpe.getCreateDate();
         matchPlayer = mpe.getIdMatchPlayer().getIdPlayer().getFullname();
-        this.matchPlayerUrl = Util.getInstance().getUrl() + "rest/matchPlayer/" + mpe.getIdMatchPlayer().getId();
+        this.matchPlayerUrl = Util.getInstance().getUrl() + "rest/matchPlayers/" + mpe.getIdMatchPlayer().getId();
     }
 
     public long getId() {

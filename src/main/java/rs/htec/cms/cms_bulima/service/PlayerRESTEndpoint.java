@@ -31,7 +31,7 @@ import rs.htec.cms.cms_bulima.pojo.PlayerPOJO;
  *
  * @author stefan
  */
-@Path("/player")
+@Path("/players")
 public class PlayerRESTEndpoint {
 
     @InjectParam
@@ -43,14 +43,14 @@ public class PlayerRESTEndpoint {
      * Example for response:<br/>
      * {<br/>
      * "urlToPlayerPosition":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerPosition/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/playerPositions/1",<br/>
      * "urlToBlockStartMatchday": null,<br/>
      * "urlToClub":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/club/56",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/clubs/56",<br/>
      * "urlToNation":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/nation/1",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/nations/1",<br/>
      * "urlToSeasonCurrent":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/season/3",v
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/seasons/3",v
      * "createDate": 1407424285000,<br/>
      * "fullname": "Timo Horn",<br/>
      * "updateAt": 1439784030000,<br/>

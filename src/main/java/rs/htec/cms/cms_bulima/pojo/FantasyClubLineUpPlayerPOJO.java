@@ -34,16 +34,16 @@ public class FantasyClubLineUpPlayerPOJO {
         this.createDate = player.getCreateDate();
         if (player.getIdPlayerSlot() != null) {
             this.idPlayerSlot = player.getIdPlayerSlot().getId();
-            this.urlToPlayerSlot = Util.getInstance().getUrl() + "rest/playerSlot/" + player.getIdPlayerSlot().getId();
+            this.urlToPlayerSlot = Util.getInstance().getUrl() + "rest/playerSlots/" + player.getIdPlayerSlot().getId();
         }
         if (player.getIdLeaguePlayer() != null) {
             this.idLeaguePlayer = player.getIdLeaguePlayer().getId();
-            this.urlToLeaguePlayer = Util.getInstance().getUrl() + "rest/fantasyLeaguePlayer/" + player.getIdLeaguePlayer().getId();
+            this.urlToLeaguePlayer = Util.getInstance().getUrl() + "rest/fantasyLeaguePlayers/" + player.getIdLeaguePlayer().getId();
             this.leaguePlayerName = player.getIdLeaguePlayer().getIdPlayer().getFullname();
         }
         if (player.getIdLineUp() != null) {
             this.idLineUp = player.getIdLineUp().getId();
-            this.urlToLineUp = Util.getInstance().getUrl() + "rest/lineup/" + player.getIdLineUp().getId();
+            this.urlToLineUp = Util.getInstance().getUrl() + "rest/lineups/" + player.getIdLineUp().getId();
         }
     }
 

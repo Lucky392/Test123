@@ -26,7 +26,7 @@ import rs.htec.cms.cms_bulima.pojo.SeasonPOJO;
  *
  * @author stefan
  */
-@Path("/season")
+@Path("/seasons")
 public class SeasonRESTEndpoint {
     
     @InjectParam
@@ -41,7 +41,7 @@ public class SeasonRESTEndpoint {
 *  "idSport1Season": "355",<br/>
 *  "idFirstMatchday": null,<br/>
 *  "urlToFirstMatchday": null,<br/>
-*  "urlToLeague": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/league/1",<br/>
+*  "urlToLeague": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/leagues/1",<br/>
 *  "name": "2014/2015",<br/>
 *  "id": 1<br/>
 *}<br/>

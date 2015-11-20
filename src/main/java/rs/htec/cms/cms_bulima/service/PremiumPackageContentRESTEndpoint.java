@@ -37,7 +37,7 @@ import rs.htec.cms.cms_bulima.pojo.PremiumPackageContentPOJO;
  *
  * @author stefan
  */
-@Path("/packageContent")
+@Path("/packageContents")
 public class PremiumPackageContentRESTEndpoint {
 
     @InjectParam
@@ -48,7 +48,7 @@ public class PremiumPackageContentRESTEndpoint {
 
     /**
      * API for method:
-     * .../rest/packageContent?page=VALUE&limit=VALUE&column=VALUE&maxDate=VALUE
+     * .../rest/packageContents?page=VALUE&limit=VALUE&column=VALUE&maxDate=VALUE
      * This method returns JSON list. Default value for page is 1, and for limit
      * is 10. You can put your values for page, limit, orderColumn, searchWord,
      * start and end date,. It produces APPLICATION_JSON media type. Example for
@@ -58,7 +58,7 @@ public class PremiumPackageContentRESTEndpoint {
      * "data": [<br/>
      * {<br/>
      * "urlToPremiumPackage":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/package/8",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/packages/8",<br/>
      * "urlToPremiumItem":
      * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/items/16",<br/>
      * "createDate": 1427204482000,<br/>
@@ -70,7 +70,7 @@ public class PremiumPackageContentRESTEndpoint {
      * },<br/>
      * {<br/>
      * "urlToPremiumPackage":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/package/8",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/packages/8",<br/>
      * "urlToPremiumItem":
      * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/items/15",<br/>
      * "createDate": 1427204482000,<br/>
@@ -150,11 +150,11 @@ public class PremiumPackageContentRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/packageContent/{id} This method return single
+     * API for method: .../rest/packageContents/{id} This method return single
      * element of package content at index in JSON. Example for JSON response:
      * {<br/>
      * "urlToPremiumPackage":
-     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/package/8",<br/>
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/packages/8",<br/>
      * "urlToPremiumItem":
      * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/items/16",<br/>
      * "createDate": 1427204482000,<br/>
@@ -188,7 +188,7 @@ public class PremiumPackageContentRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/packageContent This method recieves
+     * API for this method is .../rest/packageContents This method recieves
      * JSONobject, and put it in the base. Example for JSON that you need to
      * send:
      * <br/>
@@ -239,7 +239,7 @@ public class PremiumPackageContentRESTEndpoint {
 //        return Response.ok().build();
 //    }
     /**
-     * API for this method is .../rest/packageContent This method recieves JSON
+     * API for this method is .../rest/packageContents This method recieves JSON
      * object, and update database. Example for JSON that you need to send:
      * <br/>
      * {<br/>
@@ -282,7 +282,7 @@ public class PremiumPackageContentRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/packageContent/count This method return
+     * API for this method: .../rest/packageContents/count This method return
      * number of all package contents in database.
      *
      * @param token is a header parameter for checking permission

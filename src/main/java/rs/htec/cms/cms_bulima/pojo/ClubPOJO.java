@@ -34,7 +34,7 @@ public class ClubPOJO {
         this.createDate = club.getCreateDate();
         this.logo = club.getLogo();
         if (club.getIdLeague() != null) {
-            this.leagueUrl = Util.getInstance().getUrl() + "rest/league/" + club.getIdLeague().getId();
+            this.leagueUrl = Util.getInstance().getUrl() + "rest/leagues/" + club.getIdLeague().getId();
             if (club.getIdLeague().getIdCompetition() != null){
                 this.leagueName = club.getIdLeague().getIdCompetition().getName();
             }

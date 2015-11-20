@@ -33,7 +33,7 @@ import rs.htec.cms.cms_bulima.pojo.UserPremiumItemPOJO;
  *
  * @author stefan
  */
-@Path("/userPremiumItem")
+@Path("/userPremiumItems")
 public class UserPremiumItemRESTEndpoint {
 
     @InjectParam

@@ -26,7 +26,7 @@ import rs.htec.cms.cms_bulima.pojo.RewardPOJO;
  *
  * @author stefan
  */
-@Path("/reward")
+@Path("/rewards")
 public class RewardRESTEndpoint {
 
     @InjectParam

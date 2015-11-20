@@ -24,14 +24,14 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author lazar
  */
-@Path("/role")
+@Path("/roles")
 public class RoleRESTEndopoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
-     * API for method: .../rest/role<br/>
+     * API for method: .../rest/roles<br/>
      * This method gets authorization token from HTTP header return roles in
      * JSON format. Example for JSON:<br/>
      * [<br/>

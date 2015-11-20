@@ -36,15 +36,15 @@ public class FantasyPlayerPOJO {
         this.idFantasyClub = player.getIdFantasyClub().getId();
         this.idLeaguePlayer = player.getIdLeaguePlayer().getId();
         if (player.getIdFantasyClub() != null) {
-            this.urlToFantasyClub = Util.getInstance().getUrl() + "rest/fantasyClub/" + player.getIdFantasyClub().getId();
+            this.urlToFantasyClub = Util.getInstance().getUrl() + "rest/fantasyClubs/" + player.getIdFantasyClub().getId();
             this.fantasyClubName = player.getIdFantasyClub().getName();
         }
         if (player.getIdLeaguePlayer() != null) {
-            this.urlToLeaguePlayer = Util.getInstance().getUrl() + "rest/fantasyLeaguePlayer/" + player.getIdLeaguePlayer().getId();
+            this.urlToLeaguePlayer = Util.getInstance().getUrl() + "rest/fantasyLeaguePlayers/" + player.getIdLeaguePlayer().getId();
             this.leaguePlayerName = player.getIdLeaguePlayer().getIdPlayer().getFirstName() + " " + player.getIdLeaguePlayer().getIdPlayer().getLastName();
         }
         if (player.getIdPlayerSlot() != null) {
-            this.urlToPlaterSlot = Util.getInstance().getUrl() + "rest/playerSlot/" + player.getIdPlayerSlot().getId();
+            this.urlToPlaterSlot = Util.getInstance().getUrl() + "rest/playerSlots/" + player.getIdPlayerSlot().getId();
             this.playerSlotName = player.getIdPlayerSlot().getName();
         }
     }

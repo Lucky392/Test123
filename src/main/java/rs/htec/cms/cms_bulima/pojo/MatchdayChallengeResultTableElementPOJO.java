@@ -36,7 +36,7 @@ public class MatchdayChallengeResultTableElementPOJO {
         if (element.getIdMatchdayChallenge() != null) {
             this.idMatchdayChallenge = element.getIdMatchdayChallenge().getId();
             matchdayChallenge = element.getIdMatchdayChallenge().getMatchdayChallengeTitle();
-            this.urlToMatchdayChallenge = Util.getInstance().getUrl() + "rest/matchday_challenge/" + element.getIdMatchdayChallenge().getId();
+            this.urlToMatchdayChallenge = Util.getInstance().getUrl() + "rest/matchday_challenges/" + element.getIdMatchdayChallenge().getId();
         }
     }
 
