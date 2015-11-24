@@ -84,7 +84,6 @@ public class FantasyClubRESTEndpoint {
      * @param fantasyManagerID
      * @param fantasyLeagueID
      * @param name
-     * @param id is id of Fantasy Manager
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for exception: <br/>{<br/>
      * "errorMessage": "There is no Fantasy Club for this Manager!",<br/>
