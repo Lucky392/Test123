@@ -31,7 +31,7 @@
             <h3 ng-bind="message"></h3>
             <tr class="info" ng-repeat="player in playerList">
                 <td><a ui-sref="singleGameUser({id:'{{player.id}}'})" ng-bind="player.email"></a></td>
-                <td><a class="btn btn-success" ui-sref="fantasyManagersPerUser({email:'{{player.email}}'})">Managers</a></td>
+                <td><a class="btn btn-success" ui-sref="fantasyManagersPerUser({id:'{{player.id}}'})">Managers</a></td>
                 <td ng-bind="player.payingUser"></td>
                 <td ng-bind="player.amountPremiumCurrency"></td>
                 <td ng-bind="player.createDate  | date: 'dd/MM/yyyy HH:mm:ss'"></td>

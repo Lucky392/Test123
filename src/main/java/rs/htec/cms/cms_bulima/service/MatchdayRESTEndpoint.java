@@ -121,14 +121,14 @@ public class MatchdayRESTEndpoint {
      * "count": 2<br/>
      * }<br/>
      *
-     * @param token - header parameter for checking permission
-     * @param page - number of page for searched results
-     * @param limit - number of matchPlayerStats that are returned in body
-     * @param orderBy - column name (if there is '-' before colum name, results will be sorted in descending order)
-     * @param matchday - filters results base on defined matchday
-     * @param idSeason - filters results base on defined id for Season
-     * @param minDate - filters result form defined date
-     * @param maxDate - filters result to defined date
+     * @param token header parameter for checking permission
+     * @param page number of page for searched results
+     * @param limit number of matchPlayerStats that are returned in body
+     * @param orderBy column name (if there is '-' before colum name, results will be sorted in descending order)
+     * @param matchday filters results base on defined matchday
+     * @param idSeason filters results base on defined id for Season
+     * @param minDate filters result form defined date
+     * @param maxDate filters result to defined date
      * @return Matchdays for specified search
      * @throws DataNotFoundException if Matchday does not exist for
      * search

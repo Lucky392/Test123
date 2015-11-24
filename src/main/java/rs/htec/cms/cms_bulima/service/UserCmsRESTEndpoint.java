@@ -41,10 +41,10 @@ import rs.htec.cms.cms_bulima.token.Base64Token;
 public class UserCmsRESTEndpoint {
 
     AbstractTokenCreator tokenHelper;
-    
+
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -53,11 +53,11 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/cmsUsers This method return list of users in
-     * JSON object. Example for JSON: <br/>[ {<br/>
+     * API for this method: .../rest/cmsUsers This method return list of users
+     * in JSON object. Example for JSON: <br/>[ {<br/>
      * "idRole": {<br/> "name": "admin",<br/> "id": 1 <br/>}, <br/>"userName":
-     * "name", <br/>"token": "TOKEN",<br/> "password": "pass",<br/> "id":
-     * 1<br/> } ]
+     * "name", <br/>"token": "TOKEN",<br/> "password": "pass",<br/> "id": 1<br/>
+     * } ]
      *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
@@ -113,26 +113,24 @@ public class UserCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             userPass = tokenHelper.decodeBasicAuth(authorization);
-            
+
 //            String pass = "";
 //            try {
 //                pass = Password.getSaltedHash(userPass[1]);
 //            } catch (Exception ex) {
 //                Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
 //            }
-            
             CmsUser user = (CmsUser) em
                     .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
                     .setParameter("userName", userPass[0])
                     .getSingleResult();
-            
-            boolean pass =false;
+
+            boolean pass = false;
             try {
                 pass = Password.check(userPass[1], user.getPassword());
             } catch (Exception ex) {
                 Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
 
             if (pass && (user.getToken() == null || user.getToken().equals(""))) {
                 user.setToken(tokenHelper.createToken(user.getId()));
@@ -172,8 +170,8 @@ public class UserCmsRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/cmsUsers This method recieves JSON object, and
-     * put him in the base.
+     * API for this method: .../rest/cmsUsers This method recieves JSON object,
+     * and put him in the base.
      *
      * @param token is a header parameter for checking permission
      * @param user is object that Jackson convert from JSON
@@ -187,11 +185,11 @@ public class UserCmsRESTEndpoint {
     public Response createUser(@HeaderParam("authorization") String token, CmsUser user) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token);
-        CmsUser userDb = (CmsUser) em
-                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
-                    .setParameter("userName", user.getUserName())
-                    .getSingleResult();
-        if (userDb != null) {
+        List<CmsUser> userDb = (List<CmsUser>) em
+                .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
+                .setParameter("userName", user.getUserName())
+                .getResultList();
+        if (userDb != null && userDb.size() > 0) {
             throw new InputValidationException("User with username '" + user.getUserName() + "' already exist");
         }
         if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {

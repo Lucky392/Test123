@@ -1,20 +1,19 @@
 <div class="head">
     <div class="row">
         <div class="col-md-3">
-            <h2>Fantasy Clubs per manager</h2>
+            <h3>Fantasy Clubs per manager</h3>
             <!--<h3 ng-bind="userEmail"></h3>-->
-        </div>
-        <div class="col-md-7 searchBox">
         </div>
     </div>
     <div class="row">
-        <back back="back"></back>
+        <a  type="button" class="btn btn-default n_button" ui-sref="gameUsers">Users</a>
     </div>
     <div class="content">
         <table class="table table-hover">
             <tr>
                 <th>Name</th>
                 <th>Auctions</th>
+                <th>Bids</th>
                 <th>Credit</th>
                 <th>Activity</th>
                 <th>Create Date</th>
@@ -23,6 +22,7 @@
             <tr class="info" ng-repeat="club in clubList">
                 <td ng-bind="club.name"></td>
                 <td><a class="btn btn-success" ui-sref="auctionsPerFantasyClub({id:'{{club.id}}'})">Auctions</a></td>
+                <td><a class="btn btn-success" ui-sref="bids({idClub:'{{club.id}}'})">Bids</a></td>
                 <td ng-bind="club.credit"></td>
                 <td ng-bind="club.activity"></td>
                 <td ng-bind="club.createDate  | date: 'dd/MM/yyyy HH:mm:ss'"></td>

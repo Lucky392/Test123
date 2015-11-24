@@ -169,7 +169,7 @@ public class BugReportRESTEndpoint {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append(" WHERE b.reportDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            query.append(operator).append(" b.reportDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
             operator = " AND";
         }
 

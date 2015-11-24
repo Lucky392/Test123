@@ -4,8 +4,6 @@
 </div>
 <div class="row modal-body">
     <form class="col-md-offset-2 col-md-8"  name="epp.form1">
-        <upload-button class="btn btn-upload btn-warning"   required="true"  enctype="multipart/form-data" url="http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/uploadFile?imageLocationFolder=1"  accept="acceptTypes" multiple="allowMultiple" on-success="onGlobalSuccess(response)" on-upload="onUpload(files)" param="file" on-error="onError(response)" on-complete="onComplete(response)"">{{btn_title}}</upload-button>
-        <p>{{complete}}</p>
         <formly-form model="epp.premiumPackage" fields="epp.premiumPackageFields">
             <button type="button" class="btn btn-primary submit-button" ng-click="change()">SAVE</button>
         </formly-form>
