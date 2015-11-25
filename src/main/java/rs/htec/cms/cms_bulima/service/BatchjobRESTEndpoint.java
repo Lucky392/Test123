@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -15,6 +16,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -38,12 +40,40 @@ public class BatchjobRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
-    
-    
+    /**
+     * Returns Batchjob object in JSON format.
+     *
+     * Example for response: {<br/>
+     * "jobName": "dailyJob",<br/>
+     * "cronExpression": "30 30 2 ? * *",<br/>
+     * "defaultCronExpression": "30 30 2 ? * *",<br/>
+     * "enabled": 1,<br/>
+     * "id": 1<br/>
+     * }<br/>
+     *
+     * @param token header parameter for checking permission
+     * @param id for Batchjob that should be retrieved
+     * @return Batchjob with status 200
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBatchjobById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        Batchjob batchjob;
+        try {
+            batchjob = (Batchjob) em.createNamedQuery("Batchjob.findById").setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            throw new DataNotFoundException("Batchjob at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(batchjob).build();
+    }
+
     /**
      * API for method: .../rest/batchjobs?page=VALUE&limit=VALUE&search=VALUE
      * This method returns JSON list, and count number. Default value for page
@@ -84,7 +114,6 @@ public class BatchjobRESTEndpoint {
             throw new DataNotFoundException("There is no batchjobs for this search!");
         }
         String countQuery = query.toString().replaceFirst("b", "count(b)");
-        System.out.println(countQuery);
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
@@ -123,9 +152,11 @@ public class BatchjobRESTEndpoint {
 
     /**
      * API for this method is .../rest/batchjobs This method recieves JSON
-     * object, and update database. Example for JSON that you need to send: <br/>{<br/>
+     * object, and update database. Example for JSON that you need to send:
+     * <br/>{<br/>
      * "jobName": "dailyJob",<br/> "cronExpression": "30 00 6 ? * *",<br/>
-     * "defaultCronExpression": "30 00 6 ? * *",<br/> "enabled": 0,<br/> "id": 10 <br/>}
+     * "defaultCronExpression": "30 00 6 ? * *",<br/> "enabled": 0,<br/> "id":
+     * 10 <br/>}
      *
      * @param token is a header parameter for checking permission
      * @param batchjob is an object that Jackson convert from JSON to object

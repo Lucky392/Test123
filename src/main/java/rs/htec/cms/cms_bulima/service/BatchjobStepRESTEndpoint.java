@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -15,6 +16,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -43,6 +45,38 @@ public class BatchjobStepRESTEndpoint {
     @InjectParam
     Validator validator;
 
+    
+    /**
+     * Returns BatchjobStep object in JSON format.
+     *
+     * Example for response: 
+     * <br/>
+     * {<br/>
+     * "stepName": "FantasyLeagueActivityBatchJob",<br/>
+     * "idBatchjob": 1,<br/>
+     * "enabled": 0,<br/>
+     * "id": 1<br/>
+     * }<br/>
+     *
+     * @param token header parameter for checking permission
+     * @param id for BatchjobStep that should be retrieved
+     * @return BatchjobStep with status 200
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBatchjobStepById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        BatchjobStep step;
+        try {
+            step = (BatchjobStep) em.createNamedQuery("BatchjobStep.findById").setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            throw new DataNotFoundException("BatchjobStep at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(step).build();
+    }
+    
     /**
      * API for method:
      * .../rest/batchjobSteps?page=VALUE&limit=VALUE&search=VALUE&idBatchjob=VALUE
