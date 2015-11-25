@@ -31,6 +31,7 @@ import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.BatchjobStepPOJO;
 
 /**
  *
@@ -41,7 +42,7 @@ public class BatchjobStepRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -83,18 +84,15 @@ public class BatchjobStepRESTEndpoint {
      * This method returns JSON list, and count number. Default value for page
      * is 1, and for limit is 10. There is a possibility for search by
      * searchName, and by batchjobID. It produces APPLICATION_JSON media type.
-     * Example for JSON list for 1 page, 2 limit: <br/>{<br/> "count": 20,<br/>
-     * "data": [ {<br/>
-     * "stepName": "FantasyLeagueActivityBatchJob",<br/> "idBatchjob": {
-     * <br/>"jobName": "dailyJob",<br/> "cronExpression": "30 30 2 ? * *",<br/>
-     * "defaultCronExpression": "30 30 2 ? * *",<br/> "enabled": 1,<br/> "id":
-     * 1<br/> }, <br/>"enabled": 0,<br/> "id": 1 <br/>}, <br/>{<br/>
+     * Example for JSON list for 1 page, 2 limit: <br/>{ <br/>"count": 20,
+     * <br/>"data": [ {<br/>
+     * "jobName": "dailyJob",<br/> "stepName":
+     * "FantasyLeagueActivityBatchJob",<br/>
+     * "idBatchjob": 1,<br/> "enabled": 0,<br/> "id": 1<br/> },<br/> {<br/>
+     * "jobName": "dailyJob",<br/>
      * "stepName": "AddAuctionsToTransferMarketBatchJob",<br/> "idBatchjob":
-     * {<br/>
-     * "jobName": "dailyJob",<br/> "cronExpression": "30 30 2 ? * *",<br/>
-     * "defaultCronExpression": "30 30 2 ? * *",<br/> "enabled": 1,<br/> "id":
-     * 1<br/> },<br/>
-     * "enabled": 0,<br/> "id": 2 <br/>} <br/>] }
+     * 1,<br/>
+     * "enabled": 0,<br/> "id": 2<br/> }
      *
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for BatchjobStep
@@ -122,8 +120,8 @@ public class BatchjobStepRESTEndpoint {
         if (idBatchjob != 0) {
             query.append(search != null ? " AND" : "WHERE").append(" b.idBatchjob.id = ").append(idBatchjob);
         }
-        List<Batchjob> batchjobs = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        if (batchjobs == null || batchjobs.isEmpty()) {
+        List<BatchjobStep> steps = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        if (steps == null || steps.isEmpty()) {
             throw new DataNotFoundException("There is no batchjob steps for this search!");
         }
         String countQuery = query.toString().replaceFirst("b", "count(b)");
@@ -131,17 +129,16 @@ public class BatchjobStepRESTEndpoint {
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
-        go.setData(batchjobs);
+        go.setData(BatchjobStepPOJO.toBatchjobStepPOJOList(steps));
         return Response.ok().entity(go).build();
     }
 
     /**
      * API for this method is .../rest/batchjobSteps This method recieves JSON
      * object, and put it in the base. Example for JSON that you need to send:
-     * <br/>{ "stepName": "FinishAuctionsBatchJob",<br/> "idBatchjob": {
-     * <br/>"jobName": "dailyJob",<br/> "cronExpression": "30 30 2 ? * *",<br/>
-     * "defaultCronExpression": "30 30 2 ? * *",<br/> "enabled": 1,<br/> "id":
-     * 1<br/> },<br/> "enabled": 0 <br/>}
+     * <br/>{
+     * <br/>"stepName": "FinishAuctionsBatchJob",<br/> "idBatchjob": 1,<br/>
+     * "enabled": 0,<br/> "id": 1 <br/>}
      *
      * @param token is a header parameter for checking permission
      * @param batchjobStep is an object that Jackson convert from JSON to object
@@ -165,11 +162,10 @@ public class BatchjobStepRESTEndpoint {
 
     /**
      * API for this method is .../rest/batchjobSteps This method recieves JSON
-     * object, and update database. Example for JSON that you need to send: <br/>{<br/>
-     * "stepName": "UpdateUnqualifiedFantasyClubBatchJob",<br/> "idBatchjob": {<br/>
-     * "jobName": "dailyJob",<br/> "cronExpression": "30 30 2 ? * *",<br/>
-     * "defaultCronExpression": "30 30 2 ? * *",<br/> "enabled": 1,<br/> "id": 1<br/> },<br/>
-     * "enabled": 0,<br/> "id": 21<br/> }
+     * object, and update database. Example for JSON that you need to
+     * send:<br/>{
+     * <br/>"stepName": "FinishAuctionsBatchJob",<br/> "idBatchjob": 1,<br/>
+     * "enabled": 0,<br/> "id": 1 <br/>}
      *
      * @param token is a header parameter for checking permission
      * @param batchjobStep is an object that Jackson convert from JSON to object
