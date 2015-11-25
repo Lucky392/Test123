@@ -10,10 +10,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
@@ -30,15 +32,51 @@ import rs.htec.cms.cms_bulima.helper.RestHelperClass;
  *
  * @author marko
  */
-@Path("batchjobHistory")
+@Path("batchjobHistories")
 public class BatchjobHistoryRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
 
     /**
+     * Returns single BatchjobHistory for defined id. 
+     * <br/> api: rest/batchjobHistories/{id}
+     * <br/> Example for
+     * response:
+     * <br/>
+     * {<br/>
+     * "createDate": 1437383700000,<br/>
+     * "jobName": "FinishAuctionsBatchJob",<br/>
+     * "startDate": 1437383700000,<br/>
+     * "endDate": 1437383700000,<br/>
+     * "timeNeeded": 110,<br/>
+     * "returnValue": "OK",<br/>
+     * "errorStack": "",<br/>
+     * "id": 5<br/>
+     * }<br/>
+     *
+     * @param token header parameter for checking permission
+     * @param id for BatchjobHistory that should be returned
+     * @return BatchjobHistory status 200 OK
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getBatchjobHistoryById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        BatchjobHistory history;
+        try {
+            history = (BatchjobHistory) em.createNamedQuery("BatchjobHistory.findById").setParameter("id", id).getSingleResult();
+        } catch (NoResultException e) {
+            throw new DataNotFoundException("BatchjobStep at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(history).build();
+    }
+
+    /**
      * API for method:
-     * .../rest/batchjobHistory?page=VALUE&limit=VALUE&search=VALUE&startDate=VALUE&endDate=VALUE&returnValue=VALUE
+     * .../rest/batchjobHistories?page=VALUE&limit=VALUE&search=VALUE&startDate=VALUE&endDate=VALUE&returnValue=VALUE
      * This method returns JSON list and count number. Default value for page is
      * 1, and for limit is 10. There is a possibility for search by jobName,
      * startDate and endDate. Filtering by returnValue. It produces
@@ -118,8 +156,9 @@ public class BatchjobHistoryRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/batchjobHistory/returnValues This method return
-     * list of returnValues in JSON. Example for JSON:<br/> [<br/> "OK",<br/> "FAILED"<br/> ]
+     * API for method: .../rest/batchjobHistories/returnValues This method
+     * return list of returnValues in JSON. Example for JSON:<br/> [<br/>
+     * "OK",<br/> "FAILED"<br/> ]
      *
      * @param token
      * @return Response 200 OK status with JSON body

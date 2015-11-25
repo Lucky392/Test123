@@ -69,13 +69,14 @@ public class BatchjobStepRESTEndpoint {
     public Response getBatchjobStepById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        BatchjobStep step;
+        BatchjobStepPOJO pojo;
         try {
-            step = (BatchjobStep) em.createNamedQuery("BatchjobStep.findById").setParameter("id", id).getSingleResult();
+            BatchjobStep step = (BatchjobStep) em.createNamedQuery("BatchjobStep.findById").setParameter("id", id).getSingleResult();
+            pojo = new BatchjobStepPOJO(step);
         } catch (NoResultException e) {
             throw new DataNotFoundException("BatchjobStep at index " + id + " does not exist..");
         }
-        return Response.ok().entity(step).build();
+        return Response.ok().entity(pojo).build();
     }
     
     /**
