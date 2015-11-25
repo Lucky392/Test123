@@ -172,7 +172,7 @@ public class BatchjobRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBatchjob(@HeaderParam("authorization") String token, Batchjob batchjob) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
         Batchjob oldBatchjob = em.find(Batchjob.class, batchjob.getId());
         if (oldBatchjob != null) {
             if (validator.checkLenght(batchjob.getJobName(), 255, true)
@@ -188,3 +188,4 @@ public class BatchjobRESTEndpoint {
         return Response.ok().build();
     }
 }
+
