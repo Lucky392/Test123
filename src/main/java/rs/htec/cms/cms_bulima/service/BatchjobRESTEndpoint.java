@@ -64,7 +64,7 @@ public class BatchjobRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBatchjobById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         Batchjob batchjob;
         try {
             batchjob = (Batchjob) em.createNamedQuery("Batchjob.findById").setParameter("id", id).getSingleResult();
@@ -101,7 +101,7 @@ public class BatchjobRESTEndpoint {
     public Response getBatchjob(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT b FROM Batchjob b ");
         if (search != null) {
             search = "%" + search + "%";
@@ -139,7 +139,7 @@ public class BatchjobRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertBatchjob(@HeaderParam("authorization") String token, Batchjob batchjob) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.ADD, token);
         if (validator.checkLenght(batchjob.getJobName(), 255, true)
                 && validator.checkLenght(batchjob.getCronExpression(), 255, true)
                 && validator.checkLenght(batchjob.getDefaultCronExpression(), 255, true)) {
@@ -172,7 +172,7 @@ public class BatchjobRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBatchjob(@HeaderParam("authorization") String token, Batchjob batchjob) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.EDIT, token);
         Batchjob oldBatchjob = em.find(Batchjob.class, batchjob.getId());
         if (oldBatchjob != null) {
             if (validator.checkLenght(batchjob.getJobName(), 255, true)

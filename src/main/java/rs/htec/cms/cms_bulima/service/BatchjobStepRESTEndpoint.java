@@ -68,7 +68,7 @@ public class BatchjobStepRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBatchjobStepById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         BatchjobStepPOJO pojo;
         try {
             BatchjobStep step = (BatchjobStep) em.createNamedQuery("BatchjobStep.findById").setParameter("id", id).getSingleResult();
@@ -110,7 +110,7 @@ public class BatchjobStepRESTEndpoint {
     public Response getBatchjobStep(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search, @QueryParam("idBatchjob") long idBatchjob) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT b FROM BatchjobStep b ");
         if (search != null) {
             search = "%" + search + "%";
@@ -152,7 +152,7 @@ public class BatchjobStepRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertBatchjobStep(@HeaderParam("authorization") String token, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.ADD, token);
         if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {
             helper.persistObject(em, batchjobStep);
         } else {
@@ -182,7 +182,7 @@ public class BatchjobStepRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBatchjob(@HeaderParam("authorization") String token, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.EDIT, token);
         BatchjobStep oldBatchjobStep = em.find(BatchjobStep.class, batchjobStep.getId());
         if (oldBatchjobStep != null) {
             if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {

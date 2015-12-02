@@ -67,7 +67,7 @@ public class UserCmsRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getUsers(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
-//        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
         List<CmsUser> users = em.createNamedQuery("CmsUser.findAll").getResultList();
         if (users == null || users.isEmpty()) {
             throw new DataNotFoundException("Requested page does not exist..");

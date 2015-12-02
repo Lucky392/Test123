@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -46,7 +47,6 @@ public class DashboardRESTEndpoint {
      * Example for JSON response:<br/>
      * <br/>
      * {<br/>
-     * "yesterday": {<br/>
      * "TOTAL": {<br/>
      * "revenue": 1295.88,<br/>
      * "registrations": 7090,<br/>
@@ -71,104 +71,26 @@ public class DashboardRESTEndpoint {
      * "payingUsers": 1075,<br/>
      * "activeUsers": 16814<br/>
      * }<br/>
-     * },<br/>
-     * "today": {<br/>
-     * "TOTAL": {<br/>
-     * "revenue": 411.46,<br/>
-     * "registrations": 1265,<br/>
-     * "payingUsers": 4000,<br/>
-     * "activeUsers": 49489<br/>
-     * },<br/>
-     * "WEB": {<br/>
-     * "revenue": 113.89,<br/>
-     * "registrations": 421,<br/>
-     * "payingUsers": 1894,<br/>
-     * "activeUsers": 19740<br/>
-     * },<br/>
-     * "ANDROID": {<br/>
-     * "revenue": 203.72,<br/>
-     * "registrations": 716,<br/>
-     * "payingUsers": 1394,<br/>
-     * "activeUsers": 19482<br/>
-     * },<br/>
-     * "IOS": {<br/>
-     * "revenue": 93.85,<br/>
-     * "registrations": 128,<br/>
-     * "payingUsers": 712,<br/>
-     * "activeUsers": 10267<br/>
-     * }<br/>
-     * },<br/>
-     * "lastMonth": {<br/>
-     * "TOTAL": {<br/>
-     * "revenue": 11623.15,<br/>
-     * "registrations": 373442,<br/>
-     * "payingUsers": 25507,<br/>
-     * "activeUsers": 423524<br/>
-     * },<br/>
-     * "WEB": {<br/>
-     * "revenue": 3029.23,<br/>
-     * "registrations": 96917,<br/>
-     * "payingUsers": 10018,<br/>
-     * "activeUsers": 118992<br/>
-     * },<br/>
-     * "ANDROID": {<br/>
-     * "revenue": 8582.95,<br/>
-     * "registrations": 170107,<br/>
-     * "payingUsers": 10508,<br/>
-     * "activeUsers": 187121<br/>
-     * },<br/>
-     * "IOS": {<br/>
-     * "revenue": 10.97,<br/>
-     * "registrations": 106418,<br/>
-     * "payingUsers": 4981,<br/>
-     * "activeUsers": 117411<br/>
-     * }<br/>
-     * },<br/>
-     * "thisMonth": {<br/>
-     * "TOTAL": {<br/>
-     * "revenue": 22948.87,<br/>
-     * "registrations": 380898,<br/>
-     * "payingUsers": 59306,<br/>
-     * "activeUsers": 816245<br/>
-     * },<br/>
-     * "WEB": {<br/>
-     * "revenue": 3208.48,<br/>
-     * "registrations": 112361,<br/>
-     * "payingUsers": 21307,<br/>
-     * "activeUsers": 245487<br/>
-     * },<br/>
-     * "ANDROID": {<br/>
-     * "revenue": 11375.77,<br/>
-     * "registrations": 185024,<br/>
-     * "payingUsers": 23907,<br/>
-     * "activeUsers": 360985<br/>
-     * },<br/>
-     * "IOS": {<br/>
-     * "revenue": 8364.62,<br/>
-     * "registrations": 83513,<br/>
-     * "payingUsers": 14092,<br/>
-     * "activeUsers": 209773<br/>
-     * }<br/>
-     * }<br/>
      * }<br/>
      *
      *
      * @param token header parameter for checking permission
+     * @param day
      * @return 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/")
-    public Response getDashboard(@HeaderParam("authorization") String token) {
+    @Path("/{day}")
+    public Response getDashboard(@HeaderParam("authorization") String token, @PathParam("day") String day) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-
-        HashMap result = new HashMap();
-
-        for (String d : dates) {
-            result.put(d, getDashboardFormDB(d));
-        }
-        return Response.ok().entity(result).build();
+//
+//        HashMap result = new HashMap();
+//
+//        for (String d : dates) {
+//            result.put(d, getDashboardFormDB(d));
+//        }
+        return Response.ok().entity(getDashboardFormDB(day)).build();
     }
 
     private HashMap getDashboardFormDB(String day) {
@@ -202,6 +124,7 @@ public class DashboardRESTEndpoint {
         List<Double> list2 = getRevenue(day);
 
         HashMap results = toMap(list, list2);
+        System.out.println(query);
         return results;
     }
 

@@ -64,7 +64,7 @@ public class BatchjobHistoryRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBatchjobHistoryById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         BatchjobHistory history;
         try {
             history = (BatchjobHistory) em.createNamedQuery("BatchjobHistory.findById").setParameter("id", id).getSingleResult();
@@ -110,7 +110,7 @@ public class BatchjobHistoryRESTEndpoint {
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search,
             @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate, @QueryParam("returnValue") String returnValue) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT bh FROM BatchjobHistory bh ");
         if (startDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -171,7 +171,7 @@ public class BatchjobHistoryRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReturnValues(@HeaderParam("authorization") String token) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
         String query = "SELECT distinct bh.returnValue FROM BatchjobHistory bh";
         List<String> returnValues = em.createQuery(query).getResultList();
         if (returnValues.isEmpty()) {

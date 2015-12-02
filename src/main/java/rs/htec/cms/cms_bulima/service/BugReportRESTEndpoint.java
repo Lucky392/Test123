@@ -79,7 +79,7 @@ public class BugReportRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getBugReportById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
         BugReportPOJO pojo;
         try {
             BugReport bugReport = (BugReport) em.createNamedQuery("BugReport.findById").setParameter("id", id).getSingleResult();
@@ -159,7 +159,7 @@ public class BugReportRESTEndpoint {
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("errorType") String errorType,
             @QueryParam("origin") String origin, @QueryParam("system") String system) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
 
         List<BugReport> bugReport;
         StringBuilder query = new StringBuilder("SELECT b FROM BugReport b");
@@ -246,7 +246,7 @@ public class BugReportRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getErrorTypes(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
         String query = "SELECT distinct b.errorType FROM BugReport b";
         List<String> list = em.createQuery(query).getResultList();
         return Response.ok().entity(list).build();
@@ -272,7 +272,7 @@ public class BugReportRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getOrigins(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
         String query = "SELECT distinct b.origin FROM BugReport b";
         List<String> list = em.createQuery(query).getResultList();
         return Response.ok().entity(list).build();
@@ -311,7 +311,7 @@ public class BugReportRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBugReport(@HeaderParam("authorization") String token, BugReport bugReport) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.EDIT, token);
         BugReport foundedBugReport = em.find(BugReport.class, bugReport.getId());
         if (foundedBugReport != null) {
             Validator validator = new Validator();

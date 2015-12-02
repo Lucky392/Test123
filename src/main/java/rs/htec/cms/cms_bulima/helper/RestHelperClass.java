@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -78,7 +79,7 @@ public class RestHelperClass {
         }
         return jsonList;
     }
-    
+
     public EntityManager getEntityManager() {
 //        EntityManagerFactory emf = Persistence.createEntityManagerFactory("rs.htec.cms_CMS_Bulima_war_1.0PU");
 //        EntityManager ecm = emf.createEntityManager();
@@ -102,24 +103,26 @@ public class RestHelperClass {
     }
 
     private boolean havePrivilege(EntityManager em, CmsUser user, long tableID, MethodConstants method) {
-        CmsUserPrivileges cup = (CmsUserPrivileges) em.createNamedQuery("CmsUserPrivileges.findByPK")
-                .setParameter("roleId", user.getIdRole().getId())
-                .setParameter("tableId", tableID)
-                .getSingleResult();
-        if (cup == null) {
+        try {
+            CmsUserPrivileges cup = (CmsUserPrivileges) em.createNamedQuery("CmsUserPrivileges.findByPK")
+                    .setParameter("roleId", user.getIdRole().getId())
+                    .setParameter("tableId", tableID)
+                    .getSingleResult();
+
+            switch (method) {
+                case SEARCH:
+                    return cup.getSearchAction();
+                case EDIT:
+                    return cup.getEditAction();
+                case ADD:
+                    return cup.getAddAction();
+                case DELETE:
+                    return cup.getDeleteAction();
+                default:
+                    return false;
+            }
+        } catch (NoResultException e) {
             return false;
-        }
-        switch (method) {
-            case SEARCH:
-                return cup.getSearchAction();
-            case EDIT:
-                return cup.getEditAction();
-            case ADD:
-                return cup.getAddAction();
-            case DELETE:
-                return cup.getDeleteAction();
-            default:
-                return false;
         }
     }
 

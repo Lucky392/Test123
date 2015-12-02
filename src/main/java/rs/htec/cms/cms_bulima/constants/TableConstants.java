@@ -21,4 +21,6 @@ public interface TableConstants {
     public static final long STATISTICS = 8;
     public static final long SHOP = 9;
     public static final long TABLE = 10;
+    public static final long BUG_REPORT = 11;
+    public static final long BATCHJOB = 12;
 }
