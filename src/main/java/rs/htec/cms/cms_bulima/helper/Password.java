@@ -2,7 +2,7 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
- */
+ */ 
 package rs.htec.cms.cms_bulima.helper;
 
 import javax.crypto.SecretKey;
@@ -25,7 +25,7 @@ public class Password {
     public static boolean check(String password, String stored) throws Exception {
         String[] saltAndPass = stored.split("\\$");
         if (saltAndPass.length != 2) {
-            throw new IllegalStateException("Sifra mora biti u formatu: 'salt$hash'");
+            throw new IllegalStateException("Password must be in format: 'salt$hash'");
         }
         String hashOfInput = hash(password, Base64.decodeBase64(saltAndPass[0]));
         return hashOfInput.equals(saltAndPass[1]);
@@ -33,7 +33,7 @@ public class Password {
 
     private static String hash(String password, byte[] salt) throws Exception {
         if (password == null || password.length() == 0) {
-            throw new IllegalArgumentException("Sifra mora imati najmanje jedan karakter");
+            throw new IllegalArgumentException("Password must have at least one character");
         }
         SecretKeyFactory f = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         SecretKey key = f.generateSecret(new PBEKeySpec(password.toCharArray(), salt, iterations, desiredKeyLen));

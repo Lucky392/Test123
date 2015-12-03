@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -102,8 +103,8 @@ public class UserCmsRESTEndpoint {
      * @param authorization Basic HTTP authorization.
      * @return Response 200 OK with custom authorization value and User
      * privileges in JSON body.
-     * @throws BasicAuthenticationException Response 401 Unauthorized if user
-     * doesn't exist.
+     * @throws BasicAuthenticationException Response 401 Unauthorized if [user
+     * doesn't exist, if password is incorrect]
      */
     @POST
     @Path("/login")
@@ -113,42 +114,45 @@ public class UserCmsRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         try {
             userPass = tokenHelper.decodeBasicAuth(authorization);
-
-//            String pass = "";
-//            try {
-//                pass = Password.getSaltedHash(userPass[1]);
-//            } catch (Exception ex) {
-//                Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-            CmsUser user = (CmsUser) em
-                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
-                    .setParameter("userName", userPass[0])
-                    .getSingleResult();
-
-            boolean pass = false;
-            try {
-                pass = Password.check(userPass[1], user.getPassword());
-            } catch (Exception ex) {
-                Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            if (pass && (user.getToken() == null || user.getToken().equals(""))) {
-                user.setToken(tokenHelper.createToken(user.getId()));
-                helper.mergeObject(em, user);
-            }
-//            JsonToken jsonToken = new JsonToken(tokenHelper.encode(user.getToken()));
-            List<CmsUserPrivileges> cmsUserPrivileges = em.createNamedQuery("CmsUserPrivileges.findByRoleId").setParameter("roleId", user.getIdRole().getId()).getResultList();
-//            jsonToken.setCmsUserPrivileges(cmsUserPrivileges);
-//            jsonToken.setUser(user);
-            CmsUserPojo userPojo = new CmsUserPojo();
-            userPojo.setUsername(user.getUserName());
-            userPojo.setId(user.getId());
-            userPojo.createPermissions(cmsUserPrivileges);
-            userPojo.setToken(tokenHelper.encode(user.getToken()));
-            return Response.ok().entity(userPojo).build();
         } catch (RuntimeException e) {
             throw new BasicAuthenticationException(e.getMessage());
         }
+        CmsUser user = null;
+        try {
+            user = (CmsUser) em
+                    .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
+                    .setParameter("userName", userPass[0])
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            throw new BasicAuthenticationException("This username doesn't exist");
+        }
+
+        boolean pass = false;
+        try {
+            pass = Password.check(userPass[1], user.getPassword());
+        } catch (Exception ex) {
+            Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        if (!pass) {
+            throw new BasicAuthenticationException("The password you have entered is incorrect");
+        }
+
+        if (pass && (user.getToken() == null || user.getToken().equals(""))) {
+            user.setToken(tokenHelper.createToken(user.getId()));
+            helper.mergeObject(em, user);
+        }
+//            JsonToken jsonToken = new JsonToken(tokenHelper.encode(user.getToken()));
+        List<CmsUserPrivileges> cmsUserPrivileges = em.createNamedQuery("CmsUserPrivileges.findByRoleId").setParameter("roleId", user.getIdRole().getId()).getResultList();
+//            jsonToken.setCmsUserPrivileges(cmsUserPrivileges);
+//            jsonToken.setUser(user);
+        CmsUserPojo userPojo = new CmsUserPojo();
+        userPojo.setUsername(user.getUserName());
+        userPojo.setId(user.getId());
+        userPojo.createPermissions(cmsUserPrivileges);
+        userPojo.setToken(tokenHelper.encode(user.getToken()));
+        return Response.ok().entity(userPojo).build();
+
     }
 
     /**
