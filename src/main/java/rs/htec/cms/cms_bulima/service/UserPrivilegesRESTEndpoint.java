@@ -168,6 +168,7 @@ public class UserPrivilegesRESTEndpoint {
 
     public Map createPermisions(List<CmsUserPrivileges> cup) {
         Map map = new HashMap();
+        map.put("RoleName", cup.get(0).getCmsRole().getName());
         for (CmsUserPrivileges privilege : cup) {
 //            TablePOJO table = new TablePOJO();
 //            table.setTableName(privilege.getCmsTables().getTableName());
