@@ -130,8 +130,8 @@ public class UserCmsRESTEndpoint {
         boolean pass = false;
         try {
             pass = Password.check(userPass[1], user.getPassword());
-        } catch (Exception ex) {
-            Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            throw new BasicAuthenticationException(e.getMessage());
         }
 
         if (!pass) {
@@ -152,7 +152,6 @@ public class UserCmsRESTEndpoint {
         userPojo.createPermissions(cmsUserPrivileges);
         userPojo.setToken(tokenHelper.encode(user.getToken()));
         return Response.ok().entity(userPojo).build();
-
     }
 
     /**
