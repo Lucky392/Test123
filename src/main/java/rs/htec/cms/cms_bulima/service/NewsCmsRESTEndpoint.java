@@ -33,6 +33,7 @@ import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.NewsPOJO;
 
 /**
  *
@@ -48,28 +49,48 @@ public class NewsCmsRESTEndpoint {
     Validator validator;
 
     /**
+     * New fields added:[idFantasyLeague,idFantasyClub,idAuction,idFantasyClubSender,commentsCount]
      * API for method:
      * .../rest/news?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE&newsType=VALUE
      * This method returns JSON list. Default value for page is 1, and for limit
      * is 10. You can put your values for page, limit, orderColumn, searchWord,
      * start and end date, newsType. It produces APPLICATION_JSON media type.
      * Example for JSON list for 1 page, 2 limit:<br/> { <br/> "count":
-     * 837536,<br/> "data": [ {<br/>
-     * "newsType": "important",<br/> "newsHeadlineMobile": "NEUER
-     * TRANSFER",<br/>
-     * "newsHeadlineWeb": "bmk.com i so i sk jcpp f.n.y",<br/>
-     * "newsMessageMobile": "Ortag wechselt für 100.000 von FC Test zu
-     * Sport1dssadsdasdsad",<br/>
-     * "newsMessageWeb": "Ortag wechselt für 100.000 von FC Test zu
+     * 837536,<br/> "data": [<br/> {<br/>
+     * "createDate": 1437402253000,<br/>
+     * "newsType": "transfer",<br/>
+     * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
+     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
+     * "newsMessageMobile": "Brouwers wechselt für 1.000.000 von FC Test zu
      * Sport1",<br/>
-     * "createDate": 1437402240000,<br/> "newsDate": 1437402240000,<br/> "id":
-     * 21<br/> },<br/> {<br/>
-     * "newsType": "transfer",<br/> "newsHeadlineMobile": "NEUER TRANSFER",<br/>
-     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/> "newsMessageMobile":
-     * "Díaz wechselt für 1.500.000 von FC Test zu Sport1",<br/>
-     * "newsMessageWeb": "Díaz wechselt für 1.500.000 von FC Test zu
-     * Sport1",<br/> "createDate": 1437402392000,<br/> "newsDate":
-     * 1437402392000,<br/> "id": 25 <br/> }<br/> ]
+     * "newsMessageWeb": "Brouwers wechselt für 1.000.000 von FC Test zu
+     * Sport1",<br/>
+     * "idFantasyLeague": 7175,<br/>
+     * "idAuction": null,<br/>
+     * "idFantasyClub": null,<br/>
+     * "newsDate": 1437402252000,<br/>
+     * "commentsCount": 0,<br/>
+     * "idFantasyClubSender": null,<br/>
+     * "id": 22<br/>
+     * },<br/> { "createDate": 1437402314000,<br/>
+     * "newsType": "lineup",<br/>
+     * "newsHeadlineMobile": "NEUE AUFSTELLUNG",<br/>
+     * "newsHeadlineWeb": "NEUE AUFSTELLUNG",<br/>
+     * "newsMessageMobile": "Für den kommenden 2. Spieltag hast du ein
+     * 3-5-2-System mit folgenden Spielern aufgestellt:<br/>Tor:
+     * Özcan<br/>Abwehr: Djakpa, Brooks, Sorg<br/>Mittelfeld: Koo, Gülselam,
+     * Nordtveit, Strobl, Grillitsch<br/>Sturm: Robben, Green",<br/>
+     * "newsMessageWeb": "System: 3-5-2<br/>Tor: Özcan<br/>Abwehr: Djakpa,
+     * Brooks, Sorg<br/>Mittelfeld: Koo, Gülselam, Nordtveit, Strobl,
+     * Grillitsch<br/>Sturm: Robben, Green",<br/>
+     * "idFantasyLeague": null,<br/>
+     * "idAuction": null,<br/>
+     * "idFantasyClub": 50774,<br/>
+     * "newsDate": 1439799996000,<br/>
+     * "commentsCount": 0,<br/>
+     * "idFantasyClubSender": null,<br/>
+     * "id": 23<br/>
+     * }<br/> ]
      *
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for News
@@ -81,6 +102,10 @@ public class NewsCmsRESTEndpoint {
      * @param minDate is a start date for filtering time in millis
      * @param maxDate is a end date for filtering time in millis
      * @param newsType type of News
+     * @param idFantasyLeague #filter News base on Fantasy League id
+     * @param idFantasyClub #filter News base on Fantasy Club id
+     * @param idAuction #id of News
+     * @param idFantasyClubSender #filter News base on Fantasy Club Sender id
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "Requested page does not exist..",<br/>
@@ -92,33 +117,58 @@ public class NewsCmsRESTEndpoint {
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getNews(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
-            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("newsType") String newsType) {
+            @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("newsType") String newsType,
+            @QueryParam("idFantasyLeague") String idFantasyLeague, @QueryParam("idFantasyClub") String idFantasyClub, @QueryParam("idAuction") String idAuction, @QueryParam("idFantasyClubSender") String idFantasyClubSender) {
 
 //        EntityManager em = helper.getEntityManager();
         EntityManager em = EMF.createEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
         List<News> news;
-        StringBuilder query = new StringBuilder("SELECT n FROM News n ");
+        StringBuilder query = new StringBuilder("SELECT n FROM News n");
+        String operator = " WHERE ";
         if (minDate != 0 && maxDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
             Date d1 = new Date(minDate);
             Date d2 = new Date(maxDate);
-            query.append("WHERE n.newsDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            query.append(operator).append("n.newsDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            operator = " AND ";
         }
 
         if (newsType != null) {
-            query.append(minDate != 0 ? " AND" : "WHERE").append(" n.newsType = '").append(newsType).append("'");
+            query.append(operator).append("n.newsType = '").append(newsType).append("'");
+            operator = " AND ";
+        }
+
+        if (idFantasyLeague != null) {
+            query.append(operator).append("n.idFantasyLeague = ").append(idFantasyLeague);
+            operator = " AND ";
+        }
+
+        if (idFantasyClub != null) {
+            query.append(operator).append("n.idFantasyClub = ").append(idFantasyClub);
+            operator = " AND ";
+        }
+
+        if (idAuction != null) {
+            query.append(operator).append("n.idAuction = ").append(idAuction);
+            operator = " AND ";
+        }
+
+        if (idFantasyClubSender != null) {
+            query.append(operator).append("n.idFantasyClubSender = ").append(idFantasyClubSender);
+            operator = " AND ";
         }
 
         if (search != null) {
             search = "%" + search + "%";
-            query.append(minDate != 0 || newsType != null ? " AND" : "WHERE")
-                    .append(" (n.newsHeadlineWeb LIKE '")
+            query.append(operator)
+                    .append("(n.newsHeadlineWeb LIKE '")
                     .append(search)
                     .append("' OR n.newsHeadlineMobile LIKE '")
                     .append(search).append("' OR n.newsMessageWeb LIKE '")
                     .append(search).append("' OR n.newsMessageMobile LIKE '")
                     .append(search).append("')");
+//            operator = " AND ";
         }
 
         if (orderingColumn != null) {
@@ -135,28 +185,38 @@ public class NewsCmsRESTEndpoint {
 //        };
         String countQuery = query.toString().replaceFirst("n", "count(n)");
         long count = (long) em.createQuery(countQuery).getSingleResult();
+        List<NewsPOJO> pojos = NewsPOJO.toNewsPOJOList(news);
         GetObject go = new GetObject();
         go.setCount(count);
-        go.setData(news);
+        go.setData(pojos);
         return Response.ok().entity(go).build();
     }
 
     /**
      * API for method: .../rest/news/{id} This method return single element of
-     * news at index in JSON. Example for JSON response: <br/>{<br/>
-     * "idFantasyClub": "null",<br/>
-     * "newsHeadlineMobile": "NEUER TRANSFER",<br/>
-     * "newsHeadlineWeb": "NEUES VOM TRANSFERMARKT",<br/>
-     * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
-     * Sport1",<br/>
-     * "newsMessageMobile": "Kehrer wechselt für 100.000 von Los Chipirones zu
-     * Sport1",<br/>
-     * "id": "4",<br/>
-     * "newsDate": "2015-07-20 15:32:35.0",<br/>
+     * news at index in JSON. Example for JSON response: <br/>{ "createDate":
+     * 1437490202000, <br/>
      * "newsType": "transfer",<br/>
-     * "createDate": "2015-07-20 15:32:36.0",<br/>
-     * "idFantasyLeague": "rs.htec.cms.cms_bulima.domain.FantasyLeague[ id=7175
-     * ]"<br/>}
+     * "newsHeadlineMobile": "SCOUT - VOLLTREFFER",<br/>
+     * "newsHeadlineWeb": "SCOUT - VOLLTREFFER",<br/>
+     * "newsMessageMobile": "Herzlichen Glückwunsch! Dein Scout hat einen
+     * passenden Spieler dich gefunden.<br/><br/>Mittelfeld Karim Bellarabi von
+     * Bayer Leverkusen wurde herausgesucht.<br/>Marktwert:
+     * 13.500.000<br/>Punkte: 0<br/><br/>Gehe zum Transfermarkt und besuche den
+     * Scoutbereich, um für diesen Spieler ein Gebot abzugeben",<br/>
+     * "newsMessageWeb": "Herzlichen Glückwunsch! Dein Scout hat einen passenden
+     * Spieler dich gefunden.<br/><br/>Mittelfeld Karim Bellarabi von Bayer
+     * Leverkusen wurde herausgesucht.<br/>Marktwert: 13.500.000<br/>Punkte:
+     * 0<br/><br/>Gehe zum Transfermarkt und besuche den Scoutbereich, um für
+     * diesen Spieler ein Gebot abzugeben",<br/>
+     * "idFantasyLeague": null,<br/>
+     * "idAuction": null,<br/>
+     * "idFantasyClub": 49245,<br/>
+     * "idFantasyClubSender": null,<br/>
+     * "commentsCount": 0,<br/>
+     * "newsDate": 1437490202000,<br/>
+     * "id": 2451<br/>
+     * }<br/>
      *
      * @param token is a header parameter for checking permission
      * @param id of news we are searching for
@@ -172,14 +232,14 @@ public class NewsCmsRESTEndpoint {
     public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
-        News news = null;
+        NewsPOJO pojo;
         try {
-            news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
+            News news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
+            pojo = new NewsPOJO(news);
         } catch (Exception e) {
             throw new DataNotFoundException("News at index " + id + " does not exist..");
         }
-
-        return Response.ok().entity(news).build();
+        return Response.ok().entity(pojo).build();
     }
 
     /**
@@ -188,7 +248,7 @@ public class NewsCmsRESTEndpoint {
      * "Stryking",<br/> "transfer",<br/>
      * "matchday",<br/> "lineup",<br/> "welcome",<br/> "reward",<br/>
      * "leagueJoined",<br/> "clubLeft",<br/>
-     * "leagueNameChanged"<br/> ]
+     * "leagueNameChanged"<br/>]
      *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK status with JSON body
@@ -212,7 +272,11 @@ public class NewsCmsRESTEndpoint {
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
      * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
      * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
-     * "newsType": "transfer" <br/>}
+     * "newsType": "transfer", <br/>"idFantasyLeague": null,<br/>
+     * "idAuction": null,<br/>
+     * "idFantasyClub": 49245,<br/>
+     * "idFantasyClubSender": null,<br/>
+     * "commentsCount": 0,<br/>}
      *
      * @param token is a header parameter for checking permission
      * @param news is an object that Jackson convert from JSON to object
@@ -266,7 +330,11 @@ public class NewsCmsRESTEndpoint {
      * "newsMessageWeb": "Kehrer wechselt für 100.000 von Los Chipirones zu
      * Sport1",<br/> "newsMessageMobile": "Kehrer wechselt für 100.000 von Los
      * Chipirones zu Sport1",<br/> "newsDate": "2015-07-20T15:32:35.0",<br/>
-     * "newsType": "transfer"<br/> }
+     * "newsType": "transfer",<br/> "idFantasyLeague": null,<br/>
+     * "idAuction": null,<br/>
+     * "idFantasyClub": 49245,<br/>
+     * "idFantasyClubSender": null,<br/>
+     * "commentsCount": 0,<br/>}
      *
      * @param token is a header parameter for checking permission
      * @param news is an object that Jackson convert from JSON to object

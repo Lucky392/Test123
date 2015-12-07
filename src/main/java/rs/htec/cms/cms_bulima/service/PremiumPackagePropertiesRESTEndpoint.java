@@ -47,7 +47,8 @@ public class PremiumPackagePropertiesRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method:
+     * New fields added:[googlePlayStoreId,itunesStoreId,amazonStoreId] API for
+     * method:
      * .../rest/premium_package_properties?forPayingUser=VALUE&forNonPayingUser=VALUE
      * This method returns JSON list. Default value for forPayingUser is 0, and
      * for forNonPayingUser is 0. You can put your values for forPayingUser,
@@ -76,6 +77,9 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "updateTimestamp": null,<br/>
      * "showOnlySpecial": 0,<br/>
      * "showFrom": null,<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
      * "id": 1<br/>
      * }<br/>
      * }]<br/>
@@ -143,6 +147,9 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "updateTimestamp": null,<br/>
      * "showOnlySpecial": 0,<br/>
      * "showFrom": null,<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
      * "id": 1<br/>
      * }<br/>
      *
@@ -175,6 +182,9 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * need to send some of this attributes not to be default values:
      * <br/>
      * {<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
      * "forNonPayingUsers": 0, <br/>
      * "redirectPositionTop": null,<br/>
      * "redirectPositionLeft": null, <br/>
@@ -258,6 +268,9 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "updateTimestamp": null,<br/>
      * "createDate": 1427204490000, <br/>
      * "redirectUrl": "", <br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
      * "id": 1 <br/> }
      *
      * @param token is a header parameter for checking permission
@@ -268,7 +281,8 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "errorCode": 400<br/> }
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
-     * "errorMessage": "Premium package properies at index 15 does not exits",<br/>
+     * "errorMessage": "Premium package properies at index 15 does not
+     * exits",<br/>
      * "errorCode": 404<br/> }
      */
     @PUT

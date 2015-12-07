@@ -6,7 +6,9 @@
 package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -18,6 +20,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -49,6 +52,18 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
     // ORDER BY CASE :column_name WHEN 'id' THEN n.id WHEN 'newsDate' THEN n.newsDate WHEN 'createDate' THEN n.createDate END
 public class News implements Serializable {
+    @OneToMany(mappedBy = "idNews")
+    private List<Comment> commentList;
+    @Column(name = "commentsCount")
+    private BigInteger commentsCount;
+    @OneToMany(mappedBy = "idAuction")
+    private List<News> newsList;
+    @JoinColumn(name = "ID_AUCTION", referencedColumnName = "ID")
+    @ManyToOne
+    private News idAuction;
+    @JoinColumn(name = "ID_FANTASY_CLUB_SENDER", referencedColumnName = "ID")
+    @ManyToOne
+    private FantasyClub idFantasyClubSender;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -162,9 +177,7 @@ public class News implements Serializable {
     public void setNewsMessageMobile(String newsMessageMobile) {
         this.newsMessageMobile = newsMessageMobile;
     }
-    
-    @XmlTransient
-    @JsonIgnore
+    @XmlElement
     public FantasyLeague getIdFantasyLeague() {
         return idFantasyLeague;
     }
@@ -172,9 +185,7 @@ public class News implements Serializable {
     public void setIdFantasyLeague(FantasyLeague idFantasyLeague) {
         this.idFantasyLeague = idFantasyLeague;
     }
-    
-    @XmlTransient
-    @JsonIgnore
+    @XmlElement
     public FantasyClub getIdFantasyClub() {
         return idFantasyClub;
     }
@@ -206,6 +217,50 @@ public class News implements Serializable {
     @Override
     public String toString() {
         return id + "";
+    }
+
+    public BigInteger getCommentsCount() {
+        return commentsCount;
+    }
+
+    public void setCommentsCount(BigInteger commentsCount) {
+        this.commentsCount = commentsCount;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<News> getNewsList() {
+        return newsList;
+    }
+
+    public void setNewsList(List<News> newsList) {
+        this.newsList = newsList;
+    }
+
+    public News getIdAuction() {
+        return idAuction;
+    }
+
+    public void setIdAuction(News idAuction) {
+        this.idAuction = idAuction;
+    }
+
+    public FantasyClub getIdFantasyClubSender() {
+        return idFantasyClubSender;
+    }
+
+    public void setIdFantasyClubSender(FantasyClub idFantasyClubSender) {
+        this.idFantasyClubSender = idFantasyClubSender;
+    }
+
+    @XmlTransient
+    @JsonIgnore
+    public List<Comment> getCommentList() {
+        return commentList;
+    }
+
+    public void setCommentList(List<Comment> commentList) {
+        this.commentList = commentList;
     }
     
 }

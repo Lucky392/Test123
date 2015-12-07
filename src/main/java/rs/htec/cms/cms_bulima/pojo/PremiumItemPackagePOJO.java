@@ -32,7 +32,10 @@ public class PremiumItemPackagePOJO {
     private String highlightUrl;
     private Long idPremiumItem;
     private String namePremiumItem;
-
+    private String googlePlayStoreId;
+    private String itunesStoreId;
+    private String amazonStoreId;
+    
     public PremiumItemPackagePOJO(PremiumItemPackage pip) {
         this.id = pip.getId();
         this.name = pip.getName();
@@ -49,8 +52,13 @@ public class PremiumItemPackagePOJO {
             this.idPremiumItem = pip.getIdPremiumItem().getId();
             this.namePremiumItem = pip.getIdPremiumItem().getName();
         }
+        this.googlePlayStoreId = pip.getGooglePlayStoreId();
+        this.itunesStoreId = pip.getItunesStoreId();
+        this.amazonStoreId = pip.getAmazonStoreId();
     }
 
+    
+    
     public Long getId() {
         return id;
     }
@@ -143,6 +151,30 @@ public class PremiumItemPackagePOJO {
         return idPremiumItem;
     }
 
+    public String getGooglePlayStoreId() {
+        return googlePlayStoreId;
+    }
+
+    public void setGooglePlayStoreId(String googlePlayStoreId) {
+        this.googlePlayStoreId = googlePlayStoreId;
+    }
+
+    public String getItunesStoreId() {
+        return itunesStoreId;
+    }
+
+    public void setItunesStoreId(String itunesStoreId) {
+        this.itunesStoreId = itunesStoreId;
+    }
+
+    public String getAmazonStoreId() {
+        return amazonStoreId;
+    }
+
+    public void setAmazonStoreId(String amazonStoreId) {
+        this.amazonStoreId = amazonStoreId;
+    }
+    
     public void setIdPremiumItem(Long idPremiumItem) {
         this.idPremiumItem = idPremiumItem;
     }
@@ -164,4 +196,5 @@ public class PremiumItemPackagePOJO {
         }
         return pojos;
     }
+
 }

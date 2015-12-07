@@ -42,41 +42,54 @@ public class PremiumItemPackageRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
     /**
-     * API for method:
+     * New fields added:[googlePlayStoreId,itunesStoreId,amazonStoreId] API for
+     * method:
      * .../rest/itemPackages?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE
      * This method returns JSON list. Default value for page is 1, and for limit
      * is 10. You can put your values for page, limit, orderColumn, searchWord,
      * start and end date,. It produces APPLICATION_JSON media type. Example for
      * JSON list for 1 page, 2 limit: <br/>
-     * [
+     * [<br/>
      * {<br/>
-     * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
-     * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
-     * "idPremiumItem": "6",<br/> "id": "1",<br/>
-     * "position": "6",<br/> "title": "Bietmanager",<br/>
-     * "pricePremiumCurrency": "15",<br/>
-     * "updateTimestamp": "2014-07-11 00:00:00.0",<br/> "createDate":
-     * "2014-01-01 00:00:00.0" <br/>},<br/> {<br/> "amountPremiumItems":
-     * "1",<br/> "name": "15 Fussi -Taler",<br/>
-     * "additionalInfo": "",<br/> "active": "0",<br/>"highlightUrl": "",<br/>
-     * "idPremiumItem": "3",<br/> "id": "2",<br/> "position": "4",<br/> "title":
-     * "Co-Trainer",<br/>
-     * "pricePremiumCurrency": "15",<br/> "updateTimestamp": "2014-07-11
-     * 00:00:00.0",<br/>
-     * "createDate": "2014-01-01 00:00:00.0" <br/>},<br/>
-     * {<br/>"amountPremiumItems": "1",<br/>
-     * "name": "40 Fussi -Taler",<br/> "additionalInfo": "",<br/> "active":
-     * "1",<br/>
-     * "highlightUrl": "",<br/> "idPremiumItem": "5", <br/>"id": "3",
-     * <br/>"position": "3",<br/>
-     * "title": "Sportdirektor", <br/>"pricePremiumCurrency": "40",<br/>
-     * "updateTimestamp": "2014-07-11 00:00:00.0",<br/> "createDate":
-     * "2014-01-01 00:00:00.0" <br/>}<br/>]
+     * "createDate": 1388530800000,<br/>
+     * "title": "Bietmanager",<br/>
+     * "highlightUrl": "",<br/>
+     * "additionalInfo": "",<br/>
+     * "updateTimestamp": 1405029600000,<br/>
+     * "pricePremiumCurrency": 15,<br/>
+     * "amountPremiumItems": 1,<br/>
+     * "active": 1,<br/>
+     * "idPremiumItem": 6,<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
+     * "namePremiumItem": "Bietmanager",<br/>
+     * "position": 6,<br/>
+     * "name": "15 Fussi -Taler",<br/>
+     * "id": 1<br/>
+     * },<br/> { "createDate": 1388530800000,<br/>
+     * "title": "Co-Trainer",<br/>
+     * "highlightUrl": "",<br/>
+     * "additionalInfo": "",<br/>
+     * "updateTimestamp": 1405029600000,<br/>
+     * "pricePremiumCurrency": 15,<br/>
+     * "amountPremiumItems": 1,<br/>
+     * "active": 0,<br/>
+     * "idPremiumItem": 3,<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
+     * "namePremiumItem": "Co-Trainer",<br/>
+     * "position": 4,<br/>
+     * "name": "15 Fussi -Taler",<br/>
+     * "id": 2<br/>
+     * },<br/>
+     * <br/>]
      *
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for PremiumItemPackage
@@ -139,18 +152,27 @@ public class PremiumItemPackageRESTEndpoint {
         go.setData(pojos);
         return Response.ok().entity(go).build();
     }
-    
+
     /**
      * API for method: .../rest/itemPackages/{id} This method return single
      * element of item package at index in JSON. Example for JSON response:
      * {<br/>
-     * "amountPremiumItems": "1",<br/> "name": "15 Fussi -Taler",<br/>
-     * "additionalInfo": "",<br/> "active": "1",<br/> "highlightUrl": "",<br/>
-     * "idPremiumItem": "6",<br/> "id": "1",<br/>
-     * "position": "6",<br/> "title": "Bietmanager",<br/>
-     * "pricePremiumCurrency": "15",<br/>
-     * "updateTimestamp": "2014-07-11 00:00:00.0",<br/> "createDate":
-     * "2014-01-01 00:00:00.0" <br/>}
+     * "createDate": 1388530800000,<br/>
+     * "title": "Bietmanager",<br/>
+     * "highlightUrl": "",<br/>
+     * "additionalInfo": "",<br/>
+     * "updateTimestamp": 1405029600000,<br/>
+     * "pricePremiumCurrency": 15,<br/>
+     * "amountPremiumItems": 1,<br/>
+     * "active": 1,<br/>
+     * "idPremiumItem": 6,<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
+     * "namePremiumItem": "Bietmanager",<br/>
+     * "position": 6,<br/>
+     * "name": "15 Fussi -Taler",<br/>
+     * "id": 1<br/> }
      *
      * @param token is a header parameter for checking permission
      * @param id of item package we are searching for
@@ -178,19 +200,23 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
     /**
-     * API for this method is .../rest/itemPackages  This method recieves JSON object,
-     * and put it in the DB. Example for JSON that you need to send: 
+     * API for this method is .../rest/itemPackages This method recieves JSON
+     * object, and put it in the DB. Example for JSON that you need to send:
      * {<br/>
-     * "updateTimestamp": null,<br/>
-     * "highlightUrl": "images/shop/ribbon.png",<br/>
+     * "title": "Bietmanager",<br/>
+     * "highlightUrl": "",<br/>
      * "additionalInfo": "",<br/>
-     * "title": "Test2",<br/>
-     * "pricePremiumCurrency": 170,<br/>
-     * "amountPremiumItems": 5,<br/>
-     * "active": 3,<br/>
-     * "idPremiumItem": 9,<br/>
-     * "position": 1,<br/>
-     * "name": "Test2"<br/>
+     * "updateTimestamp": null,<br/>
+     * "pricePremiumCurrency": 15,<br/>
+     * "amountPremiumItems": 1,<br/>
+     * "active": 1,<br/>
+     * "idPremiumItem": 6,<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
+     * "namePremiumItem": "Bietmanager",<br/>
+     * "position": 6,<br/>
+     * "name": "15 Fussi -Taler"<br/>
      * }<br/>
      *
      * @param token is a header parameter for checking permission
@@ -251,6 +277,9 @@ public class PremiumItemPackageRESTEndpoint {
      * "idPremiumItem": 4,<br/>
      * "position": 6,<br/>
      * "name": "Test3",<br/>
+     * "googlePlayStoreId": null,<br/>
+     * "itunesStoreId": null,<br/>
+     * "amazonStoreId": null,<br/>
      * "id": 8<br/>
      * }<br/>
      *
@@ -293,8 +322,8 @@ public class PremiumItemPackageRESTEndpoint {
     }
 
     /**
-     * API for this method: .../rest/itemPackages/count This method return number
-     * of all item packages in database.
+     * API for this method: .../rest/itemPackages/count This method return
+     * number of all item packages in database.
      *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body

@@ -56,6 +56,15 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "PremiumPackageProperties.findByCreateDate", query = "SELECT p FROM PremiumPackageProperties p WHERE p.createDate = :createDate"),
     @NamedQuery(name = "PremiumPackageProperties.findByMaxPurchasesPerUser", query = "SELECT p FROM PremiumPackageProperties p WHERE p.maxPurchasesPerUser = :maxPurchasesPerUser")})
 public class PremiumPackageProperties implements Serializable {
+    @Size(max = 255)
+    @Column(name = "googlePlayStoreId")
+    private String googlePlayStoreId;
+    @Size(max = 255)
+    @Column(name = "itunesStoreId")
+    private String itunesStoreId;
+    @Size(max = 255)
+    @Column(name = "amazonStoreId")
+    private String amazonStoreId;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -329,6 +338,30 @@ public class PremiumPackageProperties implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.PremiumPackageProperties[ id=" + id + " ]";
+    }
+
+    public String getGooglePlayStoreId() {
+        return googlePlayStoreId;
+    }
+
+    public void setGooglePlayStoreId(String googlePlayStoreId) {
+        this.googlePlayStoreId = googlePlayStoreId;
+    }
+
+    public String getItunesStoreId() {
+        return itunesStoreId;
+    }
+
+    public void setItunesStoreId(String itunesStoreId) {
+        this.itunesStoreId = itunesStoreId;
+    }
+
+    public String getAmazonStoreId() {
+        return amazonStoreId;
+    }
+
+    public void setAmazonStoreId(String amazonStoreId) {
+        this.amazonStoreId = amazonStoreId;
     }
     
 }

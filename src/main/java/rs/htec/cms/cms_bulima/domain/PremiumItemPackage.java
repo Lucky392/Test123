@@ -47,6 +47,15 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "PremiumItemPackage.findByPosition", query = "SELECT p FROM PremiumItemPackage p WHERE p.position = :position"),
     @NamedQuery(name = "PremiumItemPackage.findByHighlightUrl", query = "SELECT p FROM PremiumItemPackage p WHERE p.highlightUrl = :highlightUrl")})
 public class PremiumItemPackage implements Serializable {
+    @Size(max = 255)
+    @Column(name = "googlePlayStoreId")
+    private String googlePlayStoreId;
+    @Size(max = 255)
+    @Column(name = "itunesStoreId")
+    private String itunesStoreId;
+    @Size(max = 255)
+    @Column(name = "amazonStoreId")
+    private String amazonStoreId;
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -221,6 +230,30 @@ public class PremiumItemPackage implements Serializable {
     @Override
     public String toString() {
         return "rs.htec.cms.cms_bulima.domain.PremiumItemPackage[ id=" + id + " ]";
+    }
+
+    public String getGooglePlayStoreId() {
+        return googlePlayStoreId;
+    }
+
+    public void setGooglePlayStoreId(String googlePlayStoreId) {
+        this.googlePlayStoreId = googlePlayStoreId;
+    }
+
+    public String getItunesStoreId() {
+        return itunesStoreId;
+    }
+
+    public void setItunesStoreId(String itunesStoreId) {
+        this.itunesStoreId = itunesStoreId;
+    }
+
+    public String getAmazonStoreId() {
+        return amazonStoreId;
+    }
+
+    public void setAmazonStoreId(String amazonStoreId) {
+        this.amazonStoreId = amazonStoreId;
     }
     
 }

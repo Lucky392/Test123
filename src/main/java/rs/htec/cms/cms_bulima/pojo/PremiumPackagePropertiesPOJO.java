@@ -40,7 +40,10 @@ public class PremiumPackagePropertiesPOJO {
     private String premiumPackageUpgrade;
     private String favoriteClub;
     private String premiumPackageSuccessor;
-
+    private String googlePlayStoreId;
+    private String itunesStoreId;
+    private String amazonStoreId;
+    
     public PremiumPackagePropertiesPOJO(PremiumPackageProperties ppp) {
         this.id = ppp.getId();
         this.highlightImageUrl = ppp.getHighlightImageUrl();
@@ -71,7 +74,11 @@ public class PremiumPackagePropertiesPOJO {
             this.idPremiumPackageSuccessor = ppp.getIdPremiumPackageSuccessor().getId();
             premiumPackageSuccessor = ppp.getIdPremiumPackageSuccessor().getName();
         }
+        this.googlePlayStoreId = ppp.getGooglePlayStoreId();
+        this.itunesStoreId = ppp.getItunesStoreId();
+        this.amazonStoreId = ppp.getAmazonStoreId();
     }
+    
 
     public Long getId() {
         return id;
@@ -232,16 +239,6 @@ public class PremiumPackagePropertiesPOJO {
     public void setIdPremiumPackageSuccessor(Long idPremiumPackageSuccessor) {
         this.idPremiumPackageSuccessor = idPremiumPackageSuccessor;
     }
-    
-    public static List<PremiumPackagePropertiesPOJO> toPremiumPackagePropertiesPOJOList(List<PremiumPackageProperties> properties){
-        PremiumPackagePropertiesPOJO pojo;
-        List<PremiumPackagePropertiesPOJO> pojos = new ArrayList<>();
-        for (PremiumPackageProperties property : properties) {
-            pojo = new PremiumPackagePropertiesPOJO(property);
-            pojos.add(pojo);
-        }
-        return pojos;
-    }
 
     public String getPremiumPackageUpgrade() {
         return premiumPackageUpgrade;
@@ -267,5 +264,37 @@ public class PremiumPackagePropertiesPOJO {
         this.premiumPackageSuccessor = premiumPackageSuccessor;
     }
 
+    public String getGooglePlayStoreId() {
+        return googlePlayStoreId;
+    }
 
+    public void setGooglePlayStoreId(String googlePlayStoreId) {
+        this.googlePlayStoreId = googlePlayStoreId;
+    }
+
+    public String getItunesStoreId() {
+        return itunesStoreId;
+    }
+
+    public void setItunesStoreId(String itunesStoreId) {
+        this.itunesStoreId = itunesStoreId;
+    }
+
+    public String getAmazonStoreId() {
+        return amazonStoreId;
+    }
+
+    public void setAmazonStoreId(String amazonStoreId) {
+        this.amazonStoreId = amazonStoreId;
+    }
+    
+    public static List<PremiumPackagePropertiesPOJO> toPremiumPackagePropertiesPOJOList(List<PremiumPackageProperties> properties){
+        PremiumPackagePropertiesPOJO pojo;
+        List<PremiumPackagePropertiesPOJO> pojos = new ArrayList<>();
+        for (PremiumPackageProperties property : properties) {
+            pojo = new PremiumPackagePropertiesPOJO(property);
+            pojos.add(pojo);
+        }
+        return pojos;
+    }
 }

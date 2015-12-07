@@ -64,14 +64,22 @@
     <class>rs.htec.cms.cms_bulima.domain.Salesorder</class>
     <class>rs.htec.cms.cms_bulima.domain.PremiumSeasonalPackage</class>
     <class>rs.htec.cms.cms_bulima.domain.Dashboard</class>
+    <class>rs.htec.cms.cms_bulima.domain.Comment</class>
     <exclude-unlisted-classes>false</exclude-unlisted-classes>
     <properties>
+      <!--jdbc:mysql://10.10.0.40:3306/bulima com.mysql.jdbc.Driver-->
       <!--localhost:3306-->
       <!--bulima-cms-devel.htec.co.rs:13306-->
-      <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/bulima?zeroDateTimeBehavior=convertToNull"/>
-      <property name="javax.persistence.jdbc.user" value="cmsdeveldb"/>
+      <!--10.10.10.14:3306 jsQwP8LzCxJ8-->
+      <!--10.10.0.40:3306 bulima-->
+      <property name="javax.persistence.jdbc.url" value="${jdbc.url}"/>
+      <property name="javax.persistence.jdbc.user" value="${jdbc.user}"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-      <property name="javax.persistence.jdbc.password" value="XPrxo2v4Zr"/>
+      <property name="javax.persistence.jdbc.password" value="${jdbc.password}"/>
+      <!--        <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima"/>
+      <property name="javax.persistence.jdbc.user" value="bulima"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="bulima"/>-->
     </properties>
   </persistence-unit>
 </persistence>
