@@ -140,7 +140,7 @@ public class BugReportRESTEndpoint {
      * 
      * @param token header parameter for checking permission
      * @param page number of page for searched results
-     * @param limit number of matchPlayerStats that are returned in body
+     * @param limit number of bugReports that are returned in body
      * @param orderBy column name (if there is '-' before colum name, results will be sorted in descending order)
      * @param search words in description and clubName
      * @param minDate filters result form defined date
