@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.ws.rs.GET;
@@ -67,4 +68,16 @@ public class SeasonRESTEndpoint {
         return Response.ok().entity(pojo).build();
     }    
     
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getSeasons(@HeaderParam("authorization") String token){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        List<Season> seasons = em.createNamedQuery("Season.findAll").getResultList();
+        if (seasons.isEmpty()){
+            throw new DataNotFoundException("There is no seasons!");
+        }
+        return Response.ok().entity(SeasonPOJO.toSeasonPOJOList(seasons)).build();
+    }
 }

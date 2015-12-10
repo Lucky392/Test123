@@ -5,7 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import rs.htec.cms.cms_bulima.domain.Season;
 import rs.htec.cms.cms_bulima.helper.Util;
 
@@ -123,4 +125,13 @@ public class SeasonPOJO {
         this.leagueName = leagueName;
     }
 
+    public static List<SeasonPOJO> toSeasonPOJOList(List<Season> seasons){
+        SeasonPOJO pojo;
+        List<SeasonPOJO> pojos = new ArrayList<>();
+        for (Season season : seasons) {
+            pojo = new SeasonPOJO(season);
+            pojos.add(pojo);
+        }
+        return pojos;
+    }
 }
