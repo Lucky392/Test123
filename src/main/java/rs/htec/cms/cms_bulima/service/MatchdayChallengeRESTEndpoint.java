@@ -156,7 +156,7 @@ public class MatchdayChallengeRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         try {
             MatchdayChallenge matchdayChallenge = (MatchdayChallenge) em.createNamedQuery("MatchdayChallenge.findById").setParameter("id", id).getSingleResult();
-            return Response.ok().entity(matchdayChallenge).build();
+            return Response.ok().entity(new MatchdayChallengePOJO(matchdayChallenge)).build();
         } catch (NoResultException nre) {
             throw new DataNotFoundException("There is no matchday challenge with id = " + id);
         }
