@@ -29,24 +29,25 @@ import rs.htec.cms.cms_bulima.pojo.SeasonPOJO;
  */
 @Path("/seasons")
 public class SeasonRESTEndpoint {
-    
+
     @InjectParam
     RestHelperClass helper;
 
     /**
      * Returns Season for specified id.
-     * 
+     *
      * { <br/>
-*  "createDate": 1420066800000,<br/>
-*  "idLeague": 1,<br/>
-*  "idSport1Season": "355",<br/>
-*  "idFirstMatchday": null,<br/>
-*  "urlToFirstMatchday": null,<br/>
-*  "urlToLeague": "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/leagues/1",<br/>
-*  "name": "2014/2015",<br/>
-*  "id": 1<br/>
-*}<br/>
-     * 
+     * "createDate": 1420066800000,<br/>
+     * "idLeague": 1,<br/>
+     * "idSport1Season": "355",<br/>
+     * "idFirstMatchday": null,<br/>
+     * "urlToFirstMatchday": null,<br/>
+     * "urlToLeague":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/leagues/1",<br/>
+     * "name": "2014/2015",<br/>
+     * "id": 1<br/>
+     * }<br/>
+     *
      * @param token- header parameter for checking permission
      * @param id - for Season
      * @return 200 OK and Season in JSON
@@ -66,16 +67,33 @@ public class SeasonRESTEndpoint {
             throw new DataNotFoundException("Season at index " + id + " does not exist..");
         }
         return Response.ok().entity(pojo).build();
-    }    
-    
-    
+    }
+
+    /**
+     * Returns all seasons. <br>[<br>{<br>
+     * "urlToFirstMatchday": null,<br>
+     * "createDate": 1420066800000,<br>
+     * "leagueName": "12",<br>
+     * "idLeague": 1,<br>
+     * "idSport1Season": "355",<br>
+     * "idFirstMatchday": null,<br>
+     * "urlToLeague":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/leagues/1",<br>
+     * "firstMatchdayName": null,<br>
+     * "name": "2014/2015",<br>
+     * "id": 1<br>
+     * }]<br>
+     *
+     * @param token
+     * @return Season List
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSeasons(@HeaderParam("authorization") String token){
+    public Response getSeasons(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         List<Season> seasons = em.createNamedQuery("Season.findAll").getResultList();
-        if (seasons.isEmpty()){
+        if (seasons.isEmpty()) {
             throw new DataNotFoundException("There is no seasons!");
         }
         return Response.ok().entity(SeasonPOJO.toSeasonPOJOList(seasons)).build();

@@ -80,7 +80,7 @@
             <property name="javax.persistence.jdbc.user" value="bulima"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.password" value="jsQwP8LzCxJ8"/>
-            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima"/>
+            <!--        <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima"/>
             <property name="javax.persistence.jdbc.user" value="bulima"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.password" value="bulima"/>-->

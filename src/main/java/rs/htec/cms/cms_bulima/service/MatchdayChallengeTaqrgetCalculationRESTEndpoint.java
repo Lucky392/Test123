@@ -49,6 +49,22 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     public MatchdayChallengeTaqrgetCalculationRESTEndpoint() {
     }
 
+//    @GET
+//    @Path("/{id}")
+//    @Produces(MediaType.APPLICATION_JSON)
+//    public Response getMatchDayById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+//        EntityManager em = helper.getEntityManager();
+//        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+//        MatchdayChallengeTargetCalculationPOJO pojo;
+//        try {
+//            Matchday matchday = (Matchday) em.createNamedQuery("Matchday.findById").setParameter("id", id).getSingleResult();
+//            pojo = new MatchdayChallengeTargetCalculationPOJO(matchday);
+//        } catch (NoResultException e) {
+//            throw new DataNotFoundException("Matchday at index " + id + " does not exist..");
+//        }
+//        return Response.ok().entity(pojo).build();
+//    }
+    
     /**
      * API for method:
      * .../rest/targetCalculations?page=VALUE&limit=VALUE&search=VALUE&minUpdateDate=VALUE&maxUpdateDate=VALUE&matchdayChallengeID=VALUE
