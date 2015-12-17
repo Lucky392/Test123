@@ -101,6 +101,12 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
         return Response.ok().entity(go).build();
     }
 
+    /**
+     * API for this call is: /rest/matchdayChallengeScoreCalculations/{id}
+     * @param token
+     * @param id
+     * @return
+     */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
