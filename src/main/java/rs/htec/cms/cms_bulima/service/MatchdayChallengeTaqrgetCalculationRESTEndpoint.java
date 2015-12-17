@@ -89,7 +89,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
             @QueryParam("matchdayChallengeID") long matchChallengeID,
             @QueryParam("minUpdateDate") long minDate, @QueryParam("maxUpdateDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallengeTargetCalculation m ");
         if (search != null) {
             search = "%" + search + "%";
@@ -149,7 +149,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @Path("/{id}")
     public Response insertTargetCalculation(@HeaderParam("authorization") String token, @PathParam("id") long idMatchdayChallenge, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
         MatchdayChallenge mc = em.find(MatchdayChallenge.class, idMatchdayChallenge);
         if (mc == null) {
             throw new DataNotFoundException("Matchday challenge at index " + idMatchdayChallenge + " does not exits!");
@@ -187,7 +187,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateTargetCalculation(@HeaderParam("authorization") String token, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
         MatchdayChallengeTargetCalculation oldMctc = em.find(MatchdayChallengeTargetCalculation.class, mctc.getId());
         if (oldMctc != null) {
             oldMctc.setUpdateAt(new Date());

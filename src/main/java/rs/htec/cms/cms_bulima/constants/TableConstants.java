@@ -23,4 +23,5 @@ public interface TableConstants {
     public static final long TABLE = 10;
     public static final long BUG_REPORT = 11;
     public static final long BATCHJOB = 12;
+    public static final long MATCHDAY = 13;
 }

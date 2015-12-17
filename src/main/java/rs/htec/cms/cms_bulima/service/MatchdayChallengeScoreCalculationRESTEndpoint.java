@@ -31,6 +31,7 @@ import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.MatchdayChallengeScoreCalculationPOJO;
 
 /**
  *
@@ -74,7 +75,7 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
             @QueryParam("search") String search,
             @QueryParam("matchdayChallengeID") long matchChallengeID) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT b FROM MatchdayChallengeScoreCalculation b ");
         if (search != null) {
             search = "%" + search + "%";
@@ -92,24 +93,39 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
             throw new DataNotFoundException("There is no MatchdayChallengeScoreCalculation for this search!");
         }
         String countQuery = query.toString().replaceFirst("b", "count(b)");
-        System.out.println(countQuery);
+        List<MatchdayChallengeScoreCalculationPOJO> pojos = MatchdayChallengeScoreCalculationPOJO.toNewsPOJOList(scoreCalculation);
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
-        go.setData(scoreCalculation);
+        go.setData(pojos);
         return Response.ok().entity(go).build();
     }
 
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getScoreCalculationById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        MatchdayChallengeScoreCalculationPOJO pojo = null;
+        try {
+            MatchdayChallengeScoreCalculation calculation = (MatchdayChallengeScoreCalculation) em.createNamedQuery("MatchdayChallengeScoreCalculation.findById").setParameter("id", id).getSingleResult();
+            pojo = new MatchdayChallengeScoreCalculationPOJO(calculation);
+            return Response.ok().entity(pojo).build();
+        } catch (Exception e) {
+            throw new DataNotFoundException("MatchdayChallengeScoreCalculation at index " + id + " does not exist..");
+        }
+    }
+    
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{matchdayChallengeID}")
+    @Path("/")
     public Response insertScoreCalculation(@HeaderParam("authorization") String token,
-            MatchdayChallengeScoreCalculation scoreCalculation,
-            @PathParam("matchdayChallengeID") long matchdayChallengeID) {
+            MatchdayChallengeScoreCalculation scoreCalculation) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
-        scoreCalculation.setIdMatchdayChallenge(em.find(MatchdayChallenge.class, matchdayChallengeID));
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
+//        scoreCalculation.setIdMatchdayChallenge(em.find(MatchdayChallenge.class, scoreCalculation.));
         if (validator.checkLenght(scoreCalculation.getCalculationSql(), 255, true)) {
             scoreCalculation.setCreateDate(new Date());
             helper.persistObject(em, scoreCalculation);
@@ -120,16 +136,15 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{matchdayChallengeID}")
+    @Path("/")
     public Response updateMatchdayChallenge(@HeaderParam("authorization") String token,
-            MatchdayChallengeScoreCalculation scoreCalculation,
-            @PathParam("matchdayChallengeID") long matchdayChallengeID) {
+            MatchdayChallengeScoreCalculation scoreCalculation) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token);
         MatchdayChallengeScoreCalculation x = em.find(MatchdayChallengeScoreCalculation.class, scoreCalculation.getId());
         if (x != null) {
             if (validator.checkLenght(scoreCalculation.getCalculationSql(), 255, true)) {
-                scoreCalculation.setCreateDate(new Date());
+                scoreCalculation.setCreateDate(x.getCreateDate());
                 helper.mergeObject(em, scoreCalculation);
             } else {
                 throw new InputValidationException("Validation failed");

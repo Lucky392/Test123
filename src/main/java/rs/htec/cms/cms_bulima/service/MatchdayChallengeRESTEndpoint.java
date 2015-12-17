@@ -82,7 +82,7 @@ public class MatchdayChallengeRESTEndpoint {
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("filter") String filter,
             @QueryParam("matchdayChallengeType") int matchdayChallengeType, @QueryParam("isPublished") Boolean isPublished) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         List<MatchdayChallenge> matchdayChallenges;
         StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallenge m ");
         if (filter != null) {
@@ -153,7 +153,7 @@ public class MatchdayChallengeRESTEndpoint {
     public Response getMatchdayChallenge(@HeaderParam("authorization") String token,
             @PathParam("id") long id) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         try {
             MatchdayChallenge matchdayChallenge = (MatchdayChallenge) em.createNamedQuery("MatchdayChallenge.findById").setParameter("id", id).getSingleResult();
             return Response.ok().entity(new MatchdayChallengePOJO(matchdayChallenge)).build();
@@ -168,7 +168,7 @@ public class MatchdayChallengeRESTEndpoint {
     public Response insertMatchdayChallenge(@HeaderParam("authorization") String token,
             MatchdayChallenge matchdayChallenge) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
         if (validator.checkLenght(matchdayChallenge.getMatchdayChallengeTitle(), 255, false)
                 && validator.checkLenght(matchdayChallenge.getMatchdayChallengeDescription(), 255, false)
                 && validator.checkLenght(matchdayChallenge.getMatchdayChallengeType(), 255, false)
@@ -191,7 +191,7 @@ public class MatchdayChallengeRESTEndpoint {
     public Response updateMatchdayChallenge(@HeaderParam("authorization") String token,
             MatchdayChallenge matchdayChallenge) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, matchdayChallenge.getId());
         if (x != null) {
             if (validator.checkLenght(matchdayChallenge.getMatchdayChallengeTitle(), 255, false)
@@ -228,7 +228,7 @@ public class MatchdayChallengeRESTEndpoint {
     @Path("/{id}")
     public Response deleteMatchdayChallenge(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.DELETE, token);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, id);
         helper.removeObject(em, x, id);
         return Response.ok().build();

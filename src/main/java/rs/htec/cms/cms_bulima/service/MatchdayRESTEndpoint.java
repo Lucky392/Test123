@@ -70,7 +70,7 @@ public class MatchdayRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMatchDayById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         MatchdayPOJO pojo;
         try {
             Matchday matchday = (Matchday) em.createNamedQuery("Matchday.findById").setParameter("id", id).getSingleResult();
@@ -140,7 +140,7 @@ public class MatchdayRESTEndpoint {
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("matchday") String matchday,
             @QueryParam("idSeason") String idSeason, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
 
         List<Matchday> matchdays;
         StringBuilder query = new StringBuilder("SELECT m FROM Matchday m");

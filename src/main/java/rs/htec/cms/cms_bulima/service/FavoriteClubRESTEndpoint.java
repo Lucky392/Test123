@@ -6,7 +6,9 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
@@ -39,21 +41,7 @@ public class FavoriteClubRESTEndpoint {
 
     /**
      * Returns all favorite clubs. 
-     * <br/> {<br/>
-     * "count": 53,<br/>
-     * "data": {<br/>
-     * "VfL Wolfsburg": 5,<br/>
-     * "FC Augsburg": 8,<br/>
-     * "FC Bayern München": 1,<br/>
-     * "TSG 1899 Hoffenheim": 9,<br/>
-     * "Hannover 96": 10,<br/>
-     * "Borussia Dortmund": 2,<br/>
-     * "Borussia Mönchengladbach": 6,<br/>
-     * "FC Schalke 04": 3,<br/>
-     * "1. FSV Mainz 05": 7,<br/>
-     * "Bayer 04 Leverkusen": 4<br/>
-     * }<br/>
-     * }<br/>
+     *
      *
      * @param token header parameter for checking permission
      * @param page number of page for searched results
@@ -81,12 +69,15 @@ public class FavoriteClubRESTEndpoint {
         return Response.ok().entity(go).build();
     }
 
-    private Map getMap(List<FavoriteClub> fantasyClubs) {
-        Map m = new HashMap();
+    private List getMap(List<FavoriteClub> fantasyClubs) {
+        List<Map> list = new ArrayList<>();
         for (FavoriteClub fc : fantasyClubs) {
-            m.put(fc.getMediumName(), fc.getId());
+            Map m = new HashMap();
+            m.put("fantasyClubName", fc.getMediumName());
+            m.put("fantasyClubId", fc.getId());
+            list.add(m);
         }
-        return m;
+        return list;
     }
 
 }

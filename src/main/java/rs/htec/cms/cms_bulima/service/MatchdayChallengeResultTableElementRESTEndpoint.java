@@ -67,7 +67,7 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getMatchdayChallengeResultTableElementById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         MatchdayChallengeResultTableElementPOJO pojo;
         try {
             MatchdayChallengeResultTableElement element = (MatchdayChallengeResultTableElement) em.createNamedQuery("MatchdayChallengeResultTableElement.findById").setParameter("id", id).getSingleResult();
@@ -99,7 +99,7 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy,
             @QueryParam("elementName") String elementName, @QueryParam("idMatchdayChallenge") String idMatchdayChallenge) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
 
         List<MatchdayChallengeResultTableElement> element;
         StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallengeResultTableElement m");
@@ -168,7 +168,7 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateMatchdayChallengeResultTableElement(@HeaderParam("authorization") String token, MatchdayChallengeResultTableElement matchdayChallengeResultTableElement) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token);
         MatchdayChallengeResultTableElement foundedElement = em.find(MatchdayChallengeResultTableElement.class, matchdayChallengeResultTableElement.getId());
         if (foundedElement != null) {
             Validator validator = new Validator();

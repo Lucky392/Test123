@@ -130,7 +130,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
             @QueryParam("isHurt") Boolean isHurt) {
 
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         List<Player> players;
         StringBuilder query = new StringBuilder("SELECT x FROM MatchdayChallengePlayer x WHERE x.idMatchdayChallenge = " + id);
         if (filter != null) {
@@ -203,7 +203,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
     public Response insertMatchdayChallengePlayer(@HeaderParam("authorization") String token,
             MatchdayChallengePlayer matchdayChallengePlayer) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
         if (matchdayChallengePlayer.getIdMatchdayChallenge() != null
                 && matchdayChallengePlayer.getIdPlayer() != null) {
             helper.persistObject(em, matchdayChallengePlayer);
@@ -219,7 +219,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
     public Response updateMatchdayChallengePlayer(@HeaderParam("authorization") String token,
             MatchdayChallengePlayer matchdayChallengePlayer) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, matchdayChallengePlayer.getId());
         if (x != null) {
             if (matchdayChallengePlayer.getIdMatchdayChallenge() != null
@@ -249,7 +249,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
     public Response deleteMatchdayChallengePlayer(@HeaderParam("authorization") String token,
             @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.DELETE, token);
         MatchdayChallengePlayer x = em.find(MatchdayChallengePlayer.class, id);
         helper.removeObject(em, x, id);
         return Response.ok().build();
