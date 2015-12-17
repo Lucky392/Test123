@@ -5,7 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import rs.htec.cms.cms_bulima.domain.Reward;
 import rs.htec.cms.cms_bulima.helper.Util;
 
@@ -14,7 +16,7 @@ import rs.htec.cms.cms_bulima.helper.Util;
  * @author stefan
  */
 public class RewardPOJO {
-    
+
     private Long id;
     private String name;
     private String description;
@@ -40,7 +42,9 @@ public class RewardPOJO {
         this.updateAt = reward.getUpdateAt();
         this.createDate = reward.getCreateDate();
         this.imageUrl = reward.getImageUrl();
-        this.idPremiumItem = reward.getIdPremiumItem().getId();
+        if (reward.getIdPremiumItem() != null) {
+            this.idPremiumItem = reward.getIdPremiumItem().getId();
+        }
         if (reward.getIdPremiumItem() != null) {
             this.urlToPremiumItem = Util.getInstance().getUrl() + "rest/items/" + reward.getIdPremiumItem().getId();
             premiumItemName = reward.getIdPremiumItem().getName();
@@ -150,5 +154,14 @@ public class RewardPOJO {
     public void setPremiumItemName(String premiumItemName) {
         this.premiumItemName = premiumItemName;
     }
-    
+
+    public static List<RewardPOJO> toRewardPOJOList(List<Reward> rewards) {
+        RewardPOJO pojo;
+        List<RewardPOJO> pojos = new ArrayList<>();
+        for (Reward reward : rewards) {
+            pojo = new RewardPOJO(reward);
+            pojos.add(pojo);
+        }
+        return pojos;
+    }
 }

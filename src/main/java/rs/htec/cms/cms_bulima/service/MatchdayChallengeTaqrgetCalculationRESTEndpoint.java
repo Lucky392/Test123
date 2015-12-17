@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -49,22 +50,43 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     public MatchdayChallengeTaqrgetCalculationRESTEndpoint() {
     }
 
-//    @GET
-//    @Path("/{id}")
-//    @Produces(MediaType.APPLICATION_JSON)
-//    public Response getMatchDayById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-//        EntityManager em = helper.getEntityManager();
-//        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
-//        MatchdayChallengeTargetCalculationPOJO pojo;
-//        try {
-//            Matchday matchday = (Matchday) em.createNamedQuery("Matchday.findById").setParameter("id", id).getSingleResult();
-//            pojo = new MatchdayChallengeTargetCalculationPOJO(matchday);
-//        } catch (NoResultException e) {
-//            throw new DataNotFoundException("Matchday at index " + id + " does not exist..");
-//        }
-//        return Response.ok().entity(pojo).build();
-//    }
-    
+    /**
+     * Returns MatchdayChallengeTargetCalculation for specified id.
+     * <br/>Example for response: {<br/>
+     * "urlToMatchdayChallenge":
+     * "http://bulima-cms-devel.htec.co.rs/CMS_Bulima-1.0/rest/matchday_challenges/1",<br/>
+     * "createDate": 1437421634000,<br/>
+     * "matchdayChallenge": "Ballerei!",<br/>
+     * "calculationSql": null,<br/>
+     * "calculationType": null,<br/>
+     * "operation": ">=",<br/>
+     * "updateAt": null,<br/>
+     * "value": 20,<br/>
+     * "id": 1<br/>
+     * }<br/>
+     *
+     * @param token header parameter for checking permission
+     * @param id of MatchdayChallengeTargetCalculation that should be returned
+     * @return MatchdayChallengeTargetCalculation for defined id
+     * @throws DataNotFoundException if MatchdayChallengeTargetCalculation does
+     * not exist for search
+     */
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getMatchDayById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        MatchdayChallengeTargetCalculationPOJO pojo;
+        try {
+            MatchdayChallengeTargetCalculation matchday = (MatchdayChallengeTargetCalculation) em.createNamedQuery("MatchdayChallengeTargetCalculation.findById").setParameter("id", id).getSingleResult();
+            pojo = new MatchdayChallengeTargetCalculationPOJO(matchday);
+        } catch (NoResultException e) {
+            throw new DataNotFoundException("MatchdayChallengeTargetCalculation at index " + id + " does not exist..");
+        }
+        return Response.ok().entity(pojo).build();
+    }
+
     /**
      * API for method:
      * .../rest/targetCalculations?page=VALUE&limit=VALUE&search=VALUE&minUpdateDate=VALUE&maxUpdateDate=VALUE&matchdayChallengeID=VALUE
@@ -185,7 +207,8 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
 
     /**
      * API for this method is .../rest/targetCalculations This method recieves
-     * JSON object, and update database. Example for JSON that you need to send: <br/>
+     * JSON object, and update database. Example for JSON that you need to send:
+     * <br/>
      * {<br/> "calculationSql": "SUM(match_shotsTotal)",<br/> "calculationType":
      * "SUM(match_foulsSuffered)",<br/> "id": 6 <br/>}
      *

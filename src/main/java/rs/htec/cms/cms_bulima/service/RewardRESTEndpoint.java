@@ -6,19 +6,26 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Reward;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.helper.EMF;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.pojo.RewardPOJO;
 
@@ -60,7 +67,7 @@ public class RewardRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getRewardById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         RewardPOJO pojo;
         try {
             Reward reward = (Reward) em.createNamedQuery("Reward.findById").setParameter("id", id).getSingleResult();
@@ -69,6 +76,69 @@ public class RewardRESTEndpoint {
             throw new DataNotFoundException("Reward at index " + id + " does not exist..");
         }
         return Response.ok().entity(pojo).build();
+    }
+    
+    /**
+     * API for method:
+     * .../rest/rewards?page=VALUE&limit=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE&idPremiumItem=VALUE
+     * This method returns JSON list and count number. Default value for page is
+     * 1, and for limit is 10. 
+     *
+     * @param token a header parameter for checking permission
+     * @param page number of page at which we search for target calculation
+     * @param limit number of Rewards method returns
+     * @param orderBy specified column
+     * @param idPremiumItem filters results based on id premium item
+     * @param minDate a start date for filtering time in millis
+     * @param maxDate a end date for filtering time in millis
+     * @return Response 200 OK with JSON body
+     * @throw DataNotFoundException Example for exception:<br/> {<br/>
+     * "errorMessage": "There is no Rewards for this search!",<br/>
+     * "errorCode": 404<br/> }
+     */
+    @GET
+    @Path("/")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getRewards(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy,
+            @QueryParam("idPremiumItem") String idPremiumItem, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
+        EntityManager em = EMF.createEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+
+        List<Reward> rewards;
+        StringBuilder query = new StringBuilder("SELECT m FROM Reward m");
+        String operator = " WHERE";
+        if (minDate != 0 && maxDate != 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+            Date d1 = new Date(minDate);
+            Date d2 = new Date(maxDate);
+            query.append(" WHERE m.createDate BETWEEN '").append(sdf.format(d1)).append("' AND '").append(sdf.format(d2)).append("'");
+            operator = " AND";
+        }
+
+        if (idPremiumItem != null) {
+            query.append(operator).append(" m.idPremiumItem = '").append(idPremiumItem).append("'");
+        }
+
+        if (orderBy != null) {
+            if (orderBy.startsWith("-")) {
+                orderBy = orderBy.substring(1) + " desc";
+            }
+            query.append(" ORDER BY ").append(orderBy);
+        }
+
+        rewards = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        if (rewards == null || rewards.isEmpty()) {
+            throw new DataNotFoundException("There is no Reward for this search!");
+        }
+
+        GetObject go = new GetObject();
+        String countQuery = query.toString().replaceFirst("m", "count(m)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        go.setCount(count);
+        List<RewardPOJO> pojos = RewardPOJO.toRewardPOJOList(rewards);
+        go.setData(pojos);
+        return Response.ok().entity(go).build();
     }
 
 }
