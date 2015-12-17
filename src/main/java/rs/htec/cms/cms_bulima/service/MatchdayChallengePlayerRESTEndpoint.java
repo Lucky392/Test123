@@ -32,6 +32,7 @@ import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.MatchdayChallengePlayerPOJO;
 
 /**
  *
@@ -47,6 +48,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
     Validator validator;
 
     /**
+     * API for this call is : /rest/MatchdayChallengePlayers/matchdayChallenge/{matchdayChallengeID}
      * Returns list of MatchdayChallengePlayers for defined
      * parameters. 
      * That list can be: 
@@ -108,7 +110,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
      * limit and their total count
      */
     @GET
-    @Path("/{matchdayChallengeId}")
+    @Path("/matchdayChallenge/{matchdayChallengeId}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getMatchdayChallengePlayers(@HeaderParam("authorization") String token,
             @PathParam("matchdayChallengeId") Long id,
@@ -195,6 +197,26 @@ public class MatchdayChallengePlayerRESTEndpoint {
         go.setCount(count);
         go.setData(players);
         return Response.ok().entity(go).build();
+    }
+    
+    /**
+     * API for this call is: /rest/MatchdayChallengePlayers/matchdayChallengePlayerID/{matchdayChallengePlayerID}
+     * @param token
+     * @param id
+     * @return
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/matchdayChallengePlayerID/{matchdayChallengePlayerID}")
+    public Response getById(@HeaderParam("authorization") String token, @PathParam("matchdayChallengePlayerID") long id){
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        MatchdayChallengePlayer player = em.find(MatchdayChallengePlayer.class, id);
+        if (player != null){
+            return Response.ok().entity(new MatchdayChallengePlayerPOJO(player)).build();
+        } else {
+            throw new DataNotFoundException("Player with this id doesn't exist!");
+        }
     }
 
     @POST
