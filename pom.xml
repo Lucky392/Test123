@@ -34,6 +34,14 @@
                 <jdbc.password>jsQwP8LzCxJ8</jdbc.password>
             </properties>
         </profile>
+        <profile>
+            <id>live</id>
+            <properties>
+                <jdbc.url>jdbc:mysql://10.91.83.132:3306/bulima</jdbc.url>
+                <jdbc.user>bulima</jdbc.user>
+                <jdbc.password>Ielaecah6a</jdbc.password>
+            </properties>
+        </profile>
     </profiles>
     
     <dependencies>

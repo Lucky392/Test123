@@ -5,7 +5,9 @@
  */
 package rs.htec.cms.cms_bulima.pojo;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import rs.htec.cms.cms_bulima.domain.Player;
 import rs.htec.cms.cms_bulima.helper.Util;
 
@@ -481,5 +483,13 @@ public class PlayerPOJO {
         this.club = club;
     }
 
-    
+    public static List<PlayerPOJO> toPlayerPOJOList(List<Player> players){
+        PlayerPOJO pojo;
+        List<PlayerPOJO> pojos = new ArrayList<>();
+        for (Player player : players) {
+            pojo = new PlayerPOJO(player);
+            pojos.add(pojo);
+        }
+        return pojos;
+    }
 }

@@ -23,6 +23,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.Matchday;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallengePlayer;
 import rs.htec.cms.cms_bulima.domain.Player;
@@ -30,6 +31,7 @@ import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
+import rs.htec.cms.cms_bulima.helper.MatchdayChallengePlayerPOST;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.MatchdayChallengePlayerPOJO;
@@ -48,41 +50,55 @@ public class MatchdayChallengePlayerRESTEndpoint {
     Validator validator;
 
     /**
-     * API for this call is : /rest/MatchdayChallengePlayers/matchdayChallenge/{matchdayChallengeID}
-     * Returns list of MatchdayChallengePlayers for defined
-     * parameters. 
-     * That list can be: 
-     * {<br/>
+     * API for this call is :
+     * /rest/MatchdayChallengePlayers/matchdayChallenge/{matchdayChallengeID}
+     * Returns list of MatchdayChallengePlayers for defined parameters. That
+     * list can be: {<br/>
      * "data": [<br/>
      * {<br/>
-     * "idPlayer": {<br/> "fullname": "Daniel Halfar",<br/> "marketValue": 0, <br/>"updateAt":
-     * 1439784030000,<br/> "isCaptain": 0, <br/>"totalBLMPoints": 5,<br/>
+     * "idPlayer": {<br/> "fullname": "Daniel Halfar",<br/> "marketValue": 0,
+     * <br/>"updateAt": 1439784030000,<br/> "isCaptain": 0,
+     * <br/>"totalBLMPoints": 5,<br/>
      * "marketValueUpdateAt": 1437438630000,<br/> "blmPointsDiff": 1,<br/>
-     * "idSport1Player": "1874",<br/> "firstName": "Daniel", <br/>"lastName": "Halfar",<br/>
-     * "trikotName": "Daniel Halfar",<br/> "sizeCm": 173,<br/> "weightKg": 65,<br/>
-     * "dateOfBirth": 568508400000,<br/> "photoUrl": null,<br/> "dateJoinedTeam":
-     * 1435701600000,<br/> "shirtNumber": "28",<br/> "matchesTopLeage": 0,<br/>
+     * "idSport1Player": "1874",<br/> "firstName": "Daniel", <br/>"lastName":
+     * "Halfar",<br/>
+     * "trikotName": "Daniel Halfar",<br/> "sizeCm": 173,<br/> "weightKg":
+     * 65,<br/>
+     * "dateOfBirth": 568508400000,<br/> "photoUrl": null,<br/>
+     * "dateJoinedTeam": 1435701600000,<br/> "shirtNumber": "28",<br/>
+     * "matchesTopLeage": 0,<br/>
      * "scoreCountTopLeague": 0,<br/> "gradeAutoSeason": 0,<br/>
-     * "gradeAutoSeasonLeagueAvg": 0,<br/> "isHurt": 0,<br/> "hasYellowCard": 0,<br/>
+     * "gradeAutoSeasonLeagueAvg": 0,<br/> "isHurt": 0,<br/> "hasYellowCard":
+     * 0,<br/>
      * "hasYellowRedCard": 0,<br/> "hasRedCard": 0,<br/> "photoUrl2":
      * "http://assets.bundesligamanager.htec.co.rs/images/bulima-player-card/photos/playerpic_Daniel_Halfar.png",<br/>
-     * "blockType": null,<br/> "blockMatchdayAmount": 0, <br/>"idPlayerPosition": <br/>{<br/>
-     * "createDate": 1388530800000,<br/> "name": "Midfield",<br/> "id": 3<br/> },<br/> "idNation": <br/>{<br/>
-     * "createDate": 1388530800000,<br/> "name": "Deutschland", <br/>"id": 1 <br/>},<br/>
-     * "idSeasonCurrent": <br/>{<br/> "idLeague": <br/>{<br/> "idSport1League": "3", <br/>"sport":
-     * "soccer",<br/> "idCompetition": <br/>{<br/> "sport": "Fußball",<br/> "gender": "male",<br/>
-     * "createDate": 1406914086000,<br/> "name": "2. Bundesliga", <br/>"id": 2, <br/>"type":
-     * "championship" <br/>}, <br/>"createDate": 1406914139000,<br/> "id": 2 <br/>},<br/>
-     * "idSport1Season": "18337",<br/> "idFirstMatchday": null,<br/> "createDate":
-     * 1437383427000, <br/>"name": "2015/2016", <br/>"id": 4<br/> }, <br/>"idBlockStartMatchday":
-     * null,<br/> "idClub":<br/> { <br/>"idSport1Team": "6",<br/> "mediumName": "1. FC
-     * Kaiserslautern",<br/> "logoUrl":
+     * "blockType": null,<br/> "blockMatchdayAmount": 0,
+     * <br/>"idPlayerPosition": <br/>{<br/>
+     * "createDate": 1388530800000,<br/> "name": "Midfield",<br/> "id": 3<br/>
+     * },<br/> "idNation": <br/>{<br/>
+     * "createDate": 1388530800000,<br/> "name": "Deutschland", <br/>"id": 1
+     * <br/>},<br/>
+     * "idSeasonCurrent": <br/>{<br/> "idLeague": <br/>{<br/> "idSport1League":
+     * "3", <br/>"sport": "soccer",<br/> "idCompetition": <br/>{<br/> "sport":
+     * "Fußball",<br/> "gender": "male",<br/>
+     * "createDate": 1406914086000,<br/> "name": "2. Bundesliga", <br/>"id": 2,
+     * <br/>"type": "championship" <br/>}, <br/>"createDate":
+     * 1406914139000,<br/> "id": 2 <br/>},<br/>
+     * "idSport1Season": "18337",<br/> "idFirstMatchday": null,<br/>
+     * "createDate": 1437383427000, <br/>"name": "2015/2016", <br/>"id": 4<br/>
+     * }, <br/>"idBlockStartMatchday": null,<br/> "idClub":<br/> {
+     * <br/>"idSport1Team": "6",<br/> "mediumName": "1. FC Kaiserslautern",<br/>
+     * "logoUrl":
      * "http://assets.bundesligamanager.htec.co.rs/images/favoriteclublogos/1.-FC-Kaiserslautern.png",<br/>
-     * "idLeague": <br/>{<br/> "idSport1League": "3", <br/>"sport": "soccer",<br/> "idCompetition":<br/>
-     * {<br/> "sport": "Fußball", <br/>"gender": "male",<br/> "createDate": 1406914086000,<br/>
-     * "name": "2. Bundesliga",<br/> "id": 2,<br/> "type": "championship"<br/> },<br/> "createDate":
-     * 1406914139000,<br/> "id": 2 <br/>}, <br/>"shortName": "FCK",<br/> "logo": null, <br/>"createDate":
-     * 1388530800000,<br/> "id": 3 <br/>},<br/> "photo": null,<br/> "createDate": 1407424292000,<br/>
+     * "idLeague": <br/>{<br/> "idSport1League": "3", <br/>"sport":
+     * "soccer",<br/> "idCompetition":<br/>
+     * {<br/> "sport": "Fußball", <br/>"gender": "male",<br/> "createDate":
+     * 1406914086000,<br/>
+     * "name": "2. Bundesliga",<br/> "id": 2,<br/> "type": "championship"<br/>
+     * },<br/> "createDate": 1406914139000,<br/> "id": 2 <br/>},
+     * <br/>"shortName": "FCK",<br/> "logo": null, <br/>"createDate":
+     * 1388530800000,<br/> "id": 3 <br/>},<br/> "photo": null,<br/>
+     * "createDate": 1407424292000,<br/>
      * "id": 3690 <br/>},<br/> "id": 1 <br/>}<br/>
      * ],<br/>
      * "count": 1<br/>
@@ -198,9 +214,11 @@ public class MatchdayChallengePlayerRESTEndpoint {
         go.setData(players);
         return Response.ok().entity(go).build();
     }
-    
+
     /**
-     * API for this call is: /rest/MatchdayChallengePlayers/matchdayChallengePlayerID/{matchdayChallengePlayerID}
+     * API for this call is:
+     * /rest/MatchdayChallengePlayers/matchdayChallengePlayerID/{matchdayChallengePlayerID}
+     *
      * @param token
      * @param id
      * @return
@@ -208,11 +226,11 @@ public class MatchdayChallengePlayerRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/matchdayChallengePlayerID/{matchdayChallengePlayerID}")
-    public Response getById(@HeaderParam("authorization") String token, @PathParam("matchdayChallengePlayerID") long id){
+    public Response getById(@HeaderParam("authorization") String token, @PathParam("matchdayChallengePlayerID") long id) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
         MatchdayChallengePlayer player = em.find(MatchdayChallengePlayer.class, id);
-        if (player != null){
+        if (player != null) {
             return Response.ok().entity(new MatchdayChallengePlayerPOJO(player)).build();
         } else {
             throw new DataNotFoundException("Player with this id doesn't exist!");
@@ -233,6 +251,33 @@ public class MatchdayChallengePlayerRESTEndpoint {
         } else {
             throw new InputValidationException("Validation failed");
         }
+    }
+
+    /**
+     * API for this call is /rest/MatchdayChallengePlayers/insertPlayers. JSON
+     * that you need to send: <br/> { <br/>"matchdayID" : 1,<br/>
+     * "listOfPlayersID" : [<br/>
+     * 3715,<br/> 3673 <br/>] <br/>}
+     * 
+     *
+     * @param token
+     * @param players
+     * @return
+     */
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/insertPlayers")
+    public Response insertPlayers(@HeaderParam("authorization") String token, MatchdayChallengePlayerPOST players) {
+        EntityManager em = helper.getEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
+        for (int i = 0; i < players.getListOfPlayersID().size(); i++) {
+            MatchdayChallengePlayer player = new MatchdayChallengePlayer();
+            player.setIdMatchdayChallenge(new MatchdayChallenge(players.getMatchdayID()));
+            player.setIdPlayer(new Player(players.getListOfPlayersID().get(i)));
+            helper.persistObject(em, player);
+        }
+        return Response.ok().build();
     }
 
     @PUT

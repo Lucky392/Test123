@@ -7,15 +7,19 @@ package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -23,6 +27,9 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Player;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.helper.EMF;
+import rs.htec.cms.cms_bulima.helper.GetObject;
+import rs.htec.cms.cms_bulima.helper.PlayerFilters;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.PlayerPOJO;
@@ -36,6 +43,197 @@ public class PlayerRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
+
+    /**
+     * API for this call is : /rest/players. JSON that you need to send:
+     * <br/>{<br/>
+     * "search" : "Tom",<br/> "clubName" : "Vfl",<br/> "playerPosition" :
+     * "Midfield",<br/>
+     * "nation" : "Deutschland",<br/> "isCaptain": 0,<br/> "hasYellow": 0,<br/>
+     * "hasRed": 0,<br/>
+     * "isHurt" : 0,<br/> "minSizeCm" : 179,<br/> "maxSizeCm" : 181,<br/>
+     * "minWeightKg" : 69,<br/>
+     * "maxWeightKg" : 71,<br/> "maxAge" : 16,<br/> "minAge" : 15,<br/>
+     * "maxMatchesTopLeage" : 4,<br/> "minMatchesTopLeage" : 0,<br/>
+     * "maxMarketValue" : 6,<br/>
+     * "minMarketValue" : 0 <br/>}
+     *
+     * JSON object that you receive: <br/>{ <br/>"count": 1,<br/> "data": [<br/>
+     * {<br/>
+     * "urlToPlayerPosition":
+     * "http://bulima-api-staging.htec.co.rs/CMS_Bulima-1.0/rest/playerPositions/3",<br/>
+     * "urlToNation":
+     * "http://bulima-api-staging.htec.co.rs/CMS_Bulima-1.0/rest/nations/1",<br/>
+     * "urlToSeasonCurrent":
+     * "http://bulima-api-staging.htec.co.rs/CMS_Bulima-1.0/rest/seasons/4",<br/>
+     * "urlToBlockStartMatchday": null,<br/> "blockStartMatchday": null,<br/>
+     * "urlToClub":
+     * "http://bulima-api-staging.htec.co.rs/CMS_Bulima-1.0/rest/clubs/69",<br/>
+     * "seasonCurrent": "2015/2016",<br/> "club": "VfL Bochum",<br/> "nation":
+     * "Deutschland",<br/> "idSport1Player": "361679",<br/> "shirtNumber":
+     * "31",<br/>
+     * "firstName": "Tom",<br/> "photoUrl2":
+     * "http://assets.bundesligamanager.htec.co.rs/images/bulima-player-card/photos/playerpic_Tom_Baack.png",<br/>
+     * "lastName": "Baack",<br/> "blockType": null,<br/> "trikotName": "Tom
+     * Baack",<br/>
+     * "fullname": "Tom Baack",<br/> "photoUrl": null,<br/> "createDate":
+     * 1437385002000,<br/>
+     * "playerPosition": "Midfield",<br/> "marketValue": 0,<br/> "isCaptain":
+     * 0,<br/>
+     * "updateAt": 1439784076000,<br/> "totalBLMPoints": 0,<br/> "sizeCm":
+     * 180,<br/>
+     * "weightKg": 70,<br/> "dateOfBirth": 921279600000,<br/> "dateJoinedTeam":
+     * 1435701600000,<br/> "matchesTopLeage": 0,<br/> "scoreCountTopLeague":
+     * 0,<br/>
+     * "gradeAutoSeason": 0,<br/> "gradeAutoSeasonLeagueAvg": 0,<br/> "isHurt":
+     * 0,<br/>
+     * "hasYellowCard": 0,<br/> "hasYellowRedCard": 0,<br/> "hasRedCard":
+     * 0,<br/>
+     * "blockMatchdayAmount": 0,<br/> "idPlayerPosition": 3,<br/> "idNation":
+     * 1,<br/>
+     * "idSeasonCurrent": 4,<br/> "idBlockStartMatchday": null,<br/> "idClub":
+     * 69,<br/>
+     * "marketValueUpdateAt": 1439546092000,<br/> "blmPointsDiff": 0,<br/> "id":
+     * 5736<br/> }<br/> ]<br/> }
+     *
+     * @param token
+     * @param page
+     * @param limit
+     * @param filters
+     * @return
+     */
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getPlayers(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, PlayerFilters filters) {
+        EntityManager em = EMF.createEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        StringBuilder query = new StringBuilder("SELECT p FROM Player p ");
+        String operator = "WHERE";
+        if (filters.getSearch() != null) {
+            query.append(operator)
+                    .append(" (p.firstName LIKE '%")
+                    .append(filters.getSearch())
+                    .append("%' OR p.lastName LIKE '%")
+                    .append(filters.getSearch())
+                    .append("%'")
+                    .append(" OR p.fullname LIKE '%")
+                    .append(filters.getSearch())
+                    .append("%')");
+            operator = "AND";
+        }
+        if (filters.getClubName() != null) {
+            query.append(operator)
+                    .append(" p.idClub.mediumName LIKE '%")
+                    .append(filters.getClubName())
+                    .append("%'");
+            operator = "AND";
+        }
+        if (filters.getPlayerPosition() != null) {
+            query.append(operator)
+                    .append(" p.idPlayerPosition.name LIKE '%")
+                    .append(filters.getPlayerPosition())
+                    .append("%'");
+            operator = "AND";
+        }
+        if (filters.getNation() != null) {
+            query.append(operator)
+                    .append(" p.idNation.name LIKE '%")
+                    .append(filters.getNation())
+                    .append("%'");
+            operator = "AND";
+        }
+        if (filters.getIsCaptain() != null) {
+            query.append(operator)
+                    .append(" p.isCaptain = ").append(filters.getIsCaptain() ? 1 : 0);
+            operator = "AND";
+        }
+        if (filters.getHasYellow() != null) {
+            query.append(operator)
+                    .append(" p.hasYellowCard = ").append(filters.getHasYellow() ? 1 : 0);
+            operator = "AND";
+        }
+        if (filters.getHasRed() != null) {
+            query.append(operator)
+                    .append(" p.hasRedCard = ").append(filters.getHasRed() ? 1 : 0);
+            operator = "AND";
+        }
+        if (filters.getIsHurt() != null) {
+            query.append(operator)
+                    .append(" p.isHurt = ").append(filters.getIsHurt() ? 1 : 0);
+            operator = "AND";
+        }
+        if (filters.getMinSizeCm() != null) {
+            query.append(operator)
+                    .append(" p.sizeCm >= ")
+                    .append(filters.getMinSizeCm());
+            operator = "AND";
+        }
+        if (filters.getMaxSizeCm() != null) {
+            query.append(operator)
+                    .append(" p.sizeCm <= ")
+                    .append(filters.getMaxSizeCm());
+            operator = "AND";
+        }
+        if (filters.getMinWeightKg() != null) {
+            query.append(operator)
+                    .append(" p.weightKg >= ")
+                    .append(filters.getMinWeightKg());
+            operator = "AND";
+        }
+        if (filters.getMaxWeightKg() != null) {
+            query.append(operator)
+                    .append(" p.weightKg <= ")
+                    .append(filters.getMaxWeightKg());
+            operator = "AND";
+        }
+        if (filters.getMinAge() != null) {
+            query.append(operator)
+                    .append(" TIMESTAMPDIFF(year,p.dateOfBirth,CURDATE()) >= ")
+                    .append(filters.getMinAge());
+            operator = "AND";
+        }
+        if (filters.getMaxAge() != null) {
+            query.append(operator)
+                    .append(" TIMESTAMPDIFF(year,p.dateOfBirth,CURDATE()) <= ")
+                    .append(filters.getMaxAge());
+            operator = "AND";
+        }
+        if (filters.getMaxMarketValue() != null) {
+            query.append(operator)
+                    .append(" p.marketValue <= ")
+                    .append(filters.getMaxMarketValue());
+            operator = "AND";
+        }
+        if (filters.getMinMarketValue() != null) {
+            query.append(operator)
+                    .append(" p.marketValue >= ")
+                    .append(filters.getMinMarketValue());
+            operator = "AND";
+        }
+        if (filters.getMaxMatchesTopLeage() != null) {
+            query.append(operator)
+                    .append(" p.matchesTopLeage <=")
+                    .append(filters.getMaxMatchesTopLeage());
+            operator = "AND";
+        }
+        if (filters.getMinMatchesTopLeage() != null) {
+            query.append(operator)
+                    .append(" p.matchesTopLeage >=")
+                    .append(filters.getMinMatchesTopLeage());
+        }
+        List<Player> players = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        if (players == null || players.isEmpty()) {
+            throw new DataNotFoundException("There is no Players for this search!");
+        }
+        String countQuery = query.toString().replaceFirst("p", "count(p)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(PlayerPOJO.toPlayerPOJOList(players));
+        return Response.ok().entity(go).build();
+    }
 
     /**
      * Returns Player for defined id.
