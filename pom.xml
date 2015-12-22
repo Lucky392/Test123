@@ -17,9 +17,6 @@
     <profiles>
         <profile>
             <id>development</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties>
                 <jdbc.url>jdbc:mysql://10.10.0.40:3306/bulima</jdbc.url>
                 <jdbc.user>bulima</jdbc.user>
@@ -28,6 +25,9 @@
         </profile>
         <profile>
             <id>production</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <properties>
                 <jdbc.url>jdbc:mysql://10.10.10.14:3306/bulima</jdbc.url>
                 <jdbc.user>bulima</jdbc.user>

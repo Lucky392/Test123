@@ -46,7 +46,7 @@ public class SliderContentCmsRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method: .../rest/sliders?page=VALUE&limit=VALUE This method returns JSON
+     * API for method: .../rest/sliders?page=VALUE&limit=VALUE&order= This method returns JSON
      * list of slider content at defined page with defined limit. 
      * Default value for page is 1, and for limit is 10. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
@@ -77,6 +77,7 @@ public class SliderContentCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for sliders
      * @param limit number of sliders this method returns
+     * @param order orders by defined column in ascending order (if with - then descending)
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "There is no sliders!",<br/>
@@ -85,10 +86,19 @@ public class SliderContentCmsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSlider(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page, @DefaultValue("10")@QueryParam("limit") int limit) {
+    public Response getSlider(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page, @DefaultValue("10")@QueryParam("limit") int limit, @QueryParam("order") String order) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
-        List<SliderContent> slider = em.createNamedQuery("SliderContent.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        StringBuilder query = new StringBuilder("SELECT s FROM SliderContent s");
+        if (order != null) {
+            if (order.startsWith("-")) {
+                order = order.substring(1) + " desc";
+            }
+            query.append(" ORDER BY ").append(order);
+        }
+        
+        List<SliderContent> slider = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        
         if (slider.isEmpty()) {
             throw new DataNotFoundException("There is no sliders!");
         }
