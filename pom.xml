@@ -21,6 +21,8 @@
                 <jdbc.url>jdbc:mysql://10.10.0.40:3306/bulima</jdbc.url>
                 <jdbc.user>bulima</jdbc.user>
                 <jdbc.password>bulima</jdbc.password>
+                <assets_url>http://bulima-stars.assets.htec.co.rs/</assets_url>
+                <base_url>http://bulima-stars.api.htec.co.rs/CMS_Bulima-1.0/</base_url>
             </properties>
         </profile>
         <profile>
@@ -32,6 +34,8 @@
                 <jdbc.url>jdbc:mysql://10.10.10.14:3306/bulima</jdbc.url>
                 <jdbc.user>bulima</jdbc.user>
                 <jdbc.password>jsQwP8LzCxJ8</jdbc.password>
+                <assets_url>http://bulima-stars.assets.htec.co.rs/</assets_url>
+                <base_url>http://bulima-stars.api.htec.co.rs/CMS_Bulima-1.0/</base_url>
             </properties>
         </profile>
         <profile>
@@ -40,6 +44,8 @@
                 <jdbc.url>jdbc:mysql://10.91.83.132:3306/bulima</jdbc.url>
                 <jdbc.user>bulima</jdbc.user>
                 <jdbc.password>Ielaecah6a</jdbc.password>
+                <assets_url>http://assets.bundesligamanager.sport1.de/</assets_url>
+                <base_url>http://cms.bundesligamanager.sport1.de/</base_url>
             </properties>
         </profile>
     </profiles>
