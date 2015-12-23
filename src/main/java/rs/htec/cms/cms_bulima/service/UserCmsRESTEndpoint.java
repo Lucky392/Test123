@@ -184,6 +184,7 @@ public class UserCmsRESTEndpoint {
      * and put him in the base.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param user is object that Jackson convert from JSON
      * @return Response 201 CREATED
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -194,7 +195,7 @@ public class UserCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response createUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, CmsUser user) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), user);
         List<CmsUser> userDb = (List<CmsUser>) em
                 .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
                 .setParameter("userName", user.getUserName())
@@ -224,7 +225,7 @@ public class UserCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, CmsUser user) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), user);
         if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {
             CmsUser oldUser = em.find(CmsUser.class, user.getId());
             if (oldUser != null) {

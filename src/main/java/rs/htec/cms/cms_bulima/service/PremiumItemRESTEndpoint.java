@@ -204,7 +204,7 @@ public class PremiumItemRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItem item) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), item);
         item.setCreateDate(new Date());
         if (validator.checkLenght(item.getName(), 255, true) && validator.checkLenght(item.getImageUrl(), 255, true)
                 && validator.checkLenght(item.getShopName(), 255, true) && validator.checkLenght(item.getDescription(), 639, true)
@@ -260,6 +260,7 @@ public class PremiumItemRESTEndpoint {
      * zum Einsatz kommen.",<br/> "name": "Ersatzbank",<br/> "id": 2<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param item is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -273,7 +274,7 @@ public class PremiumItemRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItem item) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), item);
         PremiumItem oldItem = em.find(PremiumItem.class, item.getId());
         if (oldItem != null) {
             if (validator.checkLenght(item.getName(), 255, true) && validator.checkLenght(item.getImageUrl(), 255, true)

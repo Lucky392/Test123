@@ -229,6 +229,7 @@ public class PremiumItemPackageRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param itemPackage is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -241,7 +242,7 @@ public class PremiumItemPackageRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItemPackage itemPackage) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), itemPackage);
         itemPackage.setCreateDate(new Date());
 //        PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
 //        itemPackage.setIdPremiumItem(item);
@@ -296,6 +297,7 @@ public class PremiumItemPackageRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param itemPackage is an object that Jackson convert from JSON to object
      * @return Response with status OK (200)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -311,7 +313,7 @@ public class PremiumItemPackageRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateItemPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItemPackage itemPackage) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), itemPackage);
 
         PremiumItemPackage oldPackage = em.find(PremiumItemPackage.class, itemPackage.getId());
         if (oldPackage != null) {
@@ -341,6 +343,7 @@ public class PremiumItemPackageRESTEndpoint {
      * number of all item packages in database.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET

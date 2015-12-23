@@ -226,7 +226,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageProperties premiumPackageProperties) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumPackageProperties);
         premiumPackageProperties.setCreateDate(new Date());
         if (validator.checkLenght(premiumPackageProperties.getCharityDescription(), 255, true) && someAttributeIsNotNull(premiumPackageProperties)) {
             premiumPackageProperties.setCreateDate(new Date());
@@ -305,7 +305,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageProperties premiumPackageProperty) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumPackageProperty);
         PremiumPackageProperties oldPremiumPackageProperty = em.find(PremiumPackageProperties.class, premiumPackageProperty.getId());
         if (oldPremiumPackageProperty != null) {
             if (validator.checkLenght(premiumPackageProperty.getCharityDescription(), 255, true) && someAttributeIsNotNull(premiumPackageProperty)

@@ -171,7 +171,7 @@ public class PremiumHistoryRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPremiumHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumHistory premiumHistory) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumHistory);
         premiumHistory.setCreateDate(new Date());
         helper.persistObject(em, premiumHistory);
         Response response = Response.status(Response.Status.CREATED).build();

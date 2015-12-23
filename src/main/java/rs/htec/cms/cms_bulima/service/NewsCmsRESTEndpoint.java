@@ -307,7 +307,7 @@ public class NewsCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request, News news) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), news);
         if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                 && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                 && validator.checkLenght(news.getNewsType(), 255, true)) {
@@ -373,7 +373,7 @@ public class NewsCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request, News news) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), news);
         News oldNews = em.find(News.class, news.getId());
         if (oldNews != null) {
             if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)

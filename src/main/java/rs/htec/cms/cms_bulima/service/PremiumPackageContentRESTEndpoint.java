@@ -219,7 +219,7 @@ public class PremiumPackageContentRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPackageContent(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageContent packageContent) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), packageContent);
         packageContent.setCreateDate(new Date());
 //        PremiumItem item = em.find(PremiumItem.class, idItem);
 //        packageContent.setIdPremiumItem(item);
@@ -277,7 +277,7 @@ public class PremiumPackageContentRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateItemPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageContent packageContent) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), packageContent);
 
         PremiumPackageContent oldPackageContent = em.find(PremiumPackageContent.class, packageContent.getId());
         if (oldPackageContent != null) {

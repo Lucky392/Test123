@@ -131,7 +131,7 @@ public class UserPremiumItemRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertUserPremiumItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, UserPremiumItem userPremiumItem) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), userPremiumItem);
         userPremiumItem.setCreateDate(new Date());
         helper.persistObject(em, userPremiumItem);
         Response response = Response.status(Response.Status.CREATED).build();
@@ -160,7 +160,7 @@ public class UserPremiumItemRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUserPremiumItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, UserPremiumItem userPremiumItem) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), userPremiumItem);
 
         UserPremiumItem oldUserPremiumItem = em.find(UserPremiumItem.class, userPremiumItem.getId());
         if (oldUserPremiumItem != null) {

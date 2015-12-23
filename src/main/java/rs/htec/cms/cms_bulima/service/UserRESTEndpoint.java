@@ -124,7 +124,7 @@ public class UserRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, User user) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), user);
         User oldUser = em.find(User.class, user.getId());
         if (oldUser == null) {
             helper.setResponseToHistory(history, new DataNotFoundException("User at index " + user.getId() + " doesn't exist.."), em);

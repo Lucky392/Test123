@@ -139,7 +139,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPrize(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), prize);
         if (validator.checkLenght(prize.getName(), 255, true)) {
             prize.setCreateDate(new Date());
             helper.persistObject(em, prize);
@@ -194,7 +194,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePrize(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDayPrize prize) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), prize);
         QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
         if (oldPrize != null) {
             if (validator.checkLenght(prize.getName(), 255, true)) {

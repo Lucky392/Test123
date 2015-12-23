@@ -152,7 +152,7 @@ public class PremiumActionRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumAction premiumActions) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumActions);
         premiumActions.setCreateDate(new Date());
         if (validator.checkLenght(premiumActions.getName(), 255, true)) {
             helper.persistObject(em, premiumActions);
@@ -208,7 +208,7 @@ public class PremiumActionRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumAction premiumAction) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumAction);
         PremiumAction oldPremiumAction = em.find(PremiumAction.class, premiumAction.getId());
         if (oldPremiumAction != null) {
             if (validator.checkLenght(premiumAction.getName(), 255, true)) {

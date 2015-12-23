@@ -76,7 +76,7 @@ public class UserPrivilegesRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPrivileges(@HeaderParam("authorization") String token, @Context HttpServletRequest request, RolePOJO role) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), role);
         List<CmsUserPrivileges> userPrivileges = RolePOJO.createListPrivileges(role);
         if (userPrivileges.size() > 0 && userPrivileges.get(0).getCmsRole() != null) {
             helper.persistObject(em, userPrivileges.get(0).getCmsRole());

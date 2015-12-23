@@ -216,7 +216,7 @@ public class PremiumPackageRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackage premiumPackage) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumPackage);
         premiumPackage.setCreateDate(new Date());
         if (validator.checkLenght(premiumPackage.getName(), 255, true) && validator.checkLenght(premiumPackage.getImageUrl(), 255, true)
                 && validator.checkLenght(premiumPackage.getPlatform(), 255, true) && validator.checkLenght(premiumPackage.getTitle(), 255, true)) {
@@ -276,7 +276,7 @@ public class PremiumPackageRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackage premiumPackage) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), premiumPackage);
         PremiumPackage oldPackage = em.find(PremiumPackage.class, premiumPackage.getId());
         if (oldPackage != null) {
             if (validator.checkLenght(premiumPackage.getName(), 255, true) && validator.checkLenght(premiumPackage.getImageUrl(), 255, true)

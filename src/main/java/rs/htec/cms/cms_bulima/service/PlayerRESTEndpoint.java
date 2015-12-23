@@ -112,7 +112,7 @@ public class PlayerRESTEndpoint {
     public Response getPlayers(@HeaderParam("authorization") String token,@Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, PlayerFilters filters) {
         EntityManager em = EMF.createEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), filters);
         StringBuilder query = new StringBuilder("SELECT p FROM Player p ");
         String operator = "WHERE";
         if (filters.getSearch() != null) {
@@ -373,7 +373,7 @@ public class PlayerRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, Player player) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), player);
         Player foundedPlayer = em.find(Player.class, player.getId());
         if (foundedPlayer != null) {
             Validator validator = new Validator();

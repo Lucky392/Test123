@@ -195,7 +195,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertQuestion(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), question);
         if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
                 && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
                 && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
@@ -253,10 +253,9 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateQuestion(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDay question
-    ) {
+    public Response updateQuestion(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), question);
         QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
         if (oldQuestion != null) {
             if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
@@ -281,6 +280,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * of all questions in database.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET

@@ -180,7 +180,7 @@ public class SliderContentCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), slider);
         if (slider.getContentUrl() != null && slider.getStartShowingAt() != null && slider.getStopShowingAt() != null
                 && validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
                 && validator.checkLenght(slider.getText(), 1023, true)) {
@@ -244,6 +244,7 @@ public class SliderContentCmsRESTEndpoint {
      * "startShowingAt": "2015-03-18 16:30:00.0"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param slider is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -257,7 +258,7 @@ public class SliderContentCmsRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), slider);
         SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
         if (oldSlider != null) {
             if (slider.getContentUrl() != null && slider.getStartShowingAt() != null && slider.getStopShowingAt() != null
