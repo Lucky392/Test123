@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -18,10 +19,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.UserPremiumItem;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -38,7 +41,7 @@ public class UserPremiumItemRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -73,6 +76,7 @@ public class UserPremiumItemRESTEndpoint {
      * }<br/>
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param email - email for user you want UserPremiumItem
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for this exception:<br/> {<br/>
@@ -82,14 +86,15 @@ public class UserPremiumItemRESTEndpoint {
     @GET
     @Path("/user/{email}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserPremiumItemForUserEmail(@HeaderParam("authorization") String token, @PathParam("email") String email) {
+    public Response getUserPremiumItemForUserEmail(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("email") String email) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<UserPremiumItem> items;
         StringBuilder query = new StringBuilder("SELECT upi FROM UserPremiumItem upi JOIN upi.idUser u WHERE u.email = '");
         query.append(email).append("'");
         items = em.createQuery(query.toString()).getResultList();
         if (items.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no User Premium Item for this user!"), em);
             throw new DataNotFoundException("There is no User Premium Item for this user!");
         } else {
             String countQuery = query.toString().replaceFirst("upi", "count(upi)");
@@ -98,7 +103,10 @@ public class UserPremiumItemRESTEndpoint {
             List<UserPremiumItemPOJO> pojos = UserPremiumItemPOJO.toUserPremiumItemPOJOList(items);
             go.setCount(count);
             go.setData(pojos);
-            return Response.ok().entity(go).build();
+
+            Response response = Response.ok().entity(go).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         }
     }
 
@@ -115,17 +123,20 @@ public class UserPremiumItemRESTEndpoint {
      * }<br/>
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param userPremiumItem - UserPremiumItem in JSON
      * @return status 201 created
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertUserPremiumItem(@HeaderParam("authorization") String token, UserPremiumItem userPremiumItem) {
+    public Response insertUserPremiumItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, UserPremiumItem userPremiumItem) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         userPremiumItem.setCreateDate(new Date());
         helper.persistObject(em, userPremiumItem);
-        return Response.status(Response.Status.CREATED).build();
+        Response response = Response.status(Response.Status.CREATED).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -139,6 +150,7 @@ public class UserPremiumItemRESTEndpoint {
      * }<br/>
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param userPremiumItem - UserPremiumItem in JSON
      * @return status 200 OK
      * @throws DataNotFoundException if UserPremiumItem with id defined in body
@@ -146,9 +158,9 @@ public class UserPremiumItemRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUserPremiumItem(@HeaderParam("authorization") String token, UserPremiumItem userPremiumItem) {
+    public Response updateUserPremiumItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, UserPremiumItem userPremiumItem) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         UserPremiumItem oldUserPremiumItem = em.find(UserPremiumItem.class, userPremiumItem.getId());
         if (oldUserPremiumItem != null) {
@@ -156,28 +168,35 @@ public class UserPremiumItemRESTEndpoint {
             userPremiumItem.setUpdateTimestamp(new Date());
             helper.mergeObject(em, userPremiumItem);
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("UserPremiumItem at index " + userPremiumItem.getId() + " does not exits"), em);
             throw new DataNotFoundException("UserPremiumItem at index " + userPremiumItem.getId() + " does not exits");
         }
 
-        return Response.status(Response.Status.OK).build();
+        Response response = Response.status(Response.Status.OK).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * API for method: .../rest/userPremiumItem/{id} This method find userPremiumItem with defined id.
-     * Id is retrieved from URL. If UserPremiumItem with that index does not exist method
-     * throws exception. Otherwise method remove that UserPremiumItem.
+     * API for method: .../rest/userPremiumItem/{id} This method find
+     * userPremiumItem with defined id. Id is retrieved from URL. If
+     * UserPremiumItem with that index does not exist method throws exception.
+     * Otherwise method remove that UserPremiumItem.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of UserPremiumItem that should be deleted.
      * @return Response 200 OK
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteUserPremiumItem(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteUserPremiumItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.DELETE, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         UserPremiumItem userPremiumItem = em.find(UserPremiumItem.class, id);
         helper.removeObject(em, userPremiumItem, id);
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

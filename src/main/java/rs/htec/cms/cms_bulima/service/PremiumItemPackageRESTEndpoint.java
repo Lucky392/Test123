@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,10 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumItemPackage;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -109,12 +112,12 @@ public class PremiumItemPackageRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPackage(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
 
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PremiumItemPackage> itemPackage;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumItemPackage p ");
 
@@ -142,6 +145,7 @@ public class PremiumItemPackageRESTEndpoint {
         itemPackage = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         System.out.println(query);
         if (itemPackage == null || itemPackage.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = query.toString().replaceFirst("p", "count(p)");
@@ -150,7 +154,9 @@ public class PremiumItemPackageRESTEndpoint {
         List<PremiumItemPackagePOJO> pojos = PremiumItemPackagePOJO.toPremiumItemPackagePOJOList(itemPackage);
         go.setCount(count);
         go.setData(pojos);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -185,18 +191,21 @@ public class PremiumItemPackageRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getItemPackageById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getItemPackageById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         PremiumItemPackagePOJO itemPackagePojo = null;
         try {
             PremiumItemPackage itemPackage = (PremiumItemPackage) em.createNamedQuery("PremiumItemPackage.findById").setParameter("id", id).getSingleResult();
             itemPackagePojo = new PremiumItemPackagePOJO(itemPackage);
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium item package at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Premium item package at index " + id + " does not exist..");
         }
-        return Response.ok().entity(itemPackagePojo).build();
+        Response response = Response.ok().entity(itemPackagePojo).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -230,17 +239,20 @@ public class PremiumItemPackageRESTEndpoint {
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage) {
+    public Response insertPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItemPackage itemPackage) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         itemPackage.setCreateDate(new Date());
 //        PremiumItem item = em.find(PremiumItem.class, idPremiumItem);
 //        itemPackage.setIdPremiumItem(item);
         if (validator.checkLenght(itemPackage.getName(), 255, true) && validator.checkLenght(itemPackage.getTitle(), 255, true)
                 && validator.checkLenght(itemPackage.getHighlightUrl(), 255, true) && validator.checkLenght(itemPackage.getAdditionalInfo(), 255, true)) {
             helper.persistObject(em, itemPackage);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -297,9 +309,9 @@ public class PremiumItemPackageRESTEndpoint {
     @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumItemPackage itemPackage) {
+    public Response updateItemPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItemPackage itemPackage) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         PremiumItemPackage oldPackage = em.find(PremiumItemPackage.class, itemPackage.getId());
         if (oldPackage != null) {
@@ -312,13 +324,16 @@ public class PremiumItemPackageRESTEndpoint {
 //                itemPackage.setIdPremiumItem(item);
                 helper.mergeObject(em, itemPackage);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium items package at index " + itemPackage.getId() + " does not exits"), em);
             throw new DataNotFoundException("Premium items package at index " + itemPackage.getId() + " does not exits");
         }
-
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -331,11 +346,13 @@ public class PremiumItemPackageRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountItemPackage(@HeaderParam("authorization") String token) {
+    public Response getCountItemPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From PremiumItemPackage ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

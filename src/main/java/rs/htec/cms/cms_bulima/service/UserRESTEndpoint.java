@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -17,10 +18,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.User;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -59,6 +62,7 @@ public class UserRESTEndpoint {
      * }<br/>
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param id - of User that should be returned
      * @return User
      * @throws DataNotFoundException if User for defined id does not exist
@@ -66,22 +70,26 @@ public class UserRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUserById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getUserById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         User user = null;
         try {
             user = (User) em.createNamedQuery("User.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("User with id " + id + " does not exist.."), em);
             throw new DataNotFoundException("User with id " + id + " does not exist..");
         }
-        return Response.ok().entity(user).build();
+        Response response = Response.ok().entity(user).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
      * Returns Users for defined search.
-     * 
+     *
      * @param token header parameter for checking permission
+     * @param request
      * @param page
      * @param limit
      * @param email of User we are searching for
@@ -89,16 +97,17 @@ public class UserRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsers(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getUsers(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("email") String email) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT u FROM User u");
         if (email != null) {
             query.append(" WHERE u.email='").append(email).append("'");
         }
         List<User> users = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (users == null || users.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no users!"), em);
             throw new DataNotFoundException("There is no users!");
         }
         String countQuery = query.toString().replaceFirst("u", "count(u)");
@@ -106,16 +115,19 @@ public class UserRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(users);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUser(@HeaderParam("authorization") String token, User user) {
+    public Response updateUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, User user) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         User oldUser = em.find(User.class, user.getId());
         if (oldUser == null) {
+            helper.setResponseToHistory(history, new DataNotFoundException("User at index " + user.getId() + " doesn't exist.."), em);
             throw new DataNotFoundException("User at index " + user.getId() + " doesn't exist..");
         }
         user.setCreateDate(oldUser.getCreateDate());
@@ -144,7 +156,9 @@ public class UserRESTEndpoint {
             user.setPassword(oldUser.getPassword());
         }
         helper.mergeObject(em, user);
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 }

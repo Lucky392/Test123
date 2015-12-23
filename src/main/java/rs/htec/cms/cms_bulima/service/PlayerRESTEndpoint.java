@@ -26,6 +26,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.Player;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -99,6 +100,7 @@ public class PlayerRESTEndpoint {
      * 5736<br/> }<br/> ]<br/> }
      *
      * @param token
+     * @param request
      * @param page
      * @param limit
      * @param filters
@@ -110,8 +112,7 @@ public class PlayerRESTEndpoint {
     public Response getPlayers(@HeaderParam("authorization") String token,@Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, PlayerFilters filters) {
         EntityManager em = EMF.createEntityManager();
-//        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), filters);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT p FROM Player p ");
         String operator = "WHERE";
         if (filters.getSearch() != null) {
@@ -228,6 +229,7 @@ public class PlayerRESTEndpoint {
         }
         List<Player> players = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (players == null || players.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Players for this search!"), em);
             throw new DataNotFoundException("There is no Players for this search!");
         }
         String countQuery = query.toString().replaceFirst("p", "count(p)");
@@ -235,7 +237,9 @@ public class PlayerRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(PlayerPOJO.toPlayerPOJOList(players));
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -292,6 +296,7 @@ public class PlayerRESTEndpoint {
      *
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param id for Player
      * @return Player
      * @throws DataNotFoundException if Player for id does not exist
@@ -299,17 +304,20 @@ public class PlayerRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPlayerById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPlayerById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PlayerPOJO pojo;
         try {
             Player player = (Player) em.createNamedQuery("Player.findById").setParameter("id", id).getSingleResult();
             pojo = new PlayerPOJO(player);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Player at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Player at index " + id + " does not exist..");
         }
-        return Response.ok().entity(pojo).build();
+        Response response = Response.ok().entity(pojo).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -353,6 +361,7 @@ public class PlayerRESTEndpoint {
      * }<br/>
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param player - Player in JSON
      * @return - 200 OK if Player is updated
      * @throws InputValidationException if Player properties are not valid
@@ -362,9 +371,9 @@ public class PlayerRESTEndpoint {
     @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePlayer(@HeaderParam("authorization") String token, Player player) {
+    public Response updatePlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, Player player) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         Player foundedPlayer = em.find(Player.class, player.getId());
         if (foundedPlayer != null) {
             Validator validator = new Validator();
@@ -377,11 +386,15 @@ public class PlayerRESTEndpoint {
                 player.setCreateDate(foundedPlayer.getCreateDate());
                 helper.mergeObject(em, player);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Player at index " + player.getId() + " does not exits"), em);
             throw new DataNotFoundException("Player at index " + player.getId() + " does not exits");
         }
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

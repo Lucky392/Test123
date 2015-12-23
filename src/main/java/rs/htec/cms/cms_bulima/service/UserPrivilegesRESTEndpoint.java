@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,15 +19,18 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.CmsRole;
 import rs.htec.cms.cms_bulima.domain.CmsTables;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivilegesPK;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
+import rs.htec.cms.cms_bulima.exception.ForbbidenException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.RolePOJO;
@@ -62,6 +66,7 @@ public class UserPrivilegesRESTEndpoint {
      * ] <br/>}<br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param role is JSON object that Jackson convert to object
      * @return Response 201 CREATED
      * @throws RuntimeException
@@ -69,9 +74,9 @@ public class UserPrivilegesRESTEndpoint {
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPrivileges(@HeaderParam("authorization") String token, RolePOJO role) {
+    public Response insertPrivileges(@HeaderParam("authorization") String token, @Context HttpServletRequest request, RolePOJO role) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<CmsUserPrivileges> userPrivileges = RolePOJO.createListPrivileges(role);
         if (userPrivileges.size() > 0 && userPrivileges.get(0).getCmsRole() != null) {
             helper.persistObject(em, userPrivileges.get(0).getCmsRole());
@@ -87,10 +92,12 @@ public class UserPrivilegesRESTEndpoint {
                 cup.setCmsRole(null);
                 helper.persistObject(em, cup);
             }
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
-            //napravi novi izuzetak i baci ga!!!!
-            throw new RuntimeException("Something went wrong!");
+            helper.setResponseToHistory(history, new ForbbidenException("Privileges can't be empty"), em);
+            throw new ForbbidenException("Privileges can't be empty");
         }
     }
 
@@ -135,16 +142,23 @@ public class UserPrivilegesRESTEndpoint {
     /**
      * API for method: .../rest/privileges This method gets authorization token
      * from HTTP header privileges in JSON format and insert them into database.
-     * Example for JSON:<br/>{ <br/>"SHOP": [<br/> "ADD",<br/> "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/>
-     * "CMS_USER": [<br/> "ADD",<br/> "DELETE", <br/>"EDIT",<br/> "SEARCH" <br/>],<br/> "CMS_USER_PRIVILEGES":
-     * [ <br/>"ADD",<br/> "DELETE",<br/> "EDIT", <br/>"SEARCH" <br/>],<br/> "SLIDER_CONTENT": [ <br/>"ADD",<br/>
-     * "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/> "QUESTION_OF_THE_DAY_PRIZE": [<br/> "ADD",<br/>
-     * "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/> "STATISTICS": [<br/> "ADD",<br/> "DELETE",<br/> "EDIT",<br/>
-     * "SEARCH"<br/> ],<br/> "NEWS": [<br/> "ADD",<br/> "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/>
-     * "QUESTION_OF_THE_DAY": [<br/> "ADD",<br/> "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/> "CMS_ROLE":
-     * [<br/> "ADD",<br/> "DELETE", <br/>"EDIT",<br/> "SEARCH"<br/> ] }
+     * Example for JSON:<br/>{ <br/>"SHOP": [<br/> "ADD",<br/> "DELETE",<br/>
+     * "EDIT",<br/> "SEARCH"<br/> ],<br/>
+     * "CMS_USER": [<br/> "ADD",<br/> "DELETE", <br/>"EDIT",<br/> "SEARCH"
+     * <br/>],<br/> "CMS_USER_PRIVILEGES": [ <br/>"ADD",<br/> "DELETE",<br/>
+     * "EDIT", <br/>"SEARCH" <br/>],<br/> "SLIDER_CONTENT": [ <br/>"ADD",<br/>
+     * "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/>
+     * "QUESTION_OF_THE_DAY_PRIZE": [<br/> "ADD",<br/>
+     * "DELETE",<br/> "EDIT",<br/> "SEARCH"<br/> ],<br/> "STATISTICS": [<br/>
+     * "ADD",<br/> "DELETE",<br/> "EDIT",<br/>
+     * "SEARCH"<br/> ],<br/> "NEWS": [<br/> "ADD",<br/> "DELETE",<br/>
+     * "EDIT",<br/> "SEARCH"<br/> ],<br/>
+     * "QUESTION_OF_THE_DAY": [<br/> "ADD",<br/> "DELETE",<br/> "EDIT",<br/>
+     * "SEARCH"<br/> ],<br/> "CMS_ROLE": [<br/> "ADD",<br/> "DELETE",
+     * <br/>"EDIT",<br/> "SEARCH"<br/> ] }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param idRole
      * @return Response 200 CREATED
      * @throws DataNotFoundException Example for this exception: <br/> {<br/>
@@ -155,13 +169,16 @@ public class UserPrivilegesRESTEndpoint {
     @GET
     @Path("/{idRole}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPrivileges(@HeaderParam("authorization") String token, @PathParam("idRole") long idRole) {
+    public Response getPrivileges(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("idRole") long idRole) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.USER_PRIVILEGES, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<CmsUserPrivileges> cup = em.createNamedQuery("CmsUserPrivileges.findByRoleId").setParameter("roleId", idRole).getResultList();
         if (!cup.isEmpty()) {
-            return Response.ok().entity(createPermisions(cup)).build();
+            Response response = Response.ok().entity(createPermisions(cup)).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no privileges!"), em);
             throw new DataNotFoundException("There is no privileges!");
         }
     }

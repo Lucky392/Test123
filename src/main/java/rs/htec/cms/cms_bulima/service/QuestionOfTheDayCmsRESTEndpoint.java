@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -21,11 +22,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.QuestionOfTheDay;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -83,11 +86,11 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getQuestions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getQuestions(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<QuestionOfTheDay> questions = null;
 
@@ -119,7 +122,8 @@ public class QuestionOfTheDayCmsRESTEndpoint {
             query.append(" ORDER BY ").append(orderingColumn);
         }
         questions = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-                if (questions == null || questions.isEmpty()) {
+        if (questions == null || questions.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = query.toString().replaceFirst("q", "count(q)");
@@ -127,7 +131,9 @@ public class QuestionOfTheDayCmsRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(questions);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -143,6 +149,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * Effenberg"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of questionOfTheDay we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -153,16 +160,19 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getQuestionById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getQuestionById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         QuestionOfTheDay question = null;
         try {
             question = (QuestionOfTheDay) em.createNamedQuery("QuestionOfTheDay.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Question of the day at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Question of the day at index " + id + " does not exist..");
         }
-        return Response.ok().entity(question).build();
+        Response response = Response.ok().entity(question).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -174,6 +184,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param question is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -182,17 +193,19 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question) {
+    public Response insertQuestion(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDay question) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
                 && validator.checkLenght(question.getWrongAnswer3(), 255, false) && validator.checkLenght(question.getQuestion(), 255, false)
                 && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
 
             helper.persistObject(em, question);
-            return Response.status(Status.CREATED).build();
-
+            Response response = Response.status(Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -208,13 +221,14 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteQuestion(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteQuestion(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.DELETE, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.DELETE, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         QuestionOfTheDay question = em.find(QuestionOfTheDay.class, id);
         helper.removeObject(em, question, id);
-        return Response.ok().build();
-
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -226,6 +240,7 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      * "wrongAnswer1": "Rudi Völler",<br/> "wrongAnswer2": "Dede"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param question is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -238,10 +253,10 @@ public class QuestionOfTheDayCmsRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateQuestion(@HeaderParam("authorization") String token, QuestionOfTheDay question
+    public Response updateQuestion(@HeaderParam("authorization") String token, @Context HttpServletRequest request, QuestionOfTheDay question
     ) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         QuestionOfTheDay oldQuestion = em.find(QuestionOfTheDay.class, question.getId());
         if (oldQuestion != null) {
             if (validator.checkLenght(question.getWrongAnswer1(), 255, false) && validator.checkLenght(question.getWrongAnswer2(), 255, false)
@@ -249,18 +264,21 @@ public class QuestionOfTheDayCmsRESTEndpoint {
                     && validator.checkLenght(question.getCorrectAnswer(), 255, true)) {
                 helper.mergeObject(em, question);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Question at index" + question.getId() + " does not exits"), em);
             throw new DataNotFoundException("Question at index" + question.getId() + " does not exits");
         }
-        return Response.ok().build();
-
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * API for this method: .../rest/questions/count This method return number of
-     * all questions in database.
+     * API for this method: .../rest/questions/count This method return number
+     * of all questions in database.
      *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
@@ -268,12 +286,14 @@ public class QuestionOfTheDayCmsRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountQuestions(@HeaderParam("authorization") String token) {
+    public Response getCountQuestions(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From QuestionOfTheDay ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 }

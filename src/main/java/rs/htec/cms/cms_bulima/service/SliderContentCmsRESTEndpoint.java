@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -20,10 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.SliderContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -75,6 +78,7 @@ public class SliderContentCmsRESTEndpoint {
      * "createDate": "2015-02-17 15:59:00.0"<br/> } ]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for sliders
      * @param limit number of sliders this method returns
      * @param order orders by defined column in ascending order (if with - then
@@ -87,9 +91,9 @@ public class SliderContentCmsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSlider(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page, @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("order") String order) {
+    public Response getSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page, @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("order") String order) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT s FROM SliderContent s");
         if (order != null) {
             if (order.startsWith("-")) {
@@ -97,10 +101,9 @@ public class SliderContentCmsRESTEndpoint {
             }
             query.append(" ORDER BY ").append(order);
         }
-
         List<SliderContent> slider = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-
         if (slider.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no sliders!"), em);
             throw new DataNotFoundException("There is no sliders!");
         }
         String countQuery = "Select COUNT(ip) From SliderContent ip";
@@ -108,7 +111,9 @@ public class SliderContentCmsRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(slider);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -127,6 +132,7 @@ public class SliderContentCmsRESTEndpoint {
      * 15:59:00.0"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of slider we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -137,16 +143,19 @@ public class SliderContentCmsRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSliderById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getSliderById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         SliderContent slider = null;
         try {
             slider = (SliderContent) em.createNamedQuery("SliderContent.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Slider content at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Slider content at index " + id + " does not exist..");
         }
-        return Response.ok().entity(slider).build();
+        Response response = Response.ok().entity(slider).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -160,6 +169,7 @@ public class SliderContentCmsRESTEndpoint {
      * "startShowingAt": "2015-03-18 16:30:00.0"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param slider is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -168,9 +178,9 @@ public class SliderContentCmsRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
+    public Response insertSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (slider.getContentUrl() != null && slider.getStartShowingAt() != null && slider.getStopShowingAt() != null
                 && validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
                 && validator.checkLenght(slider.getText(), 1023, true)) {
@@ -192,8 +202,11 @@ public class SliderContentCmsRESTEndpoint {
             slider.setCreateDate(new Date());
             slider.setUpdateAt(new Date());
             helper.persistObject(em, slider);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -210,12 +223,14 @@ public class SliderContentCmsRESTEndpoint {
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteSlider(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.DELETE, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.DELETE, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         SliderContent slider = em.find(SliderContent.class, id);
         helper.removeObject(em, slider, id);
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -240,9 +255,9 @@ public class SliderContentCmsRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateSlider(@HeaderParam("authorization") String token, SliderContent slider) {
+    public Response updateSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
         if (oldSlider != null) {
             if (slider.getContentUrl() != null && slider.getStartShowingAt() != null && slider.getStopShowingAt() != null
@@ -266,11 +281,15 @@ public class SliderContentCmsRESTEndpoint {
                 slider.setCreateDate(oldSlider.getCreateDate());
                 slider.setUpdateAt(new Date());
                 helper.mergeObject(em, slider);
-                return Response.ok().build();
+                Response response = Response.ok().build();
+                helper.setResponseToHistory(history, response, em);
+                return response;
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Slider at index" + slider.getId() + " does not exits"), em);
             throw new DataNotFoundException("Slider at index" + slider.getId() + " does not exits");
         }
     }
@@ -280,17 +299,20 @@ public class SliderContentCmsRESTEndpoint {
      * all sliders in database.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountSlider(@HeaderParam("authorization") String token) {
+    public Response getCountSlider(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From SliderContent ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 }

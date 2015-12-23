@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -21,10 +22,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.News;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -34,6 +37,7 @@ import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
 import rs.htec.cms.cms_bulima.pojo.NewsPOJO;
+import rs.htec.cms.cms_bulima.pojo.SeasonPOJO;
 
 /**
  *
@@ -49,7 +53,8 @@ public class NewsCmsRESTEndpoint {
     Validator validator;
 
     /**
-     * New fields added:[idFantasyLeague,idFantasyClub,idAuction,idFantasyClubSender,commentsCount]
+     * New fields
+     * added:[idFantasyLeague,idFantasyClub,idAuction,idFantasyClubSender,commentsCount]
      * API for method:
      * .../rest/news?page=VALUE&limit=VALUE&column=VALUE&search=VALUE&minDate=VALUE&maxDate=VALUE&newsType=VALUE
      * This method returns JSON list. Default value for page is 1, and for limit
@@ -93,6 +98,7 @@ public class NewsCmsRESTEndpoint {
      * }<br/> ]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for News
      * @param limit number of News method returns
      * @param orderingColumn column name for ordering, if you put "-" before
@@ -115,14 +121,14 @@ public class NewsCmsRESTEndpoint {
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
     @Path("/")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getNews(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("newsType") String newsType,
             @QueryParam("idFantasyLeague") String idFantasyLeague, @QueryParam("idFantasyClub") String idFantasyClub, @QueryParam("idAuction") String idAuction, @QueryParam("idFantasyClubSender") String idFantasyClubSender) {
 
 //        EntityManager em = helper.getEntityManager();
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<News> news;
         StringBuilder query = new StringBuilder("SELECT n FROM News n");
         String operator = " WHERE ";
@@ -179,6 +185,7 @@ public class NewsCmsRESTEndpoint {
         }
         news = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (news == null || news.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no news for this search!"), em);
             throw new DataNotFoundException("There is no news for this search!");
         }
 //        GenericEntity<List<News>> newsEntity = new GenericEntity<List<News>>(news) {
@@ -189,7 +196,9 @@ public class NewsCmsRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(pojos);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -219,6 +228,7 @@ public class NewsCmsRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of news we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -229,17 +239,20 @@ public class NewsCmsRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getNewsById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         NewsPOJO pojo;
         try {
             News news = (News) em.createNamedQuery("News.findById").setParameter("id", id).getSingleResult();
             pojo = new NewsPOJO(news);
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("News at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("News at index " + id + " does not exist..");
         }
-        return Response.ok().entity(pojo).build();
+        Response response = Response.ok().entity(pojo).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -251,17 +264,20 @@ public class NewsCmsRESTEndpoint {
      * "leagueNameChanged"<br/>]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK status with JSON body
      */
     @GET
     @Path("/newsType")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getNewsType(@HeaderParam("authorization") String token) {
+    public Response getNewsType(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT distinct newsType FROM News n";
         List<String> list = em.createQuery(query).getResultList();
-        return Response.ok().entity(list).build();
+        Response response = Response.ok().entity(list).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -279,6 +295,7 @@ public class NewsCmsRESTEndpoint {
      * "commentsCount": 0,<br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param news is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -288,18 +305,20 @@ public class NewsCmsRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertNews(@HeaderParam("authorization") String token, News news) {
+    public Response insertNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request, News news) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
                 && validator.checkLenght(news.getNewsMessageMobile(), 255, true) && validator.checkLenght(news.getNewsMessageWeb(), 255, true)
                 && validator.checkLenght(news.getNewsType(), 255, true)) {
             news.setCreateDate(new Date());
             helper.persistObject(em, news);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
-
         }
     }
 
@@ -309,17 +328,20 @@ public class NewsCmsRESTEndpoint {
      * throws exception. Otherwise method remove that News.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of News that should be deleted.
      * @return Response 200 OK
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteNews(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.DELETE, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         News news = em.find(News.class, id);
         helper.removeObject(em, news, id);
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -337,6 +359,7 @@ public class NewsCmsRESTEndpoint {
      * "commentsCount": 0,<br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param news is an object that Jackson convert from JSON to object
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -348,9 +371,9 @@ public class NewsCmsRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateNews(@HeaderParam("authorization") String token, News news) {
+    public Response updateNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request, News news) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         News oldNews = em.find(News.class, news.getId());
         if (oldNews != null) {
             if (validator.checkLenght(news.getNewsHeadlineMobile(), 255, true) && validator.checkLenght(news.getNewsHeadlineWeb(), 255, true)
@@ -359,12 +382,16 @@ public class NewsCmsRESTEndpoint {
                 news.setCreateDate(oldNews.getCreateDate());
                 helper.mergeObject(em, news);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("News at index " + news.getId() + " does not exits"), em);
             throw new DataNotFoundException("News at index " + news.getId() + " does not exits");
         }
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -372,16 +399,19 @@ public class NewsCmsRESTEndpoint {
      * news in database.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountNews(@HeaderParam("authorization") String token) {
+    public Response getCountNews(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(n) From News n";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

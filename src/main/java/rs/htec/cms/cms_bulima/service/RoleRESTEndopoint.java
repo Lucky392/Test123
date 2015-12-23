@@ -8,17 +8,21 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.CmsRole;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
+import rs.htec.cms.cms_bulima.pojo.SeasonPOJO;
 
 /**
  *
@@ -40,6 +44,7 @@ public class RoleRESTEndopoint {
      * "id": 2 <br/>}<br/> ]<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for this exception: <br/>{<br/>
      * "errorMessage": "Requested page does not exist..",<br/> "errorCode": 404
@@ -49,14 +54,17 @@ public class RoleRESTEndopoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getRole(@HeaderParam("authorization") String token) {
+    public Response getRole(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.CMS_ROLE, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_ROLE, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<CmsRole> roles = em.createNamedQuery("CmsRole.findAll").getResultList();
         if (roles.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
-        return Response.ok().entity(roles).build();
+        Response response = Response.ok().entity(roles).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 }

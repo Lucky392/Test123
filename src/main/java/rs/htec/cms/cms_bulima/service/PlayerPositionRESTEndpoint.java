@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -15,12 +16,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PlayerPosition;
-import rs.htec.cms.cms_bulima.domain.PlayerSlot;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -42,6 +44,7 @@ public class PlayerPositionRESTEndpoint {
      * "createDate": 1388530800000,<br/> "name": "Midfield",<br/> "id": 3<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of player position we are searching for
      * @return Response 200 OK status with JSON body
      * @throw DataNotFoundException Example for exception:<br/> {<br/>
@@ -51,18 +54,21 @@ public class PlayerPositionRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response getPlayerPosition(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPlayerPosition(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PlayerPosition position = em.find(PlayerPosition.class, id);
         if (position == null) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no player position at index " + id + "!"), em);
             throw new DataNotFoundException("There is no player position at index " + id + "!");
         }
-        return Response.ok().entity(position).build();
+        Response response = Response.ok().entity(position).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * Returns all player positions. 
+     * Returns all player positions.
      * <br>Api: ../rest/playerPositions
      *
      * Example for JSON response: <br>
@@ -94,6 +100,7 @@ public class PlayerPositionRESTEndpoint {
      * <br>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for positions
      * @param limit number of positions method returns
      * @return list of player positions
@@ -101,11 +108,12 @@ public class PlayerPositionRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPlayerPositions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page, @DefaultValue("10") @QueryParam("limit") int limit) {
+    public Response getPlayerPositions(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page, @DefaultValue("10") @QueryParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PlayerPosition> positions = em.createNamedQuery("PlayerPosition.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (positions.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = "Select COUNT(p) From PlayerPosition p";
@@ -113,6 +121,8 @@ public class PlayerPositionRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(positions);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

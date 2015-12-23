@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,10 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumPackage;
 import rs.htec.cms.cms_bulima.domain.PremiumPackageContent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -103,13 +106,13 @@ public class PremiumPackageContentRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPackageContent(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getPackageContent(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderingColumn") String orderingColumn,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("packageName") String packageName,
             @QueryParam("packageId") String packageId) {
 
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PremiumPackageContent> packageContent;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumPackageContent p ");
         String operator = "WHERE"; 
@@ -138,6 +141,7 @@ public class PremiumPackageContentRESTEndpoint {
         }
         packageContent = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (packageContent == null || packageContent.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package content for search does not exist.."), em);
             throw new DataNotFoundException("Premium package content for search does not exist..");
         }
         String countQuery = query.toString().replaceFirst("p", "count(p)");
@@ -146,7 +150,9 @@ public class PremiumPackageContentRESTEndpoint {
         List<PremiumPackageContentPOJO> pojos = PremiumPackageContentPOJO.toBugReportPOJOList(packageContent);
         go.setCount(count);
         go.setData(pojos);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -165,6 +171,7 @@ public class PremiumPackageContentRESTEndpoint {
      * "id": 45<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of premium package content we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -175,16 +182,19 @@ public class PremiumPackageContentRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPackageContentById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPackageContentById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumPackageContent content = null;
         try {
             content = (PremiumPackageContent) em.createNamedQuery("PremiumPackageContent.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package content at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Premium package content at index " + id + " does not exist..");
         }
-        return Response.ok().entity(content).build();
+        Response response = Response.ok().entity(content).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -199,6 +209,7 @@ public class PremiumPackageContentRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param packageContent object that we want to insert in database
      * @return Response with status CREATED (201)
      *
@@ -206,9 +217,9 @@ public class PremiumPackageContentRESTEndpoint {
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPackageContent(@HeaderParam("authorization") String token, PremiumPackageContent packageContent) {
+    public Response insertPackageContent(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageContent packageContent) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         packageContent.setCreateDate(new Date());
 //        PremiumItem item = em.find(PremiumItem.class, idItem);
 //        packageContent.setIdPremiumItem(item);
@@ -216,7 +227,9 @@ public class PremiumPackageContentRESTEndpoint {
 //        packageContent.setIdPremiumPackage(premiumPackage);
 
         helper.persistObject(em, packageContent);
-        return Response.status(Response.Status.CREATED).build();
+        Response response = Response.status(Response.Status.CREATED).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 //    /**
@@ -251,6 +264,7 @@ public class PremiumPackageContentRESTEndpoint {
      *
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param packageContent
      * @return Response with status OK (200) "Successfully updated!"
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -261,9 +275,9 @@ public class PremiumPackageContentRESTEndpoint {
     @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateItemPackage(@HeaderParam("authorization") String token, PremiumPackageContent packageContent) {
+    public Response updateItemPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageContent packageContent) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         PremiumPackageContent oldPackageContent = em.find(PremiumPackageContent.class, packageContent.getId());
         if (oldPackageContent != null) {
@@ -275,10 +289,13 @@ public class PremiumPackageContentRESTEndpoint {
 //            packageContent.setIdPremiumPackage(premiumPackage);
             helper.mergeObject(em, packageContent);
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package content at index " + packageContent.getId() + " does not exits"), em);
             throw new DataNotFoundException("Premium package content at index " + packageContent.getId() + " does not exits");
         }
-
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
+        
     }
 
     /**
@@ -286,16 +303,19 @@ public class PremiumPackageContentRESTEndpoint {
      * number of all package contents in database.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountPackageContent(@HeaderParam("authorization") String token) {
+    public Response getCountPackageContent(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From PremiumPackageContent ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

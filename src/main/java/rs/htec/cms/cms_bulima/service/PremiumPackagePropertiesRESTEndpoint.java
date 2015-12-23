@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,10 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumPackageProperties;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -85,6 +88,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * }]<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param forPayingUser - true if you want only premium package properties
      * for paying users
      * @param forNonPayingUser - true if you want only premium package
@@ -98,10 +102,10 @@ public class PremiumPackagePropertiesRESTEndpoint {
      */
     @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumPackageProperties(@HeaderParam("authorization") String token, @DefaultValue("false") @QueryParam("forPayingUser") boolean forPayingUser,
+    public Response getPremiumPackageProperties(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("false") @QueryParam("forPayingUser") boolean forPayingUser,
             @DefaultValue("false") @QueryParam("forNonPayingUser") boolean forNonPayingUser) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PremiumPackageProperties> premiumPackageProperties;
         if (forPayingUser) {
             premiumPackageProperties = em.createNamedQuery("PremiumPackageProperties.findByForPayingUsers").setParameter("forPayingUsers", Short.parseShort("1")).getResultList();
@@ -113,6 +117,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
             }
         }
         if (premiumPackageProperties == null || premiumPackageProperties.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = "Select COUNT(p) From PremiumPackageProperties p";
@@ -120,7 +125,9 @@ public class PremiumPackagePropertiesRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(PremiumPackagePropertiesPOJO.toPremiumPackagePropertiesPOJOList(premiumPackageProperties));
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -154,6 +161,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of premium package properties we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -164,16 +172,19 @@ public class PremiumPackagePropertiesRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPackagePropertiesById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPackagePropertiesById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumPackageProperties properties = null;
         try {
             properties = (PremiumPackageProperties) em.createNamedQuery("PremiumPackageProperties.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package properties at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Premium package properties at index " + id + " does not exist..");
         }
-        return Response.ok().entity(new PremiumPackagePropertiesPOJO(properties)).build();
+        Response response = Response.ok().entity(new PremiumPackagePropertiesPOJO(properties)).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -203,6 +214,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "redirectUrl": "", <br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param premiumPackageProperties
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -212,15 +224,18 @@ public class PremiumPackagePropertiesRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPremiumAction(@HeaderParam("authorization") String token, PremiumPackageProperties premiumPackageProperties) {
+    public Response insertPremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageProperties premiumPackageProperties) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         premiumPackageProperties.setCreateDate(new Date());
         if (validator.checkLenght(premiumPackageProperties.getCharityDescription(), 255, true) && someAttributeIsNotNull(premiumPackageProperties)) {
             premiumPackageProperties.setCreateDate(new Date());
             helper.persistObject(em, premiumPackageProperties);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -274,6 +289,7 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * "id": 1 <br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param premiumPackageProperty
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -287,9 +303,9 @@ public class PremiumPackagePropertiesRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePremiumAction(@HeaderParam("authorization") String token, PremiumPackageProperties premiumPackageProperty) {
+    public Response updatePremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackageProperties premiumPackageProperty) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumPackageProperties oldPremiumPackageProperty = em.find(PremiumPackageProperties.class, premiumPackageProperty.getId());
         if (oldPremiumPackageProperty != null) {
             if (validator.checkLenght(premiumPackageProperty.getCharityDescription(), 255, true) && someAttributeIsNotNull(premiumPackageProperty)
@@ -297,13 +313,16 @@ public class PremiumPackagePropertiesRESTEndpoint {
                 premiumPackageProperty.setCreateDate(oldPremiumPackageProperty.getCreateDate());
                 helper.mergeObject(em, premiumPackageProperty);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package properies at index" + premiumPackageProperty.getId() + " does not exits"), em);
             throw new DataNotFoundException("Premium package properies at index" + premiumPackageProperty.getId() + " does not exits");
         }
-
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     private boolean someAttributeIsNotNull(PremiumPackageProperties premiumPackageProperties) {
@@ -325,17 +344,20 @@ public class PremiumPackagePropertiesRESTEndpoint {
      * method return number of all package properties in database.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountPackageProperties(@HeaderParam("authorization") String token) {
+    public Response getCountPackageProperties(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From PremiumPackageProperties ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 }

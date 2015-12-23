@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -21,10 +22,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumPackage;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -47,9 +50,9 @@ public class PremiumPackageRESTEndpoint {
     Validator validator;
 
     /**
-     * API for method: .../rest/packages?page=VALUE&limit=VALUE&search=VALUE This
-     * method returns JSON list. Default value for page is 1, and for limit is
-     * 10. You can put your values for page, limit and search. It produces
+     * API for method: .../rest/packages?page=VALUE&limit=VALUE&search=VALUE
+     * This method returns JSON list. Default value for page is 1, and for limit
+     * is 10. You can put your values for page, limit and search. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2 limit:
      * <br/>[ { <br/>"imageUrl": "",<br/> "updateTimestamp": null,<br/>
      * "createDate": 1427204474000,<br/>
@@ -66,6 +69,7 @@ public class PremiumPackageRESTEndpoint {
      * "Premium-Account - Halbserie",<br/> "id": 9<br/> } ]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for Package
      * @param limit number of Package method returns
      * @param search word for searching name, title and premiumStatusDuration
@@ -77,10 +81,10 @@ public class PremiumPackageRESTEndpoint {
      */
     @GET
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getPackage(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PremiumPackage> packages;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumPackage p ");
         if (search != null) {
@@ -94,6 +98,7 @@ public class PremiumPackageRESTEndpoint {
         }
         packages = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (packages == null || packages.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = query.toString().replaceFirst("p", "count(p)");
@@ -101,13 +106,14 @@ public class PremiumPackageRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(packages);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * API for method: .../rest/packages/nameAndId Returns list of id's and names for all Premium Packages. 
-
-     * Example for response: [ <br/>
+     * API for method: .../rest/packages/nameAndId Returns list of id's and
+     * names for all Premium Packages. * Example for response: [ <br/>
      * {<br/>
      * "name": "620 Fussi-Taler",<br/>
      * "id": 15<br/>
@@ -126,14 +132,15 @@ public class PremiumPackageRESTEndpoint {
      * }<br/> ]
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @return 200 OK, with list
      */
     @GET
     @Path("/nameAndId")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPackageNameAndId(@HeaderParam("authorization") String token) {
+    public Response getPackageNameAndId(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT id, name FROM PremiumPackage p";
         List<Object[]> list = em.createQuery(query).getResultList();
         List<HashMap> lhm = new ArrayList<>();
@@ -143,7 +150,9 @@ public class PremiumPackageRESTEndpoint {
             hm.put("name", row[1]);
             lhm.add(hm);
         }
-        return Response.ok().entity(lhm).build();
+        Response response = Response.ok().entity(lhm).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -158,6 +167,7 @@ public class PremiumPackageRESTEndpoint {
      * "id": 8 <br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of premium package we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -168,21 +178,24 @@ public class PremiumPackageRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPackageById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPackageById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumPackage premiumPackage = null;
         try {
             premiumPackage = (PremiumPackage) em.createNamedQuery("PremiumPackage.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Premium package at index " + id + " does not exist..");
         }
-        return Response.ok().entity(premiumPackage).build();
+        Response response = Response.ok().entity(premiumPackage).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * API for this method is .../rest/packages This method recieves JSON object,
-     * and put it in the base. Example for JSON that you need to send:
+     * API for this method is .../rest/packages This method recieves JSON
+     * object, and put it in the base. Example for JSON that you need to send:
      * <br/>{<br/>
      * "imageUrl": "",<br/> "updateTimestamp": null,<br/> "platform":
      * "ALL",<br/> "price": 19.99,<br/> "isActive": 1,<br/>
@@ -191,6 +204,7 @@ public class PremiumPackageRESTEndpoint {
      * null,<br/> "name": "Premium-Account - Saison-Paket"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param premiumPackage is an object that Jackson convert from JSON to
      * object
      * @return Response with status CREATED (201)
@@ -200,15 +214,18 @@ public class PremiumPackageRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPackage(@HeaderParam("authorization") String token, PremiumPackage premiumPackage) {
+    public Response insertPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackage premiumPackage) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         premiumPackage.setCreateDate(new Date());
         if (validator.checkLenght(premiumPackage.getName(), 255, true) && validator.checkLenght(premiumPackage.getImageUrl(), 255, true)
                 && validator.checkLenght(premiumPackage.getPlatform(), 255, true) && validator.checkLenght(premiumPackage.getTitle(), 255, true)) {
             helper.persistObject(em, premiumPackage);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -232,8 +249,9 @@ public class PremiumPackageRESTEndpoint {
 //        return Response.ok().build();
 //    }
     /**
-     * API for this method is .../rest/packages This method recieves JSON object,
-     * and update database. Example for JSON that you need to send: <br/>{
+     * API for this method is .../rest/packages This method recieves JSON
+     * object, and update database. Example for JSON that you need to send:
+     * <br/>{
      * <br/>"title": "Saison",<br/> "updateTimestamp": null,<br/> "createDate":
      * 1427204474000,<br/>
      * "imageUrl": "",<br/> "platform": "ALL",<br/> "price": 19.99,<br/>
@@ -243,6 +261,7 @@ public class PremiumPackageRESTEndpoint {
      * "id": 8<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param premiumPackage is an object that Jackson convert from JSON to
      * object
      * @return Response with status OK (200) "Successfully updated!"
@@ -255,21 +274,25 @@ public class PremiumPackageRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePackage(@HeaderParam("authorization") String token, PremiumPackage premiumPackage) {
+    public Response updatePackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumPackage premiumPackage) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumPackage oldPackage = em.find(PremiumPackage.class, premiumPackage.getId());
         if (oldPackage != null) {
             if (validator.checkLenght(premiumPackage.getName(), 255, true) && validator.checkLenght(premiumPackage.getImageUrl(), 255, true)
                     && validator.checkLenght(premiumPackage.getPlatform(), 255, true) && validator.checkLenght(premiumPackage.getTitle(), 255, true)) {
                 helper.mergeObject(em, premiumPackage);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium package at index " + premiumPackage.getId() + " does not exits"), em);
             throw new DataNotFoundException("Premium package at index " + premiumPackage.getId() + " does not exits");
         }
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -282,11 +305,13 @@ public class PremiumPackageRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountPackage(@HeaderParam("authorization") String token) {
+    public Response getCountPackage(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From PremiumPackage ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

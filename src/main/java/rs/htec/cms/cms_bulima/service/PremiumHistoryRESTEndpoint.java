@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -16,10 +17,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -36,7 +39,7 @@ public class PremiumHistoryRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
@@ -58,6 +61,7 @@ public class PremiumHistoryRESTEndpoint {
      * 07:44:19.0"<br/> } ]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param email is email for what user you want PremiumHistory
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for this exception:<br/> {<br/>
@@ -67,23 +71,26 @@ public class PremiumHistoryRESTEndpoint {
     @GET
     @Path("/user/{email}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumHistoryUser(@HeaderParam("authorization") String token, @PathParam("email") String email) {
+    public Response getPremiumHistoryUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("email") String email) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        List<PremiumHistory> history;
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        List<PremiumHistory> historyl;
         StringBuilder query = new StringBuilder("SELECT ph FROM PremiumHistory ph JOIN ph.idUser u WHERE u.email = '");
         query.append(email).append("'");
-        history = em.createQuery(query.toString()).getResultList();
-        if (history.isEmpty()) {
+        historyl = em.createQuery(query.toString()).getResultList();
+        if (historyl.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Premium History for this user!"), em);
             throw new DataNotFoundException("There is no Premium History for this user!");
         } else {
             String countQuery = query.toString().replaceFirst("ph", "count(ph)");
             long count = (long) em.createQuery(countQuery).getSingleResult();
             GetObject go = new GetObject();
-            List<PremiumHistoryPOJO> pojos = PremiumHistoryPOJO.toPremiumHistoryPOJOList(history);
+            List<PremiumHistoryPOJO> pojos = PremiumHistoryPOJO.toPremiumHistoryPOJOList(historyl);
             go.setCount(count);
             go.setData(pojos);
-            return Response.ok().entity(go).build();
+            Response response = Response.ok().entity(go).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         }
     }
 
@@ -114,23 +121,27 @@ public class PremiumHistoryRESTEndpoint {
     @GET
     @Path("club/{idClub}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumHistoryClub(@HeaderParam("authorization") String token, @PathParam("idClub") long idClub) {
+    public Response getPremiumHistoryClub(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("idClub") long idClub) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        List<PremiumHistory> history;
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        List<PremiumHistory> historyl;
         StringBuilder query = new StringBuilder("SELECT ph FROM PremiumHistory ph WHERE ph.idFantasyClub.id = ");
         query.append(idClub);
-        history = em.createQuery(query.toString()).getResultList();
-        if (history.isEmpty()) {
+        historyl = em.createQuery(query.toString()).getResultList();
+        if (historyl.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Premium History for this Club!"), em);
             throw new DataNotFoundException("There is no Premium History for this Club!");
         } else {
             String countQuery = query.toString().replaceFirst("ph", "count(ph)");
             long count = (long) em.createQuery(countQuery).getSingleResult();
             GetObject go = new GetObject();
-            List<PremiumHistoryPOJO> pojos = PremiumHistoryPOJO.toPremiumHistoryPOJOList(history);
+            List<PremiumHistoryPOJO> pojos = PremiumHistoryPOJO.toPremiumHistoryPOJOList(historyl);
             go.setCount(count);
             go.setData(pojos);
-            return Response.ok().entity(go).build();
+            Response response = Response.ok().entity(go).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
+
         }
     }
 
@@ -152,17 +163,20 @@ public class PremiumHistoryRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param premiumHistory PremiumHistory in JSON
      * @return status 201 created
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPremiumHistory(@HeaderParam("authorization") String token, PremiumHistory premiumHistory) {
+    public Response insertPremiumHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumHistory premiumHistory) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         premiumHistory.setCreateDate(new Date());
         helper.persistObject(em, premiumHistory);
-        return Response.status(Response.Status.CREATED).build();
+        Response response = Response.status(Response.Status.CREATED).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
 }

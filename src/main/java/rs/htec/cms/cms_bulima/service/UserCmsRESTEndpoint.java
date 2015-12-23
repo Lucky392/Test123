@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,10 +19,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.exception.BasicAuthenticationException;
@@ -61,23 +64,27 @@ public class UserCmsRESTEndpoint {
      * } ]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsers(@HeaderParam("authorization") String token) {
+    public Response getUsers(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<CmsUser> users = em.createNamedQuery("CmsUser.findAll").getResultList();
         if (users == null || users.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         // should be cripted
         for (CmsUser user : users) {
             user.setPassword("******");
         }
-        return Response.ok().entity(users).build();
+        Response response = Response.ok().entity(users).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -185,14 +192,15 @@ public class UserCmsRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response createUser(@HeaderParam("authorization") String token, CmsUser user) {
+    public Response createUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, CmsUser user) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<CmsUser> userDb = (List<CmsUser>) em
                 .createQuery("SELECT u FROM CmsUser u WHERE u.userName = :userName")
                 .setParameter("userName", user.getUserName())
                 .getResultList();
         if (userDb != null && userDb.size() > 0) {
+            helper.setResponseToHistory(history, new InputValidationException("User with username '" + user.getUserName() + "' already exist"), em);
             throw new InputValidationException("User with username '" + user.getUserName() + "' already exist");
         }
         if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {
@@ -203,26 +211,33 @@ public class UserCmsRESTEndpoint {
                 Logger.getLogger(UserCmsRESTEndpoint.class.getName()).log(Level.SEVERE, null, ex);
             }
             helper.persistObject(em, user);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
 
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateUser(@HeaderParam("authorization") String token, CmsUser user) {
+    public Response updateUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, CmsUser user) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.CMS_USER, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (validator.checkLenght(user.getUserName(), 255, false) && validator.checkLenght(user.getPassword(), 255, false)) {
             CmsUser oldUser = em.find(CmsUser.class, user.getId());
             if (oldUser != null) {
                 helper.mergeObject(em, user);
             } else {
+                helper.setResponseToHistory(history, new DataNotFoundException("User at index " + user.getId() + " does not exits"), em);
                 throw new DataNotFoundException("User at index " + user.getId() + " does not exits");
             }
-            return Response.ok().build();
+            Response response = Response.ok().build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }

@@ -9,15 +9,18 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.Season;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -49,6 +52,7 @@ public class SeasonRESTEndpoint {
      * }<br/>
      *
      * @param token- header parameter for checking permission
+     * @param request
      * @param id - for Season
      * @return 200 OK and Season in JSON
      * @throws DataNotFoundException if there is no Season for id
@@ -56,17 +60,20 @@ public class SeasonRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSeasonById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getSeasonById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         SeasonPOJO pojo;
         try {
             Season season = (Season) em.createNamedQuery("Season.findById").setParameter("id", id).getSingleResult();
             pojo = new SeasonPOJO(season);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Season at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Season at index " + id + " does not exist..");
         }
-        return Response.ok().entity(pojo).build();
+        Response response = Response.ok().entity(pojo).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -85,17 +92,21 @@ public class SeasonRESTEndpoint {
      * }]<br>
      *
      * @param token
+     * @param request
      * @return Season List
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSeasons(@HeaderParam("authorization") String token) {
+    public Response getSeasons(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<Season> seasons = em.createNamedQuery("Season.findAll").getResultList();
         if (seasons.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no seasons!"), em);
             throw new DataNotFoundException("There is no seasons!");
         }
-        return Response.ok().entity(SeasonPOJO.toSeasonPOJOList(seasons)).build();
+        Response response = Response.ok().entity(SeasonPOJO.toSeasonPOJOList(seasons)).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

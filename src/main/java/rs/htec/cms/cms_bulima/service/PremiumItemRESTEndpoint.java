@@ -8,8 +8,8 @@ package rs.htec.cms.cms_bulima.service;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -19,10 +19,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumItem;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -83,6 +85,7 @@ public class PremiumItemRESTEndpoint {
      * "id": 10<br/> } ]
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for
      * @param limit number of Objects method returns
      * @param search word for searching name, shopName
@@ -95,10 +98,10 @@ public class PremiumItemRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumItems(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getPremiumItems(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PremiumItem> items;
         StringBuilder query = new StringBuilder("SELECT p FROM PremiumItem p ");
         if (search != null) {
@@ -110,6 +113,7 @@ public class PremiumItemRESTEndpoint {
         }
         items = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (items == null || items.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = query.toString().replaceFirst("p", "count(p)");
@@ -118,12 +122,15 @@ public class PremiumItemRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(items);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * API for method: .../rest/items/{id} This method return single element of premium items at index
-     * in JSON. Example for JSON response: { <br/>"imageUrl": "images/shop/Icon_Ersatzbank.png",<br/>
+     * API for method: .../rest/items/{id} This method return single element of
+     * premium items at index in JSON. Example for JSON response: {
+     * <br/>"imageUrl": "images/shop/Icon_Ersatzbank.png",<br/>
      * "shopName": "Ersatzbank",<br/> "descriptionLong": "Falls ein Spieler aus
      * deiner gepeicherten Aufstellung an einem Spieltag nicht zum Einsatz
      * kommt, können Spieler von der Ersatzbank nachrücken. Diese Spieler müssen
@@ -137,7 +144,9 @@ public class PremiumItemRESTEndpoint {
      * kommt, können Spieler von der Ersatzbank nachrücken. Die Spieler können
      * nur dann in deine Aufstellung nachrücken, wenn sie auch an dem Spieltag
      * zum Einsatz kommen.",<br/> "name": "Ersatzbank",<br/> "id": 2<br/> }
+     *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of premium items we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -148,18 +157,21 @@ public class PremiumItemRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumItemById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getPremiumItemById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumItem item = null;
         try {
             item = (PremiumItem) em.createNamedQuery("PremiumItem.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium item at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Premium item at index " + id + " does not exist..");
         }
-        return Response.ok().entity(item).build();
+        Response response = Response.ok().entity(item).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
-    
+
     /**
      * API for this method is .../rest/items This method recieves JSON object,
      * and put it in the base. Example for JSON that you need to send:
@@ -181,6 +193,7 @@ public class PremiumItemRESTEndpoint {
      * Einsatz kommen.",<br/> "name": "Ersatzbank"<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param item is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -189,16 +202,19 @@ public class PremiumItemRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertItem(@HeaderParam("authorization") String token, PremiumItem item) {
+    public Response insertItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItem item) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         item.setCreateDate(new Date());
         if (validator.checkLenght(item.getName(), 255, true) && validator.checkLenght(item.getImageUrl(), 255, true)
                 && validator.checkLenght(item.getShopName(), 255, true) && validator.checkLenght(item.getDescription(), 639, true)
                 && validator.checkLenght(item.getDescriptionLong(), 639, true)) {
             helper.persistObject(em, item);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
 
         }
@@ -225,7 +241,6 @@ public class PremiumItemRESTEndpoint {
 //        helper.removeObject(em, item, id);
 //        return Response.ok().build();
 //    }
-
     /**
      * API for this method is .../rest/items This method recieves JSON object,
      * and update database. Example for JSON that you need to send:<br/> {<br/>
@@ -256,9 +271,9 @@ public class PremiumItemRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateItem(@HeaderParam("authorization") String token, PremiumItem item) {
+    public Response updateItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumItem item) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumItem oldItem = em.find(PremiumItem.class, item.getId());
         if (oldItem != null) {
             if (validator.checkLenght(item.getName(), 255, true) && validator.checkLenght(item.getImageUrl(), 255, true)
@@ -266,28 +281,36 @@ public class PremiumItemRESTEndpoint {
                     && validator.checkLenght(item.getDescriptionLong(), 639, true)) {
                 helper.mergeObject(em, item);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium item at index" + item.getId() + " does not exits"), em);
             throw new DataNotFoundException("Premium item at index" + item.getId() + " does not exits");
         }
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
-    
+
     /**
-     * API for this method: .../rest/items/count
-     * This method return number of all items in database.
+     * API for this method: .../rest/items/count This method return number of
+     * all items in database.
+     *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountPremiumItem(@HeaderParam("authorization") String token){
+    public Response getCountPremiumItem(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(ip) From PremiumItem ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+         Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }

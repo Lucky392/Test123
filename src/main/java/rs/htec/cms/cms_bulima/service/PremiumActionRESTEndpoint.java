@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -19,10 +20,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.PremiumAction;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -37,13 +40,13 @@ import rs.htec.cms.cms_bulima.helper.Validator;
  */
 @Path("/premium_actions")
 public class PremiumActionRESTEndpoint {
-    
+
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
-    
+
     /**
      * API for method: .../rest/premium_actions?page=VALUE&limit=VALUE This
      * method returns JSON list. Default value for page is 1, and for limit is
@@ -62,6 +65,7 @@ public class PremiumActionRESTEndpoint {
      * You can also
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for Premium actions
      * @param limit number of Premium actions method returns
      * @return Response 200 OK with JSON body
@@ -71,14 +75,15 @@ public class PremiumActionRESTEndpoint {
      * "errorCode": 404<br/> }
      *
      */
-    @GET  //question?page=1&limit=10&minDate=1438387200000&maxDate=1439164800000&search=Viktor&column=id
+    @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getPremiumActions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getPremiumActions(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<PremiumAction> premiumActions = em.createNamedQuery("PremiumAction.findAll").getResultList();
         if (premiumActions == null || premiumActions.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Requested page does not exist.."), em);
             throw new DataNotFoundException("Requested page does not exist..");
         }
         String countQuery = "Select COUNT(p) From PremiumAction p";
@@ -86,7 +91,9 @@ public class PremiumActionRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(premiumActions);
-        return Response.ok().entity(go).build();
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -98,6 +105,7 @@ public class PremiumActionRESTEndpoint {
      * "id": 1<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of premium action we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
      * exception:<br/> {<br/>
@@ -108,16 +116,19 @@ public class PremiumActionRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getActionById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getActionById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumAction action = null;
         try {
             action = (PremiumAction) em.createNamedQuery("PremiumAction.findById").setParameter("id", id).getSingleResult();
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium action at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Premium action at index " + id + " does not exist..");
         }
-        return Response.ok().entity(action).build();
+        Response response = Response.ok().entity(action).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
@@ -129,6 +140,8 @@ public class PremiumActionRESTEndpoint {
      * }<br/>
      *
      * @param token is a header parameter for checking permission
+     * @param request
+     * @param premiumActions
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -137,14 +150,17 @@ public class PremiumActionRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertPremiumAction(@HeaderParam("authorization") String token, PremiumAction premiumActions) {
+    public Response insertPremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumAction premiumActions) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.ADD, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         premiumActions.setCreateDate(new Date());
         if (validator.checkLenght(premiumActions.getName(), 255, true)) {
             helper.persistObject(em, premiumActions);
-            return Response.status(Response.Status.CREATED).build();
+            Response response = Response.status(Response.Status.CREATED).build();
+            helper.setResponseToHistory(history, response, em);
+            return response;
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -169,7 +185,6 @@ public class PremiumActionRESTEndpoint {
 //        helper.removeObject(em, premiumActions, id);
 //        return Response.ok().build();
 //    }
-
     /**
      * API for this method is .../rest/premium_actions This method recieves JSON
      * object, and update database. Example for JSON that you need to send:<br/>
@@ -178,6 +193,8 @@ public class PremiumActionRESTEndpoint {
      * "id": 15<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
+     * @param premiumAction
      * @return Response with status OK (200) "Successfully updated!"
      * @throws InputValidationException Example for this exception: <br/> {<br/>
      * "errorMessage": "Validation failed",<br/>
@@ -189,38 +206,45 @@ public class PremiumActionRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updatePremiumAction(@HeaderParam("authorization") String token, PremiumAction premiumAction) {
+    public Response updatePremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request, PremiumAction premiumAction) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         PremiumAction oldPremiumAction = em.find(PremiumAction.class, premiumAction.getId());
         if (oldPremiumAction != null) {
             if (validator.checkLenght(premiumAction.getName(), 255, true)) {
                 premiumAction.setCreateDate(oldPremiumAction.getCreateDate());
                 helper.mergeObject(em, premiumAction);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Premium action at index" + premiumAction.getId() + " does not exits"), em);
             throw new DataNotFoundException("Premium action at index" + premiumAction.getId() + " does not exits");
         }
-
-        return Response.ok().build();
+        Response response = Response.ok().build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 
     /**
-     * API for this method: .../rest/premium_actions/count
-     * This method return number of all actions in database.
+     * API for this method: .../rest/premium_actions/count This method return
+     * number of all actions in database.
+     *
      * @param token is a header parameter for checking permission
+     * @param request
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountPremiumAction(@HeaderParam("authorization") String token){
+    public Response getCountPremiumAction(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "Select COUNT(p) From PremiumAction p";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());
-        return Response.ok().entity(count).build();
+        Response response = Response.ok().entity(count).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
     }
 }
