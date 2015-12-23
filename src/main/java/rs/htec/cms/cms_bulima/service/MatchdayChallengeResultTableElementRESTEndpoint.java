@@ -178,7 +178,7 @@ public class MatchdayChallengeResultTableElementRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateMatchdayChallengeResultTableElement(@HeaderParam("authorization") String token, @Context HttpServletRequest request, MatchdayChallengeResultTableElement matchdayChallengeResultTableElement) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), matchdayChallengeResultTableElement);
         MatchdayChallengeResultTableElement foundedElement = em.find(MatchdayChallengeResultTableElement.class, matchdayChallengeResultTableElement.getId());
         if (foundedElement != null) {
             Validator validator = new Validator();

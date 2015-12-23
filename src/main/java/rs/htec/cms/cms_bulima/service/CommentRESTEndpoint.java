@@ -194,7 +194,7 @@ public class CommentRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertComment(@HeaderParam("authorization") String token, @Context HttpServletRequest request, Comment comment) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), comment);
         Validator validator = new Validator();
         if (validator.checkLenght(comment.getMessage(), 505, true)) {
             comment.setCreateDate(new Date());
@@ -228,7 +228,7 @@ public class CommentRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateComment(@HeaderParam("authorization") String token, @Context HttpServletRequest request, Comment comment) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.NEWS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), comment);
         Comment oldComment = em.find(Comment.class, comment.getId());
         Validator validator = new Validator();
         if (oldComment != null) {

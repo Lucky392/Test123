@@ -103,7 +103,7 @@ public class CreditHistoryRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertsFantasyClubCreditHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyClubCreditHistory creditHistory) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), creditHistory);
         if (validator.checkLenght(creditHistory.getAction(), 255, false)) {
             creditHistory.setCreateDate(new Date());
             helper.persistObject(em, creditHistory);
@@ -120,7 +120,7 @@ public class CreditHistoryRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateFantasyClubCreditHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyClubCreditHistory fantasyClubCreditHistory) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), fantasyClubCreditHistory);
         FantasyClubCreditHistory oldFantasyClubCreditHistory = em.find(FantasyClubCreditHistory.class, fantasyClubCreditHistory.getId());
         if (oldFantasyClubCreditHistory != null) {
             oldFantasyClubCreditHistory.setCredit(fantasyClubCreditHistory.getCredit());

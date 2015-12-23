@@ -202,7 +202,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyManagerMatchdayChallengeLineUpPlayer fantasyManagerMatchdayChallengeLineUpPlayer) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), fantasyManagerMatchdayChallengeLineUpPlayer);
         FantasyManagerMatchdayChallengeLineUpPlayer foundedFantasyManagerMatchdayChallengeLineUpPlayer = em.find(FantasyManagerMatchdayChallengeLineUpPlayer.class, fantasyManagerMatchdayChallengeLineUpPlayer.getId());
         if (foundedFantasyManagerMatchdayChallengeLineUpPlayer != null) {
             helper.mergeObject(em, fantasyManagerMatchdayChallengeLineUpPlayer);
@@ -237,7 +237,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyManagerMatchdayChallengeLineUpPlayer fantasyManagerMatchdayChallengeLineUpPlayer) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), fantasyManagerMatchdayChallengeLineUpPlayer);
         fantasyManagerMatchdayChallengeLineUpPlayer.setCreateDate(new Date());
         helper.persistObject(em, fantasyManagerMatchdayChallengeLineUpPlayer);
         helper.setResponseToHistory(history, Response.ok().build(), em);

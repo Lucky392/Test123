@@ -76,7 +76,7 @@ public class FileUploadRESTEndpoint {
         CmsActionHistory history;
         switch (where) {
             case ImageLocationConstants.PLAYER:
-                history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+                history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), fileDetail.getName());
                 uploadedFileLocation = "webapps/bulima-data/images/bulima-player-card/photos/";
                 databaseString = Util.getInstance().getAssetsUrl() + "images/bulima-player-card/photos/";
                 break;

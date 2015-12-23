@@ -140,7 +140,7 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
             @Context HttpServletRequest request, 
             MatchdayChallengeScoreCalculation scoreCalculation) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), scoreCalculation);
 //        scoreCalculation.setIdMatchdayChallenge(em.find(MatchdayChallenge.class, scoreCalculation.));
         if (validator.checkLenght(scoreCalculation.getCalculationSql(), 255, true)) {
             scoreCalculation.setCreateDate(new Date());
@@ -158,7 +158,7 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
             @Context HttpServletRequest request, 
             MatchdayChallengeScoreCalculation scoreCalculation) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), scoreCalculation);
         MatchdayChallengeScoreCalculation x = em.find(MatchdayChallengeScoreCalculation.class, scoreCalculation.getId());
         if (x != null) {
             if (validator.checkLenght(scoreCalculation.getCalculationSql(), 255, true)) {

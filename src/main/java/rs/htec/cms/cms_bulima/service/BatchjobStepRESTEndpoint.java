@@ -162,7 +162,7 @@ public class BatchjobStepRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertBatchjobStep(@HeaderParam("authorization") String token, @Context HttpServletRequest request, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), batchjobStep);
         if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {
             helper.persistObject(em, batchjobStep);
         } else {
@@ -195,7 +195,7 @@ public class BatchjobStepRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBatchjob(@HeaderParam("authorization") String token, @Context HttpServletRequest request, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), batchjobStep);
         BatchjobStep oldBatchjobStep = em.find(BatchjobStep.class, batchjobStep.getId());
         if (oldBatchjobStep != null) {
             if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {

@@ -143,7 +143,7 @@ public class FantasyManagerMatchdayChallengeLineUpRESTEndpoint {
     public Response insertFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token,
             @Context HttpServletRequest request, FantasyManagerMatchdayChallengeLineUp fantasyManagerMatchdayChallengeLineUp) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), fantasyManagerMatchdayChallengeLineUp);
         if (fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager() != null
                 && fantasyManagerMatchdayChallengeLineUp.getIdMatchdayChallenge() != null
                 && validator.checkLenght(fantasyManagerMatchdayChallengeLineUp.getFormation(), 255, false)) {
@@ -163,7 +163,7 @@ public class FantasyManagerMatchdayChallengeLineUpRESTEndpoint {
     public Response updateFantasyManagerMatchdayChallengeLineUp(@HeaderParam("authorization") String token,
             @Context HttpServletRequest request, FantasyManagerMatchdayChallengeLineUp fantasyManagerMatchdayChallengeLineUp) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), fantasyManagerMatchdayChallengeLineUp);
         FantasyManagerMatchdayChallengeLineUp f = em.find(FantasyManagerMatchdayChallengeLineUp.class, fantasyManagerMatchdayChallengeLineUp.getId());
         if (f != null) {
             if (fantasyManagerMatchdayChallengeLineUp.getIdFantasyManager() != null

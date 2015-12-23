@@ -314,6 +314,7 @@ public class BugReportRESTEndpoint {
      *}<br/>
      * 
      * @param token header parameter for checking permission
+     * @param request
      * @param bugReport in body in JSON
      * @return response OK (200) if Bug report is updated
      * @throws DataNotFoundException if BugReport requested for update doesn't exist
@@ -324,7 +325,7 @@ public class BugReportRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateBugReport(@HeaderParam("authorization") String token, @Context HttpServletRequest request, BugReport bugReport) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), bugReport);
         BugReport foundedBugReport = em.find(BugReport.class, bugReport.getId());
         if (foundedBugReport != null) {
             Validator validator = new Validator();

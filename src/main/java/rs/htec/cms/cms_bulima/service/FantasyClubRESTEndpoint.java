@@ -227,7 +227,7 @@ public class FantasyClubRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateFantasyClub(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyClub fantasyClub) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), fantasyClub);
         FantasyClub oldFC = em.find(FantasyClub.class, fantasyClub.getId());
         if (oldFC != null) {
             if (validator.checkLenght(fantasyClub.getName(), 255, true)

@@ -150,7 +150,12 @@ public class RestHelperClass {
         history.setResponseCode(r.getStatus());
         ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
         try {
-            history.setResponseEntity(trimAll(ow.writeValueAsString(r.getEntity())).trim());
+            String entity = trimAll(ow.writeValueAsString(r.getEntity())).trim();
+            if (entity.length() > 65534) {
+                history.setResponseEntity("Too long!");
+            } else {
+                history.setResponseEntity(entity);
+            }
         } catch (IOException ex) {
             Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -202,7 +207,7 @@ public class RestHelperClass {
         em.getTransaction().commit();
     }
 
-    public String trimAll(String string){
+    public String trimAll(String string) {
         string = string.replaceAll("\t", "");
         string = string.replaceAll("\n", "");
         string = string.replaceAll(" ", "");

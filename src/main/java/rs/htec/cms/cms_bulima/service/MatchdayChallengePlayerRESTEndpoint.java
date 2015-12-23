@@ -253,7 +253,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
             @Context HttpServletRequest request, 
             MatchdayChallengePlayer matchdayChallengePlayer) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), matchdayChallengePlayer);
         if (matchdayChallengePlayer.getIdMatchdayChallenge() != null
                 && matchdayChallengePlayer.getIdPlayer() != null) {
             helper.persistObject(em, matchdayChallengePlayer);
@@ -283,7 +283,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
     @Path("/insertPlayers")
     public Response insertPlayers(@HeaderParam("authorization") String token, @Context HttpServletRequest request, MatchdayChallengePlayerPOST players) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), players);
         for (int i = 0; i < players.getListOfPlayersID().size(); i++) {
             MatchdayChallengePlayer player = new MatchdayChallengePlayer();
             player.setIdMatchdayChallenge(new MatchdayChallenge(players.getMatchdayID()));
@@ -301,7 +301,7 @@ public class MatchdayChallengePlayerRESTEndpoint {
             @Context HttpServletRequest request, 
             MatchdayChallengePlayer matchdayChallengePlayer) {
         EntityManager em = helper.getEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), matchdayChallengePlayer);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, matchdayChallengePlayer.getId());
         if (x != null) {
             if (matchdayChallengePlayer.getIdMatchdayChallenge() != null

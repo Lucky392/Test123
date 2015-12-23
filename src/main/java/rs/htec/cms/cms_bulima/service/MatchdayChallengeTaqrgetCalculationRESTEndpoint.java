@@ -197,7 +197,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @Path("/{id}")
     public Response insertTargetCalculation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long idMatchdayChallenge, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), mctc);
         MatchdayChallenge mc = em.find(MatchdayChallenge.class, idMatchdayChallenge);
         if (mc == null) {
             helper.setResponseToHistory(history, new DataNotFoundException("Matchday challenge at index " + idMatchdayChallenge + " does not exits!"), em);
@@ -240,7 +240,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateTargetCalculation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
-        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), mctc);
         MatchdayChallengeTargetCalculation oldMctc = em.find(MatchdayChallengeTargetCalculation.class, mctc.getId());
         if (oldMctc != null) {
             oldMctc.setUpdateAt(new Date());
