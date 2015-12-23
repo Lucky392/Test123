@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
+import java.util.List;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,14 +17,17 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author lazar
+ * @author marko
  */
 @Entity
 @Table(name = "CMS_USER")
@@ -57,6 +61,8 @@ public class CmsUser implements Serializable {
     @JoinColumn(name = "id_role", referencedColumnName = "id")
     @ManyToOne
     private CmsRole idRole;
+    @OneToMany(mappedBy = "idCmsUser")
+    private List<CmsActionHistory> cmsActionHistoryList;
 
     public CmsUser() {
     }
@@ -111,6 +117,16 @@ public class CmsUser implements Serializable {
         this.idRole = idRole;
     }
 
+    @XmlTransient
+    @JsonIgnore
+    public List<CmsActionHistory> getCmsActionHistoryList() {
+        return cmsActionHistoryList;
+    }
+
+    public void setCmsActionHistoryList(List<CmsActionHistory> cmsActionHistoryList) {
+        this.cmsActionHistoryList = cmsActionHistoryList;
+    }
+
     @Override
     public int hashCode() {
         int hash = 0;
@@ -133,7 +149,7 @@ public class CmsUser implements Serializable {
 
     @Override
     public String toString() {
-        return id + "";
+        return "rs.htec.cms.cms_bulima.domain.CmsUser[ id=" + id + " ]";
     }
     
 }

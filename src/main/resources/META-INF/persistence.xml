@@ -1,89 +1,90 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <persistence version="2.1" xmlns="http://xmlns.jcp.org/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
-    <persistence-unit name="rs.htec.cms_CMS_Bulima_war_1.0PU" transaction-type="RESOURCE_LOCAL">
-        <provider>org.hibernate.ejb.HibernatePersistence</provider>
-        <class>rs.htec.cms.cms_bulima.domain.Formation</class>
-        <class>rs.htec.cms.cms_bulima.domain.Emblem</class>
-        <class>rs.htec.cms.cms_bulima.domain.SliderContent</class>
-        <class>rs.htec.cms.cms_bulima.domain.Season</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyClub</class>
-        <class>rs.htec.cms.cms_bulima.domain.League</class>
-        <class>rs.htec.cms.cms_bulima.domain.User</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyLeague</class>
-        <class>rs.htec.cms.cms_bulima.domain.News</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyPlayer</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyLeaguePlayer</class>
-        <class>rs.htec.cms.cms_bulima.domain.Matchday</class>
-        <class>rs.htec.cms.cms_bulima.domain.Player</class>
-        <class>rs.htec.cms.cms_bulima.domain.CmsRole</class>
-        <class>rs.htec.cms.cms_bulima.domain.Nation</class>
-        <class>rs.htec.cms.cms_bulima.domain.PlayerPosition</class>
-        <class>rs.htec.cms.cms_bulima.domain.PlayerSlot</class>
-        <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDay</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyClubLogo</class>
-        <class>rs.htec.cms.cms_bulima.domain.FavoriteClub</class>
-        <class>rs.htec.cms.cms_bulima.domain.Club</class>
-        <class>rs.htec.cms.cms_bulima.domain.CmsTables</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyManager</class>
-        <class>rs.htec.cms.cms_bulima.domain.CmsUserPrivileges</class>
-        <class>rs.htec.cms.cms_bulima.domain.CmsUser</class>
-        <class>rs.htec.cms.cms_bulima.domain.Competition</class>
-        <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize</class>
-        <class>rs.htec.cms.cms_bulima.domain.Bid</class>
-        <class>rs.htec.cms.cms_bulima.domain.Auction</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyClubValuation</class>
-        <class>rs.htec.cms.cms_bulima.domain.Reward</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumHistory</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumItem</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumAction</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumPackage</class>
-        <class>rs.htec.cms.cms_bulima.domain.BatchjobController</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumPackageContent</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumPackageProperties</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumItemPackage</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyClubLineUp</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer</class>
-        <class>rs.htec.cms.cms_bulima.domain.LoginHistory</class>
-        <class>rs.htec.cms.cms_bulima.domain.UserPremiumItem</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchPlayer</class>
-        <class>rs.htec.cms.cms_bulima.domain.BatchjobStep</class>
-        <class>rs.htec.cms.cms_bulima.domain.BatchjobHistory</class>
-        <class>rs.htec.cms.cms_bulima.domain.Batchjob</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUp</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUpPlayer</class>
-        <class>rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeResult</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchdayChallenge</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengePlayer</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeResultTableElement</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeScoreCalculation</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation</class>
-        <class>rs.htec.cms.cms_bulima.domain.Match</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchPlayerEvent</class>
-        <class>rs.htec.cms.cms_bulima.domain.MatchPlayerStat</class>
-        <class>rs.htec.cms.cms_bulima.domain.Salesorder</class>
-        <class>rs.htec.cms.cms_bulima.domain.PremiumSeasonalPackage</class>
-        <class>rs.htec.cms.cms_bulima.domain.Dashboard</class>
-        <class>rs.htec.cms.cms_bulima.domain.Comment</class>
-        <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <properties>
-            <!--jdbc:mysql://10.10.0.40:3306/bulima com.mysql.jdbc.Driver-->
-            <!--localhost:3306-->
-            <!--bulima-cms-devel.htec.co.rs:13306-->
-            <!--10.10.10.14:3306 jsQwP8LzCxJ8-->
-            <!--10.10.0.40:3306 bulima-->
-            <property name="javax.persistence.jdbc.url" value="${jdbc.url}"/>
-            <property name="javax.persistence.jdbc.user" value="${jdbc.user}"/>
-            <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
-            <property name="javax.persistence.jdbc.password" value="${jdbc.password}"/>
-            <!--            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.10.14:3306/bulima"/>
+  <persistence-unit name="rs.htec.cms_CMS_Bulima_war_1.0PU" transaction-type="RESOURCE_LOCAL">
+    <provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>rs.htec.cms.cms_bulima.domain.Formation</class>
+    <class>rs.htec.cms.cms_bulima.domain.Emblem</class>
+    <class>rs.htec.cms.cms_bulima.domain.SliderContent</class>
+    <class>rs.htec.cms.cms_bulima.domain.Season</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClub</class>
+    <class>rs.htec.cms.cms_bulima.domain.League</class>
+    <class>rs.htec.cms.cms_bulima.domain.User</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyLeague</class>
+    <class>rs.htec.cms.cms_bulima.domain.News</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyPlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyLeaguePlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.Matchday</class>
+    <class>rs.htec.cms.cms_bulima.domain.Player</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsRole</class>
+    <class>rs.htec.cms.cms_bulima.domain.Nation</class>
+    <class>rs.htec.cms.cms_bulima.domain.PlayerPosition</class>
+    <class>rs.htec.cms.cms_bulima.domain.PlayerSlot</class>
+    <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDay</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLogo</class>
+    <class>rs.htec.cms.cms_bulima.domain.FavoriteClub</class>
+    <class>rs.htec.cms.cms_bulima.domain.Club</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsTables</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyManager</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsUserPrivileges</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsUser</class>
+    <class>rs.htec.cms.cms_bulima.domain.Competition</class>
+    <class>rs.htec.cms.cms_bulima.domain.QuestionOfTheDayPrize</class>
+    <class>rs.htec.cms.cms_bulima.domain.Bid</class>
+    <class>rs.htec.cms.cms_bulima.domain.Auction</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubValuation</class>
+    <class>rs.htec.cms.cms_bulima.domain.Reward</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumHistory</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumItem</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumAction</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumPackage</class>
+    <class>rs.htec.cms.cms_bulima.domain.BatchjobController</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumPackageContent</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumPackageProperties</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumItemPackage</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLineUp</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.LoginHistory</class>
+    <class>rs.htec.cms.cms_bulima.domain.UserPremiumItem</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchPlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.BatchjobStep</class>
+    <class>rs.htec.cms.cms_bulima.domain.BatchjobHistory</class>
+    <class>rs.htec.cms.cms_bulima.domain.Batchjob</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUp</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUpPlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeResult</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchdayChallenge</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengePlayer</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeResultTableElement</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeScoreCalculation</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation</class>
+    <class>rs.htec.cms.cms_bulima.domain.Match</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchPlayerEvent</class>
+    <class>rs.htec.cms.cms_bulima.domain.MatchPlayerStat</class>
+    <class>rs.htec.cms.cms_bulima.domain.Salesorder</class>
+    <class>rs.htec.cms.cms_bulima.domain.PremiumSeasonalPackage</class>
+    <class>rs.htec.cms.cms_bulima.domain.Dashboard</class>
+    <class>rs.htec.cms.cms_bulima.domain.Comment</class>
+    <class>rs.htec.cms.cms_bulima.domain.CmsActionHistory</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <!--jdbc:mysql://10.10.0.40:3306/bulima com.mysql.jdbc.Driver-->
+      <!--localhost:3306-->
+      <!--bulima-cms-devel.htec.co.rs:13306-->
+      <!--10.10.10.14:3306 jsQwP8LzCxJ8-->
+      <!--10.10.0.40:3306 bulima-->
+      <property name="javax.persistence.jdbc.url" value="${jdbc.url}"/>
+      <property name="javax.persistence.jdbc.user" value="${jdbc.user}"/>
+      <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
+      <property name="javax.persistence.jdbc.password" value="${jdbc.password}"/>
+      <!--            <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.10.14:3306/bulima"/>
             <property name="javax.persistence.jdbc.user" value="bulima"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.password" value="jsQwP8LzCxJ8"/>-->
-            <!--                    <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima"/>
+      <!--                    <property name="javax.persistence.jdbc.url" value="jdbc:mysql://10.10.0.40:3306/bulima"/>
             <property name="javax.persistence.jdbc.user" value="bulima"/>
             <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
             <property name="javax.persistence.jdbc.password" value="bulima"/>-->
-        </properties>
-    </persistence-unit>
+    </properties>
+  </persistence-unit>
 </persistence>

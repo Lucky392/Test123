@@ -26,7 +26,7 @@ import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
- * @author lazar
+ * @author marko
  */
 @Entity
 @Table(name = "CMS_ROLE")
@@ -122,7 +122,7 @@ public class CmsRole implements Serializable {
 
     @Override
     public String toString() {
-        return id + "";
+        return "rs.htec.cms.cms_bulima.domain.CmsRole[ id=" + id + " ]";
     }
     
 }

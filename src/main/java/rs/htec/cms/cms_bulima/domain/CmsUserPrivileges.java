@@ -6,6 +6,7 @@
 package rs.htec.cms.cms_bulima.domain;
 
 import java.io.Serializable;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
@@ -14,9 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 /**
  *
@@ -35,15 +35,24 @@ import org.codehaus.jackson.annotate.JsonIgnore;
     @NamedQuery(name = "CmsUserPrivileges.findByDeleteAction", query = "SELECT c FROM CmsUserPrivileges c WHERE c.deleteAction = :deleteAction"),
     @NamedQuery(name = "CmsUserPrivileges.findByPK", query = "SELECT c FROM CmsUserPrivileges c WHERE c.cmsUserPrivilegesPK.roleId = :roleId AND c.cmsUserPrivilegesPK.tableId = :tableId")})
 public class CmsUserPrivileges implements Serializable {
+
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected CmsUserPrivilegesPK cmsUserPrivilegesPK;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "search_action")
     private boolean searchAction;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "edit_action")
     private boolean editAction;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "add_action")
     private boolean addAction;
+    @Basic(optional = false)
+    @NotNull
     @Column(name = "delete_action")
     private boolean deleteAction;
     @JoinColumn(name = "role_id", referencedColumnName = "id", insertable = false, updatable = false)
@@ -60,12 +69,18 @@ public class CmsUserPrivileges implements Serializable {
         this.cmsUserPrivilegesPK = cmsUserPrivilegesPK;
     }
 
+    public CmsUserPrivileges(CmsUserPrivilegesPK cmsUserPrivilegesPK, boolean searchAction, boolean editAction, boolean addAction, boolean deleteAction) {
+        this.cmsUserPrivilegesPK = cmsUserPrivilegesPK;
+        this.searchAction = searchAction;
+        this.editAction = editAction;
+        this.addAction = addAction;
+        this.deleteAction = deleteAction;
+    }
+
     public CmsUserPrivileges(long roleId, long tableId) {
         this.cmsUserPrivilegesPK = new CmsUserPrivilegesPK(roleId, tableId);
     }
 
-    @XmlTransient
-    @JsonIgnore
     public CmsUserPrivilegesPK getCmsUserPrivilegesPK() {
         return cmsUserPrivilegesPK;
     }
@@ -144,7 +159,7 @@ public class CmsUserPrivileges implements Serializable {
 
     @Override
     public String toString() {
-        return cmsUserPrivilegesPK + "";
+        return "rs.htec.cms.cms_bulima.domain.CmsUserPrivileges[ cmsUserPrivilegesPK=" + cmsUserPrivilegesPK + " ]";
     }
-    
+
 }

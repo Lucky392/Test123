@@ -5,15 +5,22 @@
  */
 package rs.htec.cms.cms_bulima.helper;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.ObjectWriter;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.CmsUser;
 import rs.htec.cms.cms_bulima.domain.CmsUserPrivileges;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -98,8 +105,56 @@ public class RestHelperClass {
                 throw new NotAuthorizedException("You are not logged in!");
             }
         } catch (NullPointerException | ArrayIndexOutOfBoundsException | IllegalArgumentException ex) {
+            Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
             throw new NotAuthorizedException("You are not logged in!");
         }
+    }
+
+    public CmsActionHistory checkUserAndPrivileges(EntityManager em, long tableId, MethodConstants method, String token, String requestUrl, Object bodyContent) {
+        CmsActionHistory history = null;
+        try {
+            history = new CmsActionHistory();
+            ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+            try {
+                history.setBodyContent(trimAll(ow.writeValueAsString(bodyContent)).trim());
+            } catch (IOException ex) {
+                Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            history.setRequestUrl(requestUrl);
+            history.setCreateDate(new Date());
+            history.setMethodType(method.name());
+            CmsUser user = em.find(CmsUser.class, Long.parseLong(tokenHelper.decode(token).split("##")[1]));
+            history.setIdCmsUser(user);
+            if (user.getToken() != null && !user.getToken().equals("")) {
+                if (!havePrivilege(em, user, tableId, method)) {
+                    WebApplicationException e = new ForbbidenException("You don't have permission to search data");
+                    setResponseToHistory(history, e, em);
+                    throw e;
+                }
+            } else {
+                WebApplicationException e = new NotAuthorizedException("You are not logged in!");
+                setResponseToHistory(history, e, em);
+                throw e;
+            }
+            return history;
+        } catch (NullPointerException | ArrayIndexOutOfBoundsException | IllegalArgumentException ex) {
+            Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
+            WebApplicationException e = new NotAuthorizedException("You are not logged in!");
+            setResponseToHistory(history, e, em);
+            throw e;
+        }
+    }
+
+    public void setResponseToHistory(CmsActionHistory history, Object response, EntityManager em) {
+        Response r = response instanceof Response ? (Response) response : ((WebApplicationException) response).getResponse();
+        history.setResponseCode(r.getStatus());
+        ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
+        try {
+            history.setResponseEntity(trimAll(ow.writeValueAsString(r.getEntity())).trim());
+        } catch (IOException ex) {
+            Logger.getLogger(RestHelperClass.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        persistObject(em, history);
     }
 
     private boolean havePrivilege(EntityManager em, CmsUser user, long tableID, MethodConstants method) {
@@ -147,4 +202,10 @@ public class RestHelperClass {
         em.getTransaction().commit();
     }
 
+    public String trimAll(String string){
+        string = string.replaceAll("\t", "");
+        string = string.replaceAll("\n", "");
+        string = string.replaceAll(" ", "");
+        return string;
+    }
 }
