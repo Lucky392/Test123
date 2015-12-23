@@ -6,12 +6,15 @@
 package rs.htec.cms.cms_bulima.service;
 
 import com.sun.jersey.api.core.InjectParam;
+import java.util.List;
 import javax.persistence.EntityManager;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
@@ -19,6 +22,7 @@ import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Nation;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
+import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
@@ -31,9 +35,30 @@ public class NationRESTEndpoint {
     @InjectParam
     RestHelperClass helper;
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getNations(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("name") String name) {
+        EntityManager em = EMF.createEntityManager();
+        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        StringBuilder query = new StringBuilder("SELECT n FROM Nation n ");
+        if (name != null){
+            query.append("WHERE n.name LIKE '%")
+                    .append(name)
+                    .append("%'");
+        }
+        List<Nation> nations = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        String countQuery = query.toString().replaceFirst("n", "count(n)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(nations);
+        return Response.ok().entity(go).build();
+    }
+
     /**
-     * API for method: .../rest/nations/{id} This method return single element of
-     * club at index in JSON. Example for JSON response:<br/>{
+     * API for method: .../rest/nations/{id} This method return single element
+     * of club at index in JSON. Example for JSON response:<br/>{
      * <br/>"createDate": 1388530800000,<br/> "name": "Österreich",<br/> "id": 3
      * <br/> }
      *
