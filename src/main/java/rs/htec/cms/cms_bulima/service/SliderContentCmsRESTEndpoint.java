@@ -41,14 +41,14 @@ public class SliderContentCmsRESTEndpoint {
 
     @InjectParam
     RestHelperClass helper;
-    
+
     @InjectParam
     Validator validator;
 
     /**
-     * API for method: .../rest/sliders?page=VALUE&limit=VALUE&order= This method returns JSON
-     * list of slider content at defined page with defined limit. 
-     * Default value for page is 1, and for limit is 10. It produces
+     * API for method: .../rest/sliders?page=VALUE&limit=VALUE&order= This
+     * method returns JSON list of slider content at defined page with defined
+     * limit. Default value for page is 1, and for limit is 10. It produces
      * APPLICATION_JSON media type. Example for JSON list for 1 page, 2
      * limit:<br/> [ {<br/> "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
@@ -77,7 +77,8 @@ public class SliderContentCmsRESTEndpoint {
      * @param token is a header parameter for checking permission
      * @param page number of page at which we search for sliders
      * @param limit number of sliders this method returns
-     * @param order orders by defined column in ascending order (if with - then descending)
+     * @param order orders by defined column in ascending order (if with - then
+     * descending)
      * @return Response 200 OK with JSON body
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "There is no sliders!",<br/>
@@ -86,7 +87,7 @@ public class SliderContentCmsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getSlider(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page, @DefaultValue("10")@QueryParam("limit") int limit, @QueryParam("order") String order) {
+    public Response getSlider(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page, @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("order") String order) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.SEARCH, token);
         StringBuilder query = new StringBuilder("SELECT s FROM SliderContent s");
@@ -96,9 +97,9 @@ public class SliderContentCmsRESTEndpoint {
             }
             query.append(" ORDER BY ").append(order);
         }
-        
+
         List<SliderContent> slider = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
-        
+
         if (slider.isEmpty()) {
             throw new DataNotFoundException("There is no sliders!");
         }
@@ -111,8 +112,9 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/sliders/{id} This method return single element of slider at index
-     * in JSON. Example for JSON response: <br/>{<br/> "contentUrl":
+     * API for method: .../rest/sliders/{id} This method return single element
+     * of slider at index in JSON. Example for JSON response: <br/>{<br/>
+     * "contentUrl":
      * "http://assets.bundesligamanager.htec.co.rs/home_slider/sl_dailymessage.jpg",<br/>
      * "redirectUrl": "page=home",<br/> "showForMsec": "5000",<br/>
      * "idCompetition": "null",<br/> "positionInSlider": "1",<br/>
@@ -123,6 +125,7 @@ public class SliderContentCmsRESTEndpoint {
      * 2015/2016!{@code </a></div>}",<br/>
      * "startShowingAt": "2015-05-03 18:10:00.0",<br/> "createDate": "2015-02-17
      * 15:59:00.0"<br/> }
+     *
      * @param token is a header parameter for checking permission
      * @param id of slider we are searching for
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -145,7 +148,7 @@ public class SliderContentCmsRESTEndpoint {
         }
         return Response.ok().entity(slider).build();
     }
-    
+
     /**
      * API for this method is .../rest/sliders This method recieves JSON object,
      * and put it in the base. Example for JSON:<br/> {<br/> "contentUrl":
@@ -168,9 +171,26 @@ public class SliderContentCmsRESTEndpoint {
     public Response insertSlider(@HeaderParam("authorization") String token, SliderContent slider) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.ADD, token);
-        if (validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
+        if (slider.getContentUrl() != null && slider.getStartShowingAt() != null && slider.getStopShowingAt() != null
+                && validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
                 && validator.checkLenght(slider.getText(), 1023, true)) {
+            if (slider.getPositionInSlider() == null) {
+                slider.setPositionInSlider(0);
+            }
+            if (slider.getText() == null) {
+                slider.setText("");
+            }
+            if (slider.getRedirectUrl() == null) {
+                slider.setText("");
+            }
+            if (slider.getShowForMsec() == null) {
+                slider.setShowForMsec(5000);
+            }
+            if (slider.getRedirectUrl() == null) {
+                slider.setRedirectUrl("");
+            }
             slider.setCreateDate(new Date());
+            slider.setUpdateAt(new Date());
             helper.persistObject(em, slider);
             return Response.status(Response.Status.CREATED).build();
         } else {
@@ -179,10 +199,10 @@ public class SliderContentCmsRESTEndpoint {
     }
 
     /**
-     * API for method: .../rest/sliders/{id} This method find slider with defined
-     * id. Id is retrieved from URL. If slider content with that index does not
-     * exist method throws exception. Otherwise method remove that slider
-     * content.
+     * API for method: .../rest/sliders/{id} This method find slider with
+     * defined id. Id is retrieved from URL. If slider content with that index
+     * does not exist method throws exception. Otherwise method remove that
+     * slider content.
      *
      * @param token is a header parameter for checking permission
      * @param id of News that should be deleted.
@@ -225,9 +245,26 @@ public class SliderContentCmsRESTEndpoint {
         helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
         SliderContent oldSlider = em.find(SliderContent.class, slider.getId());
         if (oldSlider != null) {
-            if (validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
+            if (slider.getContentUrl() != null && slider.getStartShowingAt() != null && slider.getStopShowingAt() != null
+                    && validator.checkLenght(slider.getContentUrl(), 255, true) && validator.checkLenght(slider.getRedirectUrl(), 255, true)
                     && validator.checkLenght(slider.getText(), 1023, true)) {
-                slider.setCreateDate(new Date());
+                if (slider.getPositionInSlider() == null) {
+                    slider.setPositionInSlider(0);
+                }
+                if (slider.getText() == null) {
+                    slider.setText("");
+                }
+                if (slider.getRedirectUrl() == null) {
+                    slider.setText("");
+                }
+                if (slider.getShowForMsec() == null) {
+                    slider.setShowForMsec(5000);
+                }
+                if (slider.getRedirectUrl() == null) {
+                    slider.setRedirectUrl("");
+                }
+                slider.setCreateDate(oldSlider.getCreateDate());
+                slider.setUpdateAt(new Date());
                 helper.mergeObject(em, slider);
                 return Response.ok().build();
             } else {
@@ -237,17 +274,18 @@ public class SliderContentCmsRESTEndpoint {
             throw new DataNotFoundException("Slider at index" + slider.getId() + " does not exits");
         }
     }
-    
+
     /**
-     * API for this method: .../rest/sliders/count
-     * This method return number of all sliders in database.
+     * API for this method: .../rest/sliders/count This method return number of
+     * all sliders in database.
+     *
      * @param token is a header parameter for checking permission
      * @return Response 200 OK with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public Response getCountSlider(@HeaderParam("authorization") String token){
+    public Response getCountSlider(@HeaderParam("authorization") String token) {
         EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From SliderContent ip";
