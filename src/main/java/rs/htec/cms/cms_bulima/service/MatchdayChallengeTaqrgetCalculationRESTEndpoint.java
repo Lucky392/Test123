@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -21,10 +22,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -66,6 +69,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param id of MatchdayChallengeTargetCalculation that should be returned
      * @return MatchdayChallengeTargetCalculation for defined id
      * @throws DataNotFoundException if MatchdayChallengeTargetCalculation does
@@ -74,16 +78,18 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchDayById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getMatchDayById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchdayChallengeTargetCalculationPOJO pojo;
         try {
             MatchdayChallengeTargetCalculation matchday = (MatchdayChallengeTargetCalculation) em.createNamedQuery("MatchdayChallengeTargetCalculation.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchdayChallengeTargetCalculationPOJO(matchday);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("MatchdayChallengeTargetCalculation at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("MatchdayChallengeTargetCalculation at index " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -109,6 +115,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
      * "id": 2<br/> } ]<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for target calculation
      * @param limit number of target calculation method returns
      * @param search word for searching calculationSql
@@ -122,12 +129,12 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTargetCalculation(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getTargetCalculation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search,
             @QueryParam("matchdayChallengeID") long matchChallengeID,
             @QueryParam("minUpdateDate") long minDate, @QueryParam("maxUpdateDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallengeTargetCalculation m ");
         if (search != null) {
             search = "%" + search + "%";
@@ -153,6 +160,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
         }
         List<MatchdayChallengeTargetCalculation> targetCalculation = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (targetCalculation == null || targetCalculation.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no target calculation for this search!"), em);
             throw new DataNotFoundException("There is no target calculation for this search!");
         }
         String countQuery = query.toString().replaceFirst("m", "count(m)");
@@ -161,6 +169,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(MatchdayChallengeTargetCalculationPOJO.toMatchPOJOList(targetCalculation));
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 
@@ -172,6 +181,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
      * "calculationType": null,<br/> "value": 4<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param idMatchdayChallenge id of Matchday challenge
      * @param mctc is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
@@ -185,11 +195,12 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response insertTargetCalculation(@HeaderParam("authorization") String token, @PathParam("id") long idMatchdayChallenge, MatchdayChallengeTargetCalculation mctc) {
+    public Response insertTargetCalculation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long idMatchdayChallenge, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchdayChallenge mc = em.find(MatchdayChallenge.class, idMatchdayChallenge);
         if (mc == null) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Matchday challenge at index " + idMatchdayChallenge + " does not exits!"), em);
             throw new DataNotFoundException("Matchday challenge at index " + idMatchdayChallenge + " does not exits!");
         }
         mctc.setIdMatchdayChallenge(mc);
@@ -199,8 +210,10 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
         }
         if (validator.checkLenght(mctc.getCalculationSql(), 255, true) && validator.checkLenght(mctc.getCalculationType(), 255, true) && validator.checkLenght(mctc.getOperation(), 255, true)) {
             helper.persistObject(em, mctc);
+            helper.setResponseToHistory(history, Response.status(Response.Status.CREATED).build(), em);
             return Response.status(Response.Status.CREATED).build();
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -213,6 +226,7 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
      * "SUM(match_foulsSuffered)",<br/> "id": 6 <br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param mctc is an object that Jackson convert from JSON to object
      * @return Response with status OK (200)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -224,9 +238,9 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateTargetCalculation(@HeaderParam("authorization") String token, MatchdayChallengeTargetCalculation mctc) {
+    public Response updateTargetCalculation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchdayChallengeTargetCalculation oldMctc = em.find(MatchdayChallengeTargetCalculation.class, mctc.getId());
         if (oldMctc != null) {
             oldMctc.setUpdateAt(new Date());
@@ -245,10 +259,13 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
                 }
                 helper.mergeObject(em, oldMctc);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
+            helper.setResponseToHistory(history, Response.ok().build(), em);
             return Response.ok().build();
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Target calculation at index " + mctc.getId() + " does not exits"), em);
             throw new DataNotFoundException("Target calculation at index " + mctc.getId() + " does not exits");
         }
     }

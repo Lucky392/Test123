@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,10 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyManagerMatchdayChallengeLineUpPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -53,6 +56,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
      * }<br/>
      * 
      * @param token
+     * @param request
      * @param id
      * @return FantasyManagerMatchdayChallengeLineUpPlayer
      * @throws DataNotFoundException if FantasyManagerMatchdayChallengeLineUpPlayer doesn't exist for defined id
@@ -60,16 +64,18 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyManagerMatchdayChallengeLineUpPlayerById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getFantasyManagerMatchdayChallengeLineUpPlayerById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyManagerMatchdayChallengeLineUpPlayerPOJO pojo;
         try {
             FantasyManagerMatchdayChallengeLineUpPlayer matchdayChallengeLineUpPlayer = (FantasyManagerMatchdayChallengeLineUpPlayer) em.createNamedQuery("FantasyManagerMatchdayChallengeLineUpPlayer.findById").setParameter("id", id).getSingleResult();
             pojo = new FantasyManagerMatchdayChallengeLineUpPlayerPOJO(matchdayChallengeLineUpPlayer);
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("FantasyManagerMatchdayChallengeLineUp with id " + id + " does not exist.."), em);
             throw new DataNotFoundException("FantasyManagerMatchdayChallengeLineUp with id " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
     
@@ -108,6 +114,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
      *}<br/>
      * 
      * @param token
+     * @param request
      * @param page
      * @param limit
      * @param orderBy column
@@ -121,11 +128,11 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("form") long from, @QueryParam("to") long to,
             @QueryParam("idMatchdayChallengePlayer") String idMatchdayChallengePlayer, @QueryParam("idMatchdayChallengeLineUp") String idMatchdayChallengeLineUp, @QueryParam("slot") String slot) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<FantasyManagerMatchdayChallengeLineUpPlayer> challengeLineUpPlayerList;
         StringBuilder query = new StringBuilder("SELECT f FROM FantasyManagerMatchdayChallengeLineUpPlayer f ");
@@ -158,6 +165,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
 
         challengeLineUpPlayerList = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (challengeLineUpPlayerList == null || challengeLineUpPlayerList.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is FantasyManagerMatchdayChallengeLineUpPlayer for this search!"), em);
             throw new DataNotFoundException("There is FantasyManagerMatchdayChallengeLineUpPlayer for this search!");
         }
 
@@ -168,6 +176,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
         long count = (long) em.createQuery(countQuery).getSingleResult();
         go.setCount(count);
         go.setData(pojos);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
     
@@ -183,6 +192,7 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
      * "slot": 9<br/>
      * }<br/>
      * @param token
+     * @param request
      * @param fantasyManagerMatchdayChallengeLineUpPlayer
      * @return Status OK (200)
      * @throws DataNotFoundException if Object in body does not exits in DB.
@@ -190,15 +200,17 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
     @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, FantasyManagerMatchdayChallengeLineUpPlayer fantasyManagerMatchdayChallengeLineUpPlayer) {
+    public Response updateFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyManagerMatchdayChallengeLineUpPlayer fantasyManagerMatchdayChallengeLineUpPlayer) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyManagerMatchdayChallengeLineUpPlayer foundedFantasyManagerMatchdayChallengeLineUpPlayer = em.find(FantasyManagerMatchdayChallengeLineUpPlayer.class, fantasyManagerMatchdayChallengeLineUpPlayer.getId());
         if (foundedFantasyManagerMatchdayChallengeLineUpPlayer != null) {
             helper.mergeObject(em, fantasyManagerMatchdayChallengeLineUpPlayer);
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("FantasyManagerMatchdayChallengeLineUpPlayer at index " + fantasyManagerMatchdayChallengeLineUpPlayer.getId() + " does not exits"), em);
             throw new DataNotFoundException("FantasyManagerMatchdayChallengeLineUpPlayer at index " + fantasyManagerMatchdayChallengeLineUpPlayer.getId() + " does not exits");
         }
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
     
@@ -216,17 +228,19 @@ public class FantasyManagerMatchdayChallengeLineUpPlayerRESTEndpoint{
      * }<br/>
      * 
      * @param token
+     * @param request
      * @param fantasyManagerMatchdayChallengeLineUpPlayer
      * @return Status OK (200)
      */
     @POST
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, FantasyManagerMatchdayChallengeLineUpPlayer fantasyManagerMatchdayChallengeLineUpPlayer) {
+    public Response insertFantasyManagerMatchdayChallengeLineUpPlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyManagerMatchdayChallengeLineUpPlayer fantasyManagerMatchdayChallengeLineUpPlayer) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         fantasyManagerMatchdayChallengeLineUpPlayer.setCreateDate(new Date());
         helper.persistObject(em, fantasyManagerMatchdayChallengeLineUpPlayer);
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 }

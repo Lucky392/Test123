@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,11 +19,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.BatchjobHistory;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
@@ -93,6 +96,7 @@ public class BatchjobHistoryRESTEndpoint {
      * "count": 23766 <br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for Batchjob history
      * @param limit number of Batchjob history returns
      * @param search word for searching jobName
@@ -106,11 +110,11 @@ public class BatchjobHistoryRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getHistory(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request,@DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search,
             @QueryParam("startDate") long startDate, @QueryParam("endDate") long endDate, @QueryParam("returnValue") String returnValue) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT bh FROM BatchjobHistory bh ");
         if (startDate != 0) {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -141,9 +145,10 @@ public class BatchjobHistoryRESTEndpoint {
                     .append(returnValue.toUpperCase())
                     .append("'");
         }
-        List<BatchjobHistory> history = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        List<BatchjobHistory> bhistory = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         System.out.println(query);
-        if (history == null || history.isEmpty()) {
+        if (bhistory == null || bhistory.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no batch job history for this search!"), em);
             throw new DataNotFoundException("There is no batch job history for this search!");
         }
         String countQuery = query.toString().replaceFirst("bh", "count(bh)");
@@ -151,7 +156,8 @@ public class BatchjobHistoryRESTEndpoint {
         long count = (long) em.createQuery(countQuery).getSingleResult();
         GetObject go = new GetObject();
         go.setCount(count);
-        go.setData(history);
+        go.setData(bhistory);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 
@@ -161,6 +167,7 @@ public class BatchjobHistoryRESTEndpoint {
      * "OK",<br/> "FAILED"<br/> ]
      *
      * @param token
+     * @param request
      * @return Response 200 OK status with JSON body
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
      * "errorMessage": "There is no returnValues!",<br/>
@@ -169,14 +176,16 @@ public class BatchjobHistoryRESTEndpoint {
     @GET
     @Path("/returnValues")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReturnValues(@HeaderParam("authorization") String token) {
+    public Response getReturnValues(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT distinct bh.returnValue FROM BatchjobHistory bh";
         List<String> returnValues = em.createQuery(query).getResultList();
         if (returnValues.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no returnValues!"), em);
             throw new DataNotFoundException("There is no returnValues!");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(returnValues).build(), em);
         return Response.ok().entity(returnValues).build();
     }
 }

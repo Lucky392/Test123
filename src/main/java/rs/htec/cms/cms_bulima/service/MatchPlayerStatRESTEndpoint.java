@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,10 +19,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.MatchPlayerStat;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -107,6 +110,7 @@ public class MatchPlayerStatRESTEndpoint {
      * }<br/>
      * 
      * @param token - header parameter for checking permission
+     * @param request
      * @param id - of MatchPlayerStat that should be returned
      * @return MatchPlayerStat
      * @throws DataNotFoundException if MatchPlayerStat for id does not exist
@@ -114,16 +118,18 @@ public class MatchPlayerStatRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchPlayerStatById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getMatchPlayerStatById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchPlayerStatPOJO pojo;
         try {
             MatchPlayerStat matchPlayerStat = (MatchPlayerStat) em.createNamedQuery("MatchPlayerStat.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchPlayerStatPOJO(matchPlayerStat);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("MatchPlayerStat with id " + id + " does not exist.."), em);
             throw new DataNotFoundException("MatchPlayerStat with id " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -201,6 +207,7 @@ public class MatchPlayerStatRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param page number of page for searched results
      * @param limit number of matchPlayerStats that are returned in body
      * @param orderBy column name (if there is - before colum name, results will be sorted in descending order)
@@ -214,11 +221,11 @@ public class MatchPlayerStatRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchPlayerStat(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchPlayerStat(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("idMatchPlayer") String idMatchPlayer) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<MatchPlayerStat> matchPlayerStat;
         StringBuilder query = new StringBuilder("SELECT m FROM MatchPlayerStat m");
@@ -245,6 +252,7 @@ public class MatchPlayerStatRESTEndpoint {
 
         matchPlayerStat = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (matchPlayerStat == null || matchPlayerStat.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no MatchPlayerStat for this search!"), em);
             throw new DataNotFoundException("There is no MatchPlayerStat for this search!");
         }
 
@@ -255,6 +263,7 @@ public class MatchPlayerStatRESTEndpoint {
         long count = (long) em.createQuery(countQuery).getSingleResult();
         go.setCount(count);
         go.setData(pojos);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 }

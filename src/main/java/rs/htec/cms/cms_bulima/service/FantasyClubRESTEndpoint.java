@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -17,10 +18,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyClub;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -91,10 +94,10 @@ public class FantasyClubRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyClubs(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getFantasyClubs(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("fantasyManagerID") long fantasyManagerID, @QueryParam("fantasyLeagueID") long fantasyLeagueID, @QueryParam("name") String name) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<FantasyClub> fc;
         StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f ");
         if (fantasyManagerID != 0) {
@@ -113,10 +116,12 @@ public class FantasyClubRESTEndpoint {
                     .append("%'");
         }
         if (fantasyManagerID == 0 && fantasyLeagueID == 0 && name == null) {
+            helper.setResponseToHistory(history, new MethodNotAllowedException("Method not allowed, you need to use some query params!"), em);
             throw new MethodNotAllowedException("Method not allowed, you need to use some query params!");
         }
         fc = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (fc.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Fantasy Club for this Manager!"), em);
             throw new DataNotFoundException("There is no Fantasy Club for this Manager!");
         } else {
             String countQuery = query.toString().replaceFirst("f", "count(f)");
@@ -124,6 +129,7 @@ public class FantasyClubRESTEndpoint {
             GetObject go = new GetObject();
             go.setCount(count);
             go.setData(FantasyClubPOJO.toFantasyCLubPOJOList(fc));
+            helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
             return Response.ok().entity(go).build();
         }
     }
@@ -175,17 +181,19 @@ public class FantasyClubRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyClubById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getFantasyClubById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyClub fc;
         StringBuilder query = new StringBuilder("SELECT f FROM FantasyClub f WHERE f.id = ");
         query.append(id);
         fc = (FantasyClub) em.createQuery(query.toString()).getSingleResult();
         if (fc == null) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Fantasy Club for this id!"), em);
             throw new DataNotFoundException("There is no Fantasy Club for this id!");
         } else {
             FantasyClubPOJO pojo = new FantasyClubPOJO(fc);
+            helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
             return Response.ok().entity(pojo).build();
         }
     }
@@ -217,9 +225,9 @@ public class FantasyClubRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateFantasyClub(@HeaderParam("authorization") String token, FantasyClub fantasyClub) {
+    public Response updateFantasyClub(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyClub fantasyClub) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyClub oldFC = em.find(FantasyClub.class, fantasyClub.getId());
         if (oldFC != null) {
             if (validator.checkLenght(fantasyClub.getName(), 255, true)
@@ -234,11 +242,14 @@ public class FantasyClubRESTEndpoint {
 
                 helper.mergeObject(em, fantasyClub);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("FantasyClub at index " + fantasyClub.getId() + " does not exits"), em);
             throw new DataNotFoundException("FantasyClub at index " + fantasyClub.getId() + " does not exits");
         }
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 

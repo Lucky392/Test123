@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,10 +19,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.Match;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -58,6 +61,7 @@ public class MatchRESTEndpoint {
      *
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of Match that is looked for
      * @return 
      * @throws DataNotFoundException Example for exception:<br/> {<br/>
@@ -67,16 +71,18 @@ public class MatchRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getMatchById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchPOJO pojo;
         try {
             Match match = (Match) em.createNamedQuery("Match.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchPOJO(match);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Match at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Match at index " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -113,6 +119,7 @@ public class MatchRESTEndpoint {
      * "startTime": 1437822000000,<br/> "id": 2<br/> } ]<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for Match
      * @param limit number of Match returns
      * @param clubID id of club
@@ -125,10 +132,10 @@ public class MatchRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatch(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatch(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("clubID") long clubID, @QueryParam("matchdayID") long matchdayID, @QueryParam("startDate") long startDate) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT m FROM Match m ");
         if (clubID != 0) {
             query.append("WHERE (m.idGuestClub.id = ")
@@ -154,6 +161,7 @@ public class MatchRESTEndpoint {
         List<Match> matches = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         System.out.println(query);
         if (matches == null || matches.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no mathes for this search!"), em);
             throw new DataNotFoundException("There is no mathes for this search!");
         }
         String countQuery = query.toString().replaceFirst("m", "count(m)");
@@ -162,6 +170,7 @@ public class MatchRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(MatchPOJO.toMatchPOJOList(matches));
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 }

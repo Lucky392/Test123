@@ -8,16 +8,19 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUp;
 import rs.htec.cms.cms_bulima.domain.FantasyClubLineUpPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
@@ -84,6 +87,7 @@ public class FantasyClubLineUpRESTEndpoint {
      *
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param idFantasyClub id for fantasy club
      * @param idMatchday id for matchday
      * @return 200 OK with FantasyClubLineUpPlayer list in JSON format
@@ -91,14 +95,15 @@ public class FantasyClubLineUpRESTEndpoint {
     @GET
     @Path("/{idFantasyClub}/{idMatchday}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLineUp(@HeaderParam("authorization") String token, @PathParam("idFantasyClub") long idFantasyClub,
+    public Response getLineUp(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("idFantasyClub") long idFantasyClub,
             @PathParam("idMatchday") long idMatchday) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyClubLineUp lineUp = LineUpDifference.getLineUp(em, idFantasyClub, idMatchday);
         List<FantasyClubLineUpPlayer> lineUpPlayer = LineUpDifference.getLineUpList(em, lineUp.getId());
 
         List<FantasyClubLineUpPlayerPOJO> lineUpPlayerPOJO = FantasyClubLineUpPlayerPOJO.toFantasyClubLineUpPlayerPOJOList(lineUpPlayer);
+        helper.setResponseToHistory(history, Response.ok().entity(lineUpPlayerPOJO).build(), em);
         return Response.ok().entity(lineUpPlayerPOJO).build();
     }
 
@@ -201,6 +206,7 @@ public class FantasyClubLineUpRESTEndpoint {
      *
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param idFantasyClub1 id for first fantasy club
      * @param idFantasyClub2 id for second fantasy club
      * @param idMatchday1 id for first match day
@@ -210,10 +216,10 @@ public class FantasyClubLineUpRESTEndpoint {
     @GET
     @Path("/difference")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getDifference(@HeaderParam("authorization") String token, @QueryParam("idFantasyClub1") long idFantasyClub1,
+    public Response getDifference(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @QueryParam("idFantasyClub1") long idFantasyClub1,
             @QueryParam("idFantasyClub2") long idFantasyClub2, @QueryParam("idMatchday1") long idMatchday1, @QueryParam("idMatchday2") long idMatchday2) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         FantasyClubLineUp lineUp = LineUpDifference.getLineUp(em, idFantasyClub1, idMatchday1);
         List<FantasyClubLineUpPlayer> lineUpPlayers1 = LineUpDifference.getLineUpList(em, lineUp.getId());
@@ -228,6 +234,7 @@ public class FantasyClubLineUpRESTEndpoint {
         Long pointsDifference = (points1 != null && points2 != null) ? (points2 - points1) : null;
 
         LineUpDifferencePOJO pojo = new LineUpDifferencePOJO(lineUpDifference, fDiff, pointsDifference);
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -258,6 +265,7 @@ public class FantasyClubLineUpRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param id of FantasyClubLineUp
      * @return 200 OK with FantasyClubLineUp in JSON format
      * @throws DataNotFoundException if FantasyClubLineUp with id doesn't exist
@@ -266,17 +274,18 @@ public class FantasyClubLineUpRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLineUpId(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getLineUpId(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyClubLineUpPOJO pojo = null;
         try {
             FantasyClubLineUp fantasyClubLineUp = (FantasyClubLineUp) em.createNamedQuery("FantasyClubLineUp.findById").setParameter("id", id).getSingleResult();
             pojo = new FantasyClubLineUpPOJO(fantasyClubLineUp);
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Fantasy Club Line Up at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Fantasy Club Line Up at index " + id + " does not exist..");
         }
-
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 }

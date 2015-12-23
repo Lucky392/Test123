@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -17,10 +18,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.MatchPlayer;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -60,6 +63,7 @@ public class MatchPlayerRESTEndpoint {
      *}<br/>
      * 
      * @param token - header parameter for checking permission
+     * @param request
      * @param id - of MatchPlayer that should be returned
      * @return MatchPlayer in JSON
      * @throws DataNotFoundException if MatchPlayer doesn't exist for defined id
@@ -67,16 +71,18 @@ public class MatchPlayerRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchPlayerById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getMatchPlayerById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchPlayerPOJO pojo;
         try {
             MatchPlayer player = (MatchPlayer) em.createNamedQuery("MatchPlayer.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchPlayerPOJO(player);
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("MatchPlayer at index " + id + " does not exist.." + e.getMessage()), em);
             throw new DataNotFoundException("MatchPlayer at index " + id + " does not exist.." + e.getMessage());
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
     
@@ -124,6 +130,7 @@ public class MatchPlayerRESTEndpoint {
      *}<br/>
      * 
      * @param token - header parameter for checking permission
+     * @param request
      * @param page - number of page at which we search for News
      * @param limit - number of News method returns
      * @param orderBy - column name for ordering, if you put "-" before
@@ -138,11 +145,11 @@ public class MatchPlayerRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchPlayer(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchPlayer(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("idMatch") String idMatch,
             @QueryParam("idPlayer") String idPlayer, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<MatchPlayer> matchPlayers;
         StringBuilder query = new StringBuilder("SELECT m FROM MatchPlayer m");
@@ -173,6 +180,7 @@ public class MatchPlayerRESTEndpoint {
 
         matchPlayers = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (matchPlayers == null || matchPlayers.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no MatchPlayer for this search!"), em);
             throw new DataNotFoundException("There is no MatchPlayer for this search!");
         }
 
@@ -182,6 +190,7 @@ public class MatchPlayerRESTEndpoint {
         go.setCount(count);
         List<MatchPlayerPOJO> pojos = MatchPlayerPOJO.toMatchdayPOJOList(matchPlayers);
         go.setData(pojos);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 

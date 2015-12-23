@@ -8,16 +8,19 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.MatchPlayerEvent;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -55,6 +58,7 @@ public class MatchPlayerEventRESTEndpoint {
      * "id": 2,<br/> "type": "soccer_match_playing_lineup"<br/> } <br/>] }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for Match player event
      * @param limit number of Match player event returns
      * @param type type of event
@@ -68,10 +72,10 @@ public class MatchPlayerEventRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getEvents(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getEvents(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("type") String type, @QueryParam("min") int min, @QueryParam("matchPlayerID") long matchPlayerID) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT m FROM MatchPlayerEvent m ");
         if (type != null) {
             query.append("WHERE m.type = '")
@@ -92,6 +96,7 @@ public class MatchPlayerEventRESTEndpoint {
         List<MatchPlayerEvent> events = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         System.out.println(query);
         if (events == null || events.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no events for this search!"), em);
             throw new DataNotFoundException("There is no events for this search!");
         }
         String countQuery = query.toString().replaceFirst("m", "count(m)");
@@ -100,6 +105,7 @@ public class MatchPlayerEventRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(MatchPlayerEventPOJO.toMatchPlayerEventPOJOList(events));
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 
@@ -114,19 +120,22 @@ public class MatchPlayerEventRESTEndpoint {
      * "soccer_match_special_missed-penalty",<br/> "soccer_match_card_yellow-red"<br/> ]
      *
      * @param token 
+     * @param request 
      * @return Response 200 OK status with JSON body
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/types")
-    public Response getTypes(@HeaderParam("authorization") String token) {
+    public Response getTypes(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT distinct type FROM MatchPlayerEvent m";
         List<String> list = em.createQuery(query).getResultList();
         if (list.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no types in match playes event!"), em);
             throw new DataNotFoundException("There is no types in match playes event!");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(list).build(), em);
         return Response.ok().entity(list).build();
     }
 }

@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -20,11 +21,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.BugReport;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -70,6 +73,7 @@ public class BugReportRESTEndpoint {
      * 
      * 
      * @param token header parameter for checking permission
+     * @param request
      * @param id of BugReport that should be returned
      * @return BugReport
      * @throws DataNotFoundException if BugReport with defined id doesn't exist
@@ -77,16 +81,18 @@ public class BugReportRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBugReportById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getBugReportById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         BugReportPOJO pojo;
         try {
             BugReport bugReport = (BugReport) em.createNamedQuery("BugReport.findById").setParameter("id", id).getSingleResult();
             pojo = new BugReportPOJO(bugReport);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Bug report at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Bug report at index " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -139,6 +145,7 @@ public class BugReportRESTEndpoint {
      * 
      * 
      * @param token header parameter for checking permission
+     * @param request
      * @param page number of page for searched results
      * @param limit number of bugReports that are returned in body
      * @param orderBy column name (if there is '-' before colum name, results will be sorted in descending order)
@@ -154,12 +161,12 @@ public class BugReportRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBugReport(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getBugReport(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("search") String search,
             @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate, @QueryParam("errorType") String errorType,
             @QueryParam("origin") String origin, @QueryParam("system") String system) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<BugReport> bugReport;
         StringBuilder query = new StringBuilder("SELECT b FROM BugReport b");
@@ -205,6 +212,7 @@ public class BugReportRESTEndpoint {
 
         bugReport = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (bugReport == null || bugReport.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no bug report for this search!"), em);
             throw new DataNotFoundException("There is no bug report for this search!");
         }
 
@@ -215,6 +223,7 @@ public class BugReportRESTEndpoint {
         long count = (long) em.createQuery(countQuery).getSingleResult();
         go.setCount(count);
         go.setData(pojos);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 
@@ -239,16 +248,18 @@ public class BugReportRESTEndpoint {
      *]<br/>
      * 
      * @param token
+     * @param request
      * @return list of all error types
      */
     @GET
     @Path("/errorType")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getErrorTypes(@HeaderParam("authorization") String token) {
+    public Response getErrorTypes(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT distinct b.errorType FROM BugReport b";
         List<String> list = em.createQuery(query).getResultList();
+        helper.setResponseToHistory(history, Response.ok().entity(list).build(), em);
         return Response.ok().entity(list).build();
     }
 
@@ -265,16 +276,18 @@ public class BugReportRESTEndpoint {
      * ]<br/>
      * 
      * @param token header parameter for checking permission
+     * @param request
      * @return list of origins
      */
     @GET
     @Path("/errorOrigin")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getOrigins(@HeaderParam("authorization") String token) {
+    public Response getOrigins(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT distinct b.origin FROM BugReport b";
         List<String> list = em.createQuery(query).getResultList();
+        helper.setResponseToHistory(history, Response.ok().entity(list).build(), em);
         return Response.ok().entity(list).build();
     }
 
@@ -309,9 +322,9 @@ public class BugReportRESTEndpoint {
     @PUT
     @Path("/")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBugReport(@HeaderParam("authorization") String token, BugReport bugReport) {
+    public Response updateBugReport(@HeaderParam("authorization") String token, @Context HttpServletRequest request, BugReport bugReport) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BUG_REPORT, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         BugReport foundedBugReport = em.find(BugReport.class, bugReport.getId());
         if (foundedBugReport != null) {
             Validator validator = new Validator();
@@ -324,12 +337,15 @@ public class BugReportRESTEndpoint {
 
                 helper.mergeObject(em, bugReport);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
 
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Bug report at index " + bugReport.getId() + " does not exits"), em);
             throw new DataNotFoundException("Bug report at index " + bugReport.getId() + " does not exits");
         }
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 }

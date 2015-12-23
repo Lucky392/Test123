@@ -7,6 +7,7 @@ package rs.htec.cms.cms_bulima.service;
 
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -14,10 +15,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyManager;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.MethodNotAllowedException;
@@ -69,10 +72,10 @@ public class FantasyManagerRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyManager(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getFantasyManager(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("userID") long userID, @QueryParam("username") String username) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<FantasyManager> fm;
         StringBuilder query = new StringBuilder("SELECT f FROM FantasyManager f ");
         if (userID != 0) {
@@ -87,10 +90,12 @@ public class FantasyManagerRESTEndpoint {
         }
         //method not allowed if there is no query params!!!
         if (userID == 0 && username == null) {
+            helper.setResponseToHistory(history, new MethodNotAllowedException("Method not allowed, you need to use some query params!"), em);
             throw new MethodNotAllowedException("Method not allowed, you need to use some query params!");
         }
         fm = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (fm.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Fantasy Managers for this user!"), em);
             throw new DataNotFoundException("There is no Fantasy Managers for this user!");
         } else {
             String countQuery = query.toString().replaceFirst("f", "count(f)");
@@ -98,6 +103,7 @@ public class FantasyManagerRESTEndpoint {
             GetObject go = new GetObject();
             go.setCount(count);
             go.setData(FantasyManagerPOJO.toFantasyManagerPOJO(fm));
+            helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
             return Response.ok().entity(go).build();
         }
     }

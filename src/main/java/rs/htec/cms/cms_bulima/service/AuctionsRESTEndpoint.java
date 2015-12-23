@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -16,11 +17,13 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Auction;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -56,6 +59,7 @@ public class AuctionsRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param id of bid that should be returned
      * @return Bid in JSON format
      * @throws DataNotFoundException if there is not Bid for defined id
@@ -63,17 +67,18 @@ public class AuctionsRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAuctionById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getAuctionById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         AuctionPOJO pojo = null;
         try {
             Auction auction = (Auction) em.createNamedQuery("Auction.findById").setParameter("id", id).getSingleResult();
             pojo = new AuctionPOJO(auction);
         } catch (Exception e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Auction at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Auction at index " + id + " does not exist..");
         }
-
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -131,11 +136,11 @@ public class AuctionsRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAuctions(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getAuctions(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("idFantasyLeague") String idFantasyLeague,
             @QueryParam("idFantasyClubSeller") String idFantasyClubSeller, @QueryParam("idFantasyLeaguePlayer") String idFantasyLeaguePlayer) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<Auction> auctions;
         StringBuilder query = new StringBuilder("SELECT a FROM Auction a ");
@@ -153,6 +158,7 @@ public class AuctionsRESTEndpoint {
         }
         auctions = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (auctions.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Auction for this search!"), em);
             throw new DataNotFoundException("There is no Auction for this search!");
         } else {
             List<AuctionPOJO> pojos = AuctionPOJO.toAuctionPOJOList(auctions);
@@ -161,6 +167,7 @@ public class AuctionsRESTEndpoint {
             GetObject go = new GetObject();
             go.setCount(count);
             go.setData(pojos);
+            helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
             return Response.ok().entity(go).build();
         }
     }

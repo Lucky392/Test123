@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -18,10 +19,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.Matchday;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -60,6 +63,7 @@ public class MatchdayRESTEndpoint {
      * }<br/>
      *
      * @param token - header parameter for checking permission
+     * @param request
      * @param id - of Matchday that should be returned
      * @return Matchday for defined id
      * @throws DataNotFoundException if Matchday does not exist for
@@ -68,16 +72,18 @@ public class MatchdayRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchDayById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getMatchDayById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchdayPOJO pojo;
         try {
             Matchday matchday = (Matchday) em.createNamedQuery("Matchday.findById").setParameter("id", id).getSingleResult();
             pojo = new MatchdayPOJO(matchday);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("Matchday at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("Matchday at index " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
 
@@ -122,6 +128,7 @@ public class MatchdayRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param page number of page for searched results
      * @param limit number of matchPlayerStats that are returned in body
      * @param orderBy column name (if there is '-' before colum name, results will be sorted in descending order)
@@ -136,11 +143,11 @@ public class MatchdayRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getMatchday(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchday(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("orderBy") String orderBy, @QueryParam("matchday") String matchday,
             @QueryParam("idSeason") String idSeason, @QueryParam("minDate") long minDate, @QueryParam("maxDate") long maxDate) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         List<Matchday> matchdays;
         StringBuilder query = new StringBuilder("SELECT m FROM Matchday m");
@@ -171,6 +178,7 @@ public class MatchdayRESTEndpoint {
 
         matchdays = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (matchdays == null || matchdays.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Matchday for this search!"), em);
             throw new DataNotFoundException("There is no Matchday for this search!");
         }
 
@@ -180,6 +188,7 @@ public class MatchdayRESTEndpoint {
         go.setCount(count);
         List<MatchdayPOJO> pojos = MatchdayPOJO.toMatchdayPOJOList(matchdays);
         go.setData(pojos);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 }

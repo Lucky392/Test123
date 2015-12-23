@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -17,10 +18,12 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyClubCreditHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -63,16 +66,18 @@ public class CreditHistoryRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getCreditHistoryForFantasyClub(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getCreditHistoryForFantasyClub(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<FantasyClubCreditHistory> creditHistory;
         StringBuilder query = new StringBuilder("SELECT f FROM FantasyClubCreditHistory f WHERE f.idFantasyClub.id = ");
         query.append(id);
         creditHistory = em.createQuery(query.toString()).getResultList();
         if (creditHistory.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no credit history for this club!"), em);
             throw new DataNotFoundException("There is no credit history for this club!");
         } else {
+            helper.setResponseToHistory(history, Response.ok().entity(creditHistory).build(), em);
             return Response.ok().entity(creditHistory).build();
         }
     }
@@ -96,14 +101,16 @@ public class CreditHistoryRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertsFantasyClubCreditHistory(@HeaderParam("authorization") String token, FantasyClubCreditHistory creditHistory) {
+    public Response insertsFantasyClubCreditHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyClubCreditHistory creditHistory) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (validator.checkLenght(creditHistory.getAction(), 255, false)) {
             creditHistory.setCreateDate(new Date());
             helper.persistObject(em, creditHistory);
+            helper.setResponseToHistory(history, Response.status(Response.Status.CREATED).build(), em);
             return Response.status(Response.Status.CREATED).build();
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
 
         }
@@ -111,16 +118,18 @@ public class CreditHistoryRESTEndpoint {
     
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateFantasyClubCreditHistory(@HeaderParam("authorization") String token, FantasyClubCreditHistory fantasyClubCreditHistory) {
+    public Response updateFantasyClubCreditHistory(@HeaderParam("authorization") String token, @Context HttpServletRequest request, FantasyClubCreditHistory fantasyClubCreditHistory) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyClubCreditHistory oldFantasyClubCreditHistory = em.find(FantasyClubCreditHistory.class, fantasyClubCreditHistory.getId());
         if (oldFantasyClubCreditHistory != null) {
             oldFantasyClubCreditHistory.setCredit(fantasyClubCreditHistory.getCredit());
             oldFantasyClubCreditHistory.setUpdatedCredit(fantasyClubCreditHistory.getCredit());
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("FantasyClubCreditHistory at index " + fantasyClubCreditHistory.getId() + " does not exits"), em);
             throw new DataNotFoundException("FantasyClubCreditHistory at index " + fantasyClubCreditHistory.getId() + " does not exits");
         }
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 

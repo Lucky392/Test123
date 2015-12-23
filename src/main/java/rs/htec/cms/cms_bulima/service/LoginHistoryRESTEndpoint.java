@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.sql.Date;
 import java.util.Calendar;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -16,10 +17,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.LoginHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.CountWrapper;
@@ -40,9 +43,9 @@ public class LoginHistoryRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/activeUser/{day}")
-    public Response getUserCount(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
+    public Response getUserCount(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @QueryParam("platform") String platform, @PathParam("day") String day) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         StringBuilder query = new StringBuilder("SELECT count(l) FROM LoginHistory l WHERE ");
 
@@ -51,6 +54,7 @@ public class LoginHistoryRESTEndpoint {
         appendDateToQuery(query, day);
 
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+        helper.setResponseToHistory(history, Response.ok().entity(cw).build(), em);
         return Response.ok().entity(cw).build();
     }
 
@@ -68,9 +72,9 @@ public class LoginHistoryRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/registration/{day}")
-    public Response getRegistrationUser(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
+    public Response getRegistrationUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @QueryParam("platform") String platform, @PathParam("day") String day) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         StringBuilder query = new StringBuilder("SELECT count(u) FROM LoginHistory l JOIN l.idUser u WHERE ");
 
@@ -79,6 +83,7 @@ public class LoginHistoryRESTEndpoint {
         appendDateToQuery(query, day);
 
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+        helper.setResponseToHistory(history, Response.ok().entity(cw).build(), em);
         return Response.ok().entity(cw).build();
     }
 
@@ -98,9 +103,9 @@ public class LoginHistoryRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/payingUser/{day}")
-    public Response getPayingUser(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
+    public Response getPayingUser(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @QueryParam("platform") String platform, @PathParam("day") String day) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 
         StringBuilder query = new StringBuilder("SELECT count(u) FROM LoginHistory l JOIN l.idUser u WHERE u.payingUser = 1 AND ");
 
@@ -112,6 +117,7 @@ public class LoginHistoryRESTEndpoint {
 //        Date d1 = new Date(d.getTime());
 
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+        helper.setResponseToHistory(history, Response.ok().entity(cw).build(), em);
         return Response.ok().entity(cw).build();
     }
 
@@ -131,10 +137,10 @@ public class LoginHistoryRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/revenue/{day}")
-    public Response getRevenue(@HeaderParam("authorization") String token, @QueryParam("platform") String platform, @PathParam("day") String day) {
+    public Response getRevenue(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @QueryParam("platform") String platform, @PathParam("day") String day) {
         // Treba promeniti upit, verovatno ne vadi dobar obracun
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT SUM(p.directPurchasePrice) FROM UserPremiumItem upi, LoginHistory l JOIN upi.idPremiumItem p WHERE l.idUser=upi.idUser AND ");
 
         appendPlatformToQuery(query, platform);
@@ -142,6 +148,7 @@ public class LoginHistoryRESTEndpoint {
         appendDateToQuery(query, day);
         
         CountWrapper cw = new CountWrapper((long) em.createQuery(query.toString()).getSingleResult());
+        helper.setResponseToHistory(history, Response.ok().entity(cw).build(), em);
         return Response.ok().entity(cw).build();
     }
 
@@ -219,13 +226,15 @@ public class LoginHistoryRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response getHistoryById(@HeaderParam("authorization") String token, @PathParam("id") long id){
+    public Response getHistoryById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id){
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
-        LoginHistory history = em.find(LoginHistory.class, id);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
+        LoginHistory lhistory = em.find(LoginHistory.class, id);
         if (history == null) {
+            helper.setResponseToHistory(history, new DataNotFoundException("History at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("History at index " + id + " does not exist..");
         }
-        return Response.ok().entity(new LoginHistoryPOJO(history)).build();
+        helper.setResponseToHistory(history, Response.ok().entity(new LoginHistoryPOJO(lhistory)).build(), em);
+        return Response.ok().entity(new LoginHistoryPOJO(lhistory)).build();
     }
 }

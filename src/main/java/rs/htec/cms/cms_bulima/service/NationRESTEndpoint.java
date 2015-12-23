@@ -82,7 +82,7 @@ public class NationRESTEndpoint {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{id}")
-    public Response getNation(@HeaderParam("authorization") String token, @Context HttpServletRequest request,@PathParam("id") long id) {
+    public Response getNation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = EMF.createEntityManager();
         CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         Nation nation = em.find(Nation.class, id);

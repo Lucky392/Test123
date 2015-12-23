@@ -8,6 +8,7 @@ package rs.htec.cms.cms_bulima.service;
 import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
@@ -15,10 +16,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.FantasyLeague;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -53,6 +56,7 @@ public class FantasyLeagueRESTEndpoint {
      * "password": "test1234",<br/> "name": "TestLiga3",<br/> "id": 2 <br/>}
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param id of league we are searching for
      * @return Response 200 OK status with JSON body
      * @throws DataNotFoundException DataNotFoundException Example for
@@ -63,13 +67,15 @@ public class FantasyLeagueRESTEndpoint {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyLeague(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getFantasyLeague(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         FantasyLeague league = em.find(FantasyLeague.class, id);
         if (league == null) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no league at index " + id + "!"), em);
             throw new DataNotFoundException("There is no league at index " + id + "!");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(league).build(), em);
         return Response.ok().entity(league).build();
     }
 
@@ -109,6 +115,7 @@ public class FantasyLeagueRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param page number of page for searched results
      * @param limit number of matchPlayerStats that are returned in body
      * @param name of FantasyLeagues that is searched
@@ -118,11 +125,11 @@ public class FantasyLeagueRESTEndpoint {
     @GET
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFantasyLeagues(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getFantasyLeagues(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("name") String name,
             @QueryParam("leagueType") String leagueType) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<FantasyLeague> bids;
         StringBuilder query = new StringBuilder("SELECT f FROM FantasyLeague f ");
         String operator = "WHERE";
@@ -135,6 +142,7 @@ public class FantasyLeagueRESTEndpoint {
         }
         bids = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (bids.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no FantasyLeague for this search!"), em);
             throw new DataNotFoundException("There is no FantasyLeague for this search!");
         } else {
             String countQuery = query.toString().replaceFirst("f", "count(f)");
@@ -142,6 +150,7 @@ public class FantasyLeagueRESTEndpoint {
             GetObject go = new GetObject();
             go.setCount(count);
             go.setData(bids);
+            helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
             return Response.ok().entity(go).build();
         }
     }
@@ -154,16 +163,18 @@ public class FantasyLeagueRESTEndpoint {
      * ]<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @return status 200 OK with JSON body
      */
     @GET
     @Path("/leagueTypes")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getLeagueTypes(@HeaderParam("authorization") String token) {
+    public Response getLeagueTypes(@HeaderParam("authorization") String token, @Context HttpServletRequest request) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         String query = "SELECT distinct leagueType FROM FantasyLeague f";
         List<String> list = em.createQuery(query).getResultList();
+        helper.setResponseToHistory(history, Response.ok().entity(list).build(), em);
         return Response.ok().entity(list).build();
     }
 }

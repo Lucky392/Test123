@@ -15,15 +15,18 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import javax.persistence.EntityManager;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 
 /**
@@ -75,21 +78,23 @@ public class DashboardRESTEndpoint {
      *
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param day
      * @return 200 OK
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/{day}")
-    public Response getDashboard(@HeaderParam("authorization") String token, @PathParam("day") String day) {
+    public Response getDashboard(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("day") String day) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
 //
 //        HashMap result = new HashMap();
 //
 //        for (String d : dates) {
 //            result.put(d, getDashboardFormDB(d));
 //        }
+        helper.setResponseToHistory(history, Response.ok().entity(getDashboardFormDB(day)).build(), em);
         return Response.ok().entity(getDashboardFormDB(day)).build();
     }
 

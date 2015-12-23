@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
@@ -22,10 +23,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
@@ -65,6 +68,7 @@ public class MatchdayChallengeRESTEndpoint {
      * }
      *
      * @param token - authorization token
+     * @param request
      * @param page - which page to display
      * @param limit - how much results to display on page
      * @param orderingColumn - by which column to order (add - before text for desc order)
@@ -78,11 +82,11 @@ public class MatchdayChallengeRESTEndpoint {
     @GET
     @Path("/")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
-    public Response getMatchdayChallenges(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getMatchdayChallenges(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("column") String orderingColumn, @QueryParam("filter") String filter,
             @QueryParam("matchdayChallengeType") int matchdayChallengeType, @QueryParam("isPublished") Boolean isPublished) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         List<MatchdayChallenge> matchdayChallenges;
         StringBuilder query = new StringBuilder("SELECT m FROM MatchdayChallenge m ");
         if (filter != null) {
@@ -97,6 +101,7 @@ public class MatchdayChallengeRESTEndpoint {
                 case 3:
                     query.append(" AND m.matchdayChallengeType = ").append(matchdayChallengeType);
                 default:
+                    helper.setResponseToHistory(history, new InputValidationException("matchdayChallengeType have to be 1, 2 or 3!"), em);
                     throw new InputValidationException("matchdayChallengeType have to be 1, 2 or 3!");
             }
         }
@@ -111,6 +116,7 @@ public class MatchdayChallengeRESTEndpoint {
         }
         matchdayChallenges = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (matchdayChallenges == null || matchdayChallenges.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no FantasyManagerMatchdayChallengeLineUp for this search!"), em);
             throw new DataNotFoundException("There is no FantasyManagerMatchdayChallengeLineUp for this search!");
         }
         String countQuery = query.toString().replaceFirst("m", "count(m)");
@@ -122,6 +128,7 @@ public class MatchdayChallengeRESTEndpoint {
             pojos.add(new MatchdayChallengePOJO(mc));
         }
         go.setData(pojos);
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 
@@ -142,6 +149,7 @@ public class MatchdayChallengeRESTEndpoint {
      * }
      *
      * @param token - authorization token
+     * @param request
      * @param id - matchdayChallenge id
      * @return List of MatchdayChallenges and count
      * @throws DataNotFoundException if MatchdayChallenges doesn't exist
@@ -151,13 +159,16 @@ public class MatchdayChallengeRESTEndpoint {
     @Path("/{id}")
     @Produces({MediaType.APPLICATION_JSON, MediaType.APPLICATION_XML})
     public Response getMatchdayChallenge(@HeaderParam("authorization") String token,
+            @Context HttpServletRequest request, 
             @PathParam("id") long id) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         try {
             MatchdayChallenge matchdayChallenge = (MatchdayChallenge) em.createNamedQuery("MatchdayChallenge.findById").setParameter("id", id).getSingleResult();
+            helper.setResponseToHistory(history, Response.ok().entity(new MatchdayChallengePOJO(matchdayChallenge)).build(), em);
             return Response.ok().entity(new MatchdayChallengePOJO(matchdayChallenge)).build();
         } catch (NoResultException nre) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no matchday challenge with id = " + id), em);
             throw new DataNotFoundException("There is no matchday challenge with id = " + id);
         }
     }
@@ -166,9 +177,10 @@ public class MatchdayChallengeRESTEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertMatchdayChallenge(@HeaderParam("authorization") String token,
+            @Context HttpServletRequest request, 
             MatchdayChallenge matchdayChallenge) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (validator.checkLenght(matchdayChallenge.getMatchdayChallengeTitle(), 255, false)
                 && validator.checkLenght(matchdayChallenge.getMatchdayChallengeDescription(), 255, false)
                 && validator.checkLenght(matchdayChallenge.getMatchdayChallengeType(), 255, false)
@@ -180,8 +192,10 @@ public class MatchdayChallengeRESTEndpoint {
                 && validator.checkLenght(matchdayChallenge.getSquad(), 255, true)) {
             matchdayChallenge.setCreateDate(new Date());
             helper.persistObject(em, matchdayChallenge);
+            helper.setResponseToHistory(history, Response.status(Response.Status.CREATED).build(), em);
             return Response.status(Response.Status.CREATED).build();
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
     }
@@ -189,9 +203,10 @@ public class MatchdayChallengeRESTEndpoint {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updateMatchdayChallenge(@HeaderParam("authorization") String token,
+            @Context HttpServletRequest request, 
             MatchdayChallenge matchdayChallenge) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, matchdayChallenge.getId());
         if (x != null) {
             if (validator.checkLenght(matchdayChallenge.getMatchdayChallengeTitle(), 255, false)
@@ -206,11 +221,14 @@ public class MatchdayChallengeRESTEndpoint {
                 matchdayChallenge.setCreateDate(x.getCreateDate());
                 helper.mergeObject(em, matchdayChallenge);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Fantasy Manager Matchday Challenge Line Up at index " + matchdayChallenge.getId() + " does not exits"), em);
             throw new DataNotFoundException("Fantasy Manager Matchday Challenge Line Up at index " + matchdayChallenge.getId() + " does not exits");
         }
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 
@@ -221,16 +239,18 @@ public class MatchdayChallengeRESTEndpoint {
      * Otherwise method remove that matchdayChallenge.
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param id of matchdayChallenge that should be deleted.
      * @return Response 200 OK
      */
     @DELETE
     @Path("/{id}")
-    public Response deleteMatchdayChallenge(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response deleteMatchdayChallenge(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.DELETE, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.DELETE, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         MatchdayChallenge x = em.find(MatchdayChallenge.class, id);
         helper.removeObject(em, x, id);
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 

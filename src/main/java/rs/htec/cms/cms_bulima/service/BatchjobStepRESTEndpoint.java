@@ -9,6 +9,7 @@ import com.sun.jersey.api.core.InjectParam;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -19,12 +20,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import rs.htec.cms.cms_bulima.constants.MethodConstants;
 import rs.htec.cms.cms_bulima.constants.TableConstants;
 import rs.htec.cms.cms_bulima.domain.Batchjob;
 import rs.htec.cms.cms_bulima.domain.BatchjobStep;
+import rs.htec.cms.cms_bulima.domain.CmsActionHistory;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
 import rs.htec.cms.cms_bulima.helper.EMF;
@@ -60,22 +63,25 @@ public class BatchjobStepRESTEndpoint {
      * }<br/>
      *
      * @param token header parameter for checking permission
+     * @param request
      * @param id for BatchjobStep that should be retrieved
      * @return BatchjobStep with status 200
      */
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBatchjobStepById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
+    public Response getBatchjobStepById(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long id) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         BatchjobStepPOJO pojo;
         try {
             BatchjobStep step = (BatchjobStep) em.createNamedQuery("BatchjobStep.findById").setParameter("id", id).getSingleResult();
             pojo = new BatchjobStepPOJO(step);
         } catch (NoResultException e) {
+            helper.setResponseToHistory(history, new DataNotFoundException("BatchjobStep at index " + id + " does not exist.."), em);
             throw new DataNotFoundException("BatchjobStep at index " + id + " does not exist..");
         }
+        helper.setResponseToHistory(history, Response.ok().entity(pojo).build(), em);
         return Response.ok().entity(pojo).build();
     }
     
@@ -96,6 +102,7 @@ public class BatchjobStepRESTEndpoint {
      * "enabled": 0,<br/> "id": 2<br/> }
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param page number of page at which we search for BatchjobStep
      * @param limit number of BatchjobSteps method returns
      * @param search word for searching searchName
@@ -107,10 +114,10 @@ public class BatchjobStepRESTEndpoint {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getBatchjobStep(@HeaderParam("authorization") String token, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getBatchjobStep(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, @QueryParam("search") String search, @QueryParam("idBatchjob") long idBatchjob) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.SEARCH, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         StringBuilder query = new StringBuilder("SELECT b FROM BatchjobStep b ");
         if (search != null) {
             search = "%" + search + "%";
@@ -123,6 +130,7 @@ public class BatchjobStepRESTEndpoint {
         }
         List<BatchjobStep> steps = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (steps == null || steps.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no batchjob steps for this search!"), em);
             throw new DataNotFoundException("There is no batchjob steps for this search!");
         }
         String countQuery = query.toString().replaceFirst("b", "count(b)");
@@ -131,6 +139,7 @@ public class BatchjobStepRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(BatchjobStepPOJO.toBatchjobStepPOJOList(steps));
+        helper.setResponseToHistory(history, Response.ok().entity(go).build(), em);
         return Response.ok().entity(go).build();
     }
 
@@ -142,6 +151,7 @@ public class BatchjobStepRESTEndpoint {
      * "enabled": 0,<br/> "id": 1 <br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param batchjobStep is an object that Jackson convert from JSON to object
      * @return Response with status CREATED (201)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -150,14 +160,16 @@ public class BatchjobStepRESTEndpoint {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response insertBatchjobStep(@HeaderParam("authorization") String token, BatchjobStep batchjobStep) {
+    public Response insertBatchjobStep(@HeaderParam("authorization") String token, @Context HttpServletRequest request, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.ADD, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {
             helper.persistObject(em, batchjobStep);
         } else {
+            helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
             throw new InputValidationException("Validation failed");
         }
+        helper.setResponseToHistory(history, Response.status(Response.Status.CREATED).build(), em);
         return Response.status(Response.Status.CREATED).build();
     }
 
@@ -169,6 +181,7 @@ public class BatchjobStepRESTEndpoint {
      * "enabled": 0,<br/> "id": 1 <br/>}
      *
      * @param token is a header parameter for checking permission
+     * @param request
      * @param batchjobStep is an object that Jackson convert from JSON to object
      * @return Response with status OK (200)
      * @throws InputValidationException Example for this exception: <br/> {<br/>
@@ -180,19 +193,22 @@ public class BatchjobStepRESTEndpoint {
      */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response updateBatchjob(@HeaderParam("authorization") String token, BatchjobStep batchjobStep) {
+    public Response updateBatchjob(@HeaderParam("authorization") String token, @Context HttpServletRequest request, BatchjobStep batchjobStep) {
         EntityManager em = helper.getEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.EDIT, token);
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.BATCHJOB, MethodConstants.EDIT, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), null);
         BatchjobStep oldBatchjobStep = em.find(BatchjobStep.class, batchjobStep.getId());
         if (oldBatchjobStep != null) {
             if (validator.checkLenght(batchjobStep.getStepName(), 255, true)) {
                 helper.mergeObject(em, batchjobStep);
             } else {
+                helper.setResponseToHistory(history, new InputValidationException("Validation failed"), em);
                 throw new InputValidationException("Validation failed");
             }
         } else {
+            helper.setResponseToHistory(history, new DataNotFoundException("Batchjob step at index " + batchjobStep.getId() + " does not exits"), em);
             throw new DataNotFoundException("Batchjob step at index " + batchjobStep.getId() + " does not exits");
         }
+        helper.setResponseToHistory(history, Response.ok().build(), em);
         return Response.ok().build();
     }
 }
