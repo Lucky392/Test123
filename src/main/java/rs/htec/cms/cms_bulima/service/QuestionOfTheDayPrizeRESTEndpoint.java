@@ -44,9 +44,6 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     
     @InjectParam
     Validator validator;
-    
-    public EntityManager em;
-
 
     /**
      * API for method: .../rest/prizes?page=VALUE&limit=VALUE This method returns JSON
@@ -70,7 +67,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrize(@HeaderParam("authorization") String token, @DefaultValue("1")@QueryParam("page") int page, @DefaultValue("10")@QueryParam("limit") int limit) {
-        em = helper.getEntityManager();
+        EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
         List<QuestionOfTheDayPrize> prize = em.createNamedQuery("QuestionOfTheDayPrize.findAll").setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
         if (prize.isEmpty()) {
@@ -100,7 +97,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getPrizeById(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        em = helper.getEntityManager();
+        EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
         QuestionOfTheDayPrize prize = null;
         try {
@@ -127,7 +124,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public Response insertPrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
-        em = helper.getEntityManager();
+        EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.ADD, token);
         if (validator.checkLenght(prize.getName(), 255, true)) {
             prize.setCreateDate(new Date());
@@ -150,7 +147,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @DELETE
     @Path("/{id}")
     public Response deletePrize(@HeaderParam("authorization") String token, @PathParam("id") long id) {
-        em = helper.getEntityManager();
+        EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.DELETE, token);
         QuestionOfTheDayPrize prize = em.find(QuestionOfTheDayPrize.class, id);
         helper.removeObject(em, prize, id);
@@ -176,7 +173,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response updatePrize(@HeaderParam("authorization") String token, QuestionOfTheDayPrize prize) {
-        em = helper.getEntityManager();
+        EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.QUESTION_OF_THE_DAY_PRIZE, MethodConstants.SEARCH, token);
         QuestionOfTheDayPrize oldPrize = em.find(QuestionOfTheDayPrize.class, prize.getId());
         if (oldPrize != null) {
@@ -202,7 +199,7 @@ public class QuestionOfTheDayPrizeRESTEndpoint {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
     public Response getCountPrize(@HeaderParam("authorization") String token){
-        em = helper.getEntityManager();
+        EntityManager em = helper.getEntityManager();
         helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.SEARCH, token);
         String query = "Select COUNT(ip) From QuestionOfTheDayPrize ip";
         CountWrapper count = new CountWrapper((long) em.createQuery(query).getSingleResult());

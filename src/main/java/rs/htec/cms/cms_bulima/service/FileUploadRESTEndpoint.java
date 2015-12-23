@@ -63,27 +63,31 @@ public class FileUploadRESTEndpoint {
             @FormDataParam("file") FormDataContentDisposition fileDetail,
             @QueryParam("imageLocationFolder") int where) {
         EntityManager em = EMF.createEntityManager();
-        helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token);
         String uploadedFileLocation;
         String databaseString;
         switch (where) {
             case ImageLocationConstants.PLAYER:
+                helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
                 uploadedFileLocation = "webapps/bulima-data/images/bulima-player-card/photos/";
                 databaseString = Util.getInstance().getAssetsUrl() + "images/bulima-player-card/photos/";
                 break;
             case ImageLocationConstants.CLUB:
+                helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.EDIT, token);
                 uploadedFileLocation = "webapps/bulima-data/images/favoriteclublogos/";
                 databaseString = Util.getInstance().getAssetsUrl() + "images/favoriteclublogos/";
                 break;
             case ImageLocationConstants.HOME_SLIDER:
+                helper.checkUserAndPrivileges(em, TableConstants.SLIDER_CONTENT, MethodConstants.EDIT, token);
                 uploadedFileLocation = "webapps/bulima-data/home_slider/";
                 databaseString = Util.getInstance().getAssetsUrl() + "home_slider/";
                 break;
             case ImageLocationConstants.SHOP_IMAGES:
+                helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
                 uploadedFileLocation = "webapps/bulima-data/images/shop/";
                 databaseString = "images/shop/";
                 break;
             case ImageLocationConstants.SHOP_IMAGES_SPECIALS:
+                helper.checkUserAndPrivileges(em, TableConstants.SHOP, MethodConstants.EDIT, token);
                 uploadedFileLocation = "webapps/bulima-data/images/shop/specials/";
                 databaseString = "images/shop/specials/";
                 break;
