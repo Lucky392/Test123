@@ -210,7 +210,7 @@ public class RestHelperClass {
     public String trimAll(String string) {
         string = string.replaceAll("\t", "");
         string = string.replaceAll("\n", "");
-        string = string.replaceAll(" ", "");
+//        string = string.replaceAll(" ", "");
         return string;
     }
 }

@@ -32,6 +32,7 @@ import rs.htec.cms.cms_bulima.domain.MatchdayChallenge;
 import rs.htec.cms.cms_bulima.domain.MatchdayChallengeTargetCalculation;
 import rs.htec.cms.cms_bulima.exception.DataNotFoundException;
 import rs.htec.cms.cms_bulima.exception.InputValidationException;
+import rs.htec.cms.cms_bulima.exception.MethodNotAllowedException;
 import rs.htec.cms.cms_bulima.helper.EMF;
 import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
@@ -197,7 +198,14 @@ public class MatchdayChallengeTaqrgetCalculationRESTEndpoint {
     @Path("/{id}")
     public Response insertTargetCalculation(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @PathParam("id") long idMatchdayChallenge, MatchdayChallengeTargetCalculation mctc) {
         EntityManager em = EMF.createEntityManager();
+
         CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), mctc);
+        
+        long count = (long) em.createQuery("SELECT count(m) FROM MatchdayChallengeTargetCalculation m  WHERE m.idMatchdayChallenge.id=" + idMatchdayChallenge).getSingleResult();
+        if (count > 0) {
+            helper.setResponseToHistory(history, new MethodNotAllowedException("Matchday challenge target calculation for matchday challange with id " + idMatchdayChallenge + " already exists"), em);
+            throw new MethodNotAllowedException("Matchday challenge target calculation for matchday challange with id " + idMatchdayChallenge + " already exists");
+        }
         MatchdayChallenge mc = em.find(MatchdayChallenge.class, idMatchdayChallenge);
         if (mc == null) {
             helper.setResponseToHistory(history, new DataNotFoundException("Matchday challenge at index " + idMatchdayChallenge + " does not exits!"), em);

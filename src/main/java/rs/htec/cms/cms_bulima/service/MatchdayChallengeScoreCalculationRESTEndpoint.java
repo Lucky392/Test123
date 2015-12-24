@@ -142,6 +142,12 @@ public class MatchdayChallengeScoreCalculationRESTEndpoint {
         EntityManager em = helper.getEntityManager();
         CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.MATCHDAY, MethodConstants.ADD, token, request.getRequestURL().toString()+(request.getQueryString() != null ? "?" + request.getQueryString() : ""), scoreCalculation);
 //        scoreCalculation.setIdMatchdayChallenge(em.find(MatchdayChallenge.class, scoreCalculation.));
+        long idMatchdayChallenge = scoreCalculation.getIdMatchdayChallenge().getId();
+        long count = (long) em.createQuery("SELECT count(m) FROM MatchdayChallengeScoreCalculation m  WHERE m.idMatchdayChallenge.id=" + idMatchdayChallenge).getSingleResult();
+        if (count > 0) {
+            helper.setResponseToHistory(history, new InputValidationException("Matchday challenge score calculation for matchday challange with id " + idMatchdayChallenge + " already exists"), em);
+            throw new InputValidationException("Matchday challenge score calculation for matchday challange with id " + idMatchdayChallenge + " already exists");
+        }
         if (validator.checkLenght(scoreCalculation.getCalculationSql(), 255, true)) {
             scoreCalculation.setCreateDate(new Date());
             helper.persistObject(em, scoreCalculation);

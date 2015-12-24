@@ -35,6 +35,7 @@ import rs.htec.cms.cms_bulima.helper.GetObject;
 import rs.htec.cms.cms_bulima.helper.PlayerFilters;
 import rs.htec.cms.cms_bulima.helper.RestHelperClass;
 import rs.htec.cms.cms_bulima.helper.Validator;
+import rs.htec.cms.cms_bulima.pojo.PlayerIdAndNamePOJO;
 import rs.htec.cms.cms_bulima.pojo.PlayerPOJO;
 
 /**
@@ -109,7 +110,7 @@ public class PlayerRESTEndpoint {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response getPlayers(@HeaderParam("authorization") String token,@Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
+    public Response getPlayers(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
             @DefaultValue("10") @QueryParam("limit") int limit, PlayerFilters filters) {
         EntityManager em = EMF.createEntityManager();
         CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), filters);
@@ -237,6 +238,169 @@ public class PlayerRESTEndpoint {
         GetObject go = new GetObject();
         go.setCount(count);
         go.setData(PlayerPOJO.toPlayerPOJOList(players));
+        Response response = Response.ok().entity(go).build();
+        helper.setResponseToHistory(history, response, em);
+        return response;
+    }
+
+    /**
+     * API for this call is : /rest/players/idsAndNames . JSON that you need to
+     * send:<br>
+     * {<br>
+     * "count": 1460,<br>
+     * "data": [<br>
+     * {<br>
+     * "firstName": "Timo",<br>
+     * "lastName": "Horn",<br>
+     * "id": 3673<br>
+     * },<br>
+     * {<br>
+     * "firstName": "Thomas",<br>
+     * "lastName": "Kessler",<br>
+     * "id": 3674<br>
+     * }<br>]<br>}
+     *
+     * @param token
+     * @param request
+     * @param page
+     * @param limit
+     * @param filters
+     * @return list of id's first and last names for players
+     */
+    @POST
+    @Path("/idsAndNames")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response getPlayersIdAndNames(@HeaderParam("authorization") String token, @Context HttpServletRequest request, @DefaultValue("1") @QueryParam("page") int page,
+            @DefaultValue("10") @QueryParam("limit") int limit, PlayerFilters filters) {
+        EntityManager em = EMF.createEntityManager();
+        CmsActionHistory history = helper.checkUserAndPrivileges(em, TableConstants.STATISTICS, MethodConstants.SEARCH, token, request.getRequestURL().toString() + (request.getQueryString() != null ? "?" + request.getQueryString() : ""), filters);
+        StringBuilder query = new StringBuilder("SELECT p FROM Player p ");
+        String operator = "WHERE";
+        if (filters != null) {
+            if (filters.getSearch() != null) {
+                query.append(operator)
+                        .append(" (p.firstName LIKE '%")
+                        .append(filters.getSearch())
+                        .append("%' OR p.lastName LIKE '%")
+                        .append(filters.getSearch())
+                        .append("%'")
+                        .append(" OR p.fullname LIKE '%")
+                        .append(filters.getSearch())
+                        .append("%')");
+                operator = "AND";
+            }
+            if (filters.getClubName() != null) {
+                query.append(operator)
+                        .append(" p.idClub.mediumName LIKE '%")
+                        .append(filters.getClubName())
+                        .append("%'");
+                operator = "AND";
+            }
+            if (filters.getPlayerPosition() != null) {
+                query.append(operator)
+                        .append(" p.idPlayerPosition.name LIKE '%")
+                        .append(filters.getPlayerPosition())
+                        .append("%'");
+                operator = "AND";
+            }
+            if (filters.getNation() != null) {
+                query.append(operator)
+                        .append(" p.idNation.name LIKE '%")
+                        .append(filters.getNation())
+                        .append("%'");
+                operator = "AND";
+            }
+            if (filters.getIsCaptain() != null) {
+                query.append(operator)
+                        .append(" p.isCaptain = ").append(filters.getIsCaptain() ? 1 : 0);
+                operator = "AND";
+            }
+            if (filters.getHasYellow() != null) {
+                query.append(operator)
+                        .append(" p.hasYellowCard = ").append(filters.getHasYellow() ? 1 : 0);
+                operator = "AND";
+            }
+            if (filters.getHasRed() != null) {
+                query.append(operator)
+                        .append(" p.hasRedCard = ").append(filters.getHasRed() ? 1 : 0);
+                operator = "AND";
+            }
+            if (filters.getIsHurt() != null) {
+                query.append(operator)
+                        .append(" p.isHurt = ").append(filters.getIsHurt() ? 1 : 0);
+                operator = "AND";
+            }
+            if (filters.getMinSizeCm() != null) {
+                query.append(operator)
+                        .append(" p.sizeCm >= ")
+                        .append(filters.getMinSizeCm());
+                operator = "AND";
+            }
+            if (filters.getMaxSizeCm() != null) {
+                query.append(operator)
+                        .append(" p.sizeCm <= ")
+                        .append(filters.getMaxSizeCm());
+                operator = "AND";
+            }
+            if (filters.getMinWeightKg() != null) {
+                query.append(operator)
+                        .append(" p.weightKg >= ")
+                        .append(filters.getMinWeightKg());
+                operator = "AND";
+            }
+            if (filters.getMaxWeightKg() != null) {
+                query.append(operator)
+                        .append(" p.weightKg <= ")
+                        .append(filters.getMaxWeightKg());
+                operator = "AND";
+            }
+            if (filters.getMinAge() != null) {
+                query.append(operator)
+                        .append(" TIMESTAMPDIFF(year,p.dateOfBirth,CURDATE()) >= ")
+                        .append(filters.getMinAge());
+                operator = "AND";
+            }
+            if (filters.getMaxAge() != null) {
+                query.append(operator)
+                        .append(" TIMESTAMPDIFF(year,p.dateOfBirth,CURDATE()) <= ")
+                        .append(filters.getMaxAge());
+                operator = "AND";
+            }
+            if (filters.getMaxMarketValue() != null) {
+                query.append(operator)
+                        .append(" p.marketValue <= ")
+                        .append(filters.getMaxMarketValue());
+                operator = "AND";
+            }
+            if (filters.getMinMarketValue() != null) {
+                query.append(operator)
+                        .append(" p.marketValue >= ")
+                        .append(filters.getMinMarketValue());
+                operator = "AND";
+            }
+            if (filters.getMaxMatchesTopLeage() != null) {
+                query.append(operator)
+                        .append(" p.matchesTopLeage <=")
+                        .append(filters.getMaxMatchesTopLeage());
+                operator = "AND";
+            }
+            if (filters.getMinMatchesTopLeage() != null) {
+                query.append(operator)
+                        .append(" p.matchesTopLeage >=")
+                        .append(filters.getMinMatchesTopLeage());
+            }
+        }
+        List<Player> players = em.createQuery(query.toString()).setFirstResult((page - 1) * limit).setMaxResults(limit).getResultList();
+        if (players == null || players.isEmpty()) {
+            helper.setResponseToHistory(history, new DataNotFoundException("There is no Players for this search!"), em);
+            throw new DataNotFoundException("There is no Players for this search!");
+        }
+        String countQuery = query.toString().replaceFirst("p", "count(p)");
+        long count = (long) em.createQuery(countQuery).getSingleResult();
+        GetObject go = new GetObject();
+        go.setCount(count);
+        go.setData(PlayerIdAndNamePOJO.toPlayerIdAndNamePOJOList(players));
         Response response = Response.ok().entity(go).build();
         helper.setResponseToHistory(history, response, em);
         return response;
